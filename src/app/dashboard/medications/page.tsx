@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Box from '@mui/material/Box';
@@ -45,12 +45,19 @@ export default function MedicationsPage() {
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<MedicationFormInputs>({
     resolver: zodResolver(medicationSchema),
+    defaultValues: {
+      medication_name: '',
+      dosage: '',
+      frequency_type: '',
+      start_date: '',
+      end_date: '',
+    },
   });
 
   // Fetch schedules when the component mounts
@@ -89,11 +96,87 @@ export default function MedicationsPage() {
       <Box component="form" onSubmit={handleSubmit(onAddSchedule)} noValidate sx={{ mb: 4 }}>
         <Typography variant="h6">Añadir Nuevo Plan de Medicación</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
-        <TextField {...register('medication_name')} label="Nombre del Medicamento" fullWidth margin="normal" required error={!!errors.medication_name} helperText={errors.medication_name?.message} />
-        <TextField {...register('dosage')} label="Dosis (ej. 1 pastilla, 10mg)" fullWidth margin="normal" required error={!!errors.dosage} helperText={errors.dosage?.message} />
-        <TextField {...register('frequency_type')} label="Frecuencia (ej. Diario, Cada 8 horas)" fullWidth margin="normal" required error={!!errors.frequency_type} helperText={errors.frequency_type?.message} />
-        <TextField {...register('start_date')} label="Fecha de Inicio" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.start_date} helperText={errors.start_date?.message} />
-        <TextField {...register('end_date')} label="Fecha de Fin (Opcional)" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" />
+        
+        <Controller
+          name="medication_name"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Nombre del Medicamento"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.medication_name}
+              helperText={errors.medication_name?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="dosage"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Dosis (ej. 1 pastilla, 10mg)"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.dosage}
+              helperText={errors.dosage?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="frequency_type"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Frecuencia (ej. Diario, Cada 8 horas)"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.frequency_type}
+              helperText={errors.frequency_type?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="start_date"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Fecha de Inicio"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.start_date}
+              helperText={errors.start_date?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="end_date"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Fecha de Fin (Opcional)"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+              margin="normal"
+            />
+          )}
+        />
         
         <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
           {isSubmitting ? 'Añadiendo...' : 'Añadir Plan'}

@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
+import Divider from '@mui/material/Divider';
 
 // Recharts components for charts
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -22,14 +23,21 @@ import { useDateFilterStore } from '@/store/date-filter/date-filter.store';
 // Import date-fns for date manipulation
 import { format, parseISO, isWithinInterval, startOfDay, endOfDay, eachDayOfInterval } from 'date-fns';
 
-// A simple widget component for displaying summary data
-function SummaryWidget({ title, value, loading }: { title: string; value: React.ReactNode; loading: boolean }) {
+// MODIFICADO: Widget ahora acepta una lista de detalles
+function SummaryWidget({ title, value, loading, details }: { title: string; value: React.ReactNode; loading: boolean; details?: string[] }) {
   return (
-    <Paper sx={{ p: 2, textAlign: 'center', height: '100%' }}>
+    <Paper sx={{ p: 2, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" color="text.secondary">{title}</Typography>
-      <Typography variant="h4" component="p" sx={{ mt: 1 }}>
+      <Typography variant="h4" component="p" sx={{ mt: 1, flexGrow: 1 }}>
         {loading ? <CircularProgress size={24} /> : value}
       </Typography>
+      {details && details.length > 0 && (
+        <Box sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}>
+          {details.map((item, index) => (
+            <Typography key={index} variant="body2" color="text.secondary">{item}</Typography>
+          ))}
+        </Box>
+      )}
     </Paper>
   );
 }
@@ -135,10 +143,9 @@ function MedicationsChart({ data, loading }: { data: any[]; loading: boolean }) 
 
     return daysInInterval.map(day => {
       const activeCount = data.filter(s => {
-        // Guard against schedules with no start date
-        if (!s.startDate) return false;
-        const scheduleStart = startOfDay(parseISO(s.startDate));
-        const scheduleEnd = s.endDate ? endOfDay(parseISO(s.endDate)) : new Date(8640000000000000);
+        if (!s.start_date) return false;
+        const scheduleStart = startOfDay(parseISO(s.start_date));
+        const scheduleEnd = s.end_date ? endOfDay(parseISO(s.end_date)) : new Date(8640000000000000);
         return scheduleStart <= day && scheduleEnd >= day;
       }).length;
 
@@ -193,12 +200,11 @@ export default function DashboardSummaryPage() {
 
   const filteredSchedules = React.useMemo(() => {
     return schedules.filter(s => {
-      // Guard against schedules with no start date to prevent crashes
-      if (!s.startDate) {
+      if (!s.start_date) {
         return false;
       }
-      const scheduleStart = startOfDay(parseISO(s.startDate));
-      const scheduleEnd = s.endDate ? endOfDay(parseISO(s.endDate)) : new Date(8640000000000000);
+      const scheduleStart = startOfDay(parseISO(s.start_date));
+      const scheduleEnd = s.end_date ? endOfDay(parseISO(s.end_date)) : new Date(8640000000000000);
       return scheduleStart <= endDate && scheduleEnd >= startDate;
     });
   }, [schedules, startDate, endDate]);
@@ -215,17 +221,26 @@ export default function DashboardSummaryPage() {
       <DateFilter />
 
       <Grid container spacing={3}>
+        <Grid item xs={12} sm={4}>
+          {/* MODIFICADO: Pasar la lista de nombres de medicamentos al widget */}
+          <SummaryWidget 
+            title="Medicamentos Activos" 
+            value={filteredSchedules.length} 
+            loading={medicationsLoading}
+            details={filteredSchedules.map(s => s.medication_name)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <SummaryWidget title="Alergias" value={allergies.length} loading={allergiesLoading} />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <SummaryWidget title="Condiciones Médicas" value={diseases.length} loading={diseasesLoading} />
+        </Grid>
         <Grid item xs={12}>
           <VitalSignsChart data={filteredVitalSigns} loading={vitalSignsLoading} />
         </Grid>
         <Grid item xs={12}>
           <MedicationsChart data={filteredSchedules} loading={medicationsLoading} />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <SummaryWidget title="Alergias" value={allergies.length} loading={allergiesLoading} />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <SummaryWidget title="Condiciones Médicas" value={diseases.length} loading={diseasesLoading} />
         </Grid>
       </Grid>
     </Box>

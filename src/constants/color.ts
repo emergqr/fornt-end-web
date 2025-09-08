@@ -6,7 +6,7 @@ import { ThemeColors } from '@/interfaces/ThemeColors.interface';
 const commonColors = {
   white: '#FFFFFF',
   black: '#000000',
-  blueGreen: '#5d979e', // Color primario de app.json
+  blueGreen: '#5d979e',
   red: '#d9534f',
   softRed: '#dd7272',
   darkSoftRed: '#4d2222',
@@ -14,23 +14,21 @@ const commonColors = {
   surfGreen: '#3f673f',
   surfOrange: '#f59e0b',
   // Tonos de gris
-  gray50: '#f9fafb', // Muy claro, para fondos de inputs en tema claro
-  gray100: '#f3f4f6', // Para fondos neutrales en tema claro
-  gray200: '#e5e7eb', // Para bordes en tema claro
-  gray400: '#9ca3af', // Para placeholders en tema claro
-  gray500: '#6b7280', // Texto secundario
-  gray700: '#374151', // Para fondos de inputs en tema oscuro
-  gray800: '#1f2937', // Para tarjetas en tema oscuro
-  gray900: '#111827', // Para fondo principal en tema oscuro
+  gray50: '#f9fafb',
+  gray100: '#f3f4f6',
+  gray200: '#e5e7eb',
+  gray400: '#9ca3af',
+  gray500: '#6b7280',
+  gray700: '#374151',
+  gray800: '#1f2937',
+  gray900: '#111827',
 };
 
 /**
  * Definición del tema claro.
- * Implementa la interfaz `ThemeColors` para asegurar que todas las propiedades estén definidas.
  */
 const light: ThemeColors = {
-  // Base
-  surface:commonColors.surfOrange,
+  surface: commonColors.surfOrange,
   primary: commonColors.blueGreen,
   primaryText: commonColors.white,
   secondary: commonColors.gray500,
@@ -38,15 +36,13 @@ const light: ThemeColors = {
   card: commonColors.white,
   text: commonColors.gray900,
   secondaryText: commonColors.gray500,
-  onSurfaceVariant: commonColors.gray500, // Color para etiquetas y texto de medio énfasis
+  onSurfaceVariant: commonColors.gray500,
   border: commonColors.gray200,
-  // Estado
   success: commonColors.green,
   alert: commonColors.red,
   alertSoft: commonColors.softRed,
   disabled: commonColors.gray200,
-  // UI
-  inputBackground: commonColors.white, // En tema claro, los inputs suelen ser blancos
+  inputBackground: commonColors.white,
   placeholder: commonColors.gray400,
   neutral: commonColors.gray100,
   tabIconDefault: '#ccc',
@@ -57,31 +53,64 @@ const light: ThemeColors = {
  * Definición del tema oscuro.
  */
 const dark: ThemeColors = {
-  // Base
-  surface:commonColors.surfOrange,
+  ...light, // Hereda propiedades para no redefinir todo
   primary: commonColors.blueGreen,
-  primaryText: commonColors.white,
   secondary: commonColors.gray400,
-  background: commonColors.gray900,
-  card: commonColors.gray800,
+  background: commonColors.gray800, // Fondo gris semi-oscuro
+  card: commonColors.gray700,     // Tarjetas un poco más claras
   text: commonColors.gray50,
   secondaryText: commonColors.gray400,
-  onSurfaceVariant: commonColors.gray400, // Color para etiquetas y texto de medio énfasis
+  onSurfaceVariant: commonColors.gray400,
   border: commonColors.gray700,
-  // Estado
-  success: commonColors.green,
-  alert: commonColors.red,
   alertSoft: commonColors.darkSoftRed,
   disabled: commonColors.gray700,
-  // UI
   inputBackground: commonColors.gray700,
   placeholder: commonColors.gray500,
   neutral: commonColors.gray800,
-  tabIconDefault: '#ccc',
-  tabIconSelected: commonColors.blueGreen,
+};
+
+// --- TEMAS ESTACIONALES ---
+
+const spring: ThemeColors = {
+  ...light,
+  primary: '#4CAF50',
+  secondary: '#FFC107',
+  background: '#F1F8E9', // Fondo verde pastel
+  text: '#2E7D32',
+};
+
+const summer: ThemeColors = {
+  ...light,
+  primary: '#2196F3',
+  secondary: '#FFEB3B',
+  background: '#E3F2FD', // Fondo azul pastel
+  text: '#1565C0',
+};
+
+const autumn: ThemeColors = {
+  ...light,
+  primary: '#FF5722',
+  secondary: '#795548',
+  background: '#FFF3E0', // Fondo naranja pastel
+  text: '#BF360C',
+  card: '#FEFBF8',
+};
+
+const winter: ThemeColors = {
+  ...dark, // Hereda la base del tema oscuro
+  primary: '#607D8B',
+  secondary: '#00BCD4',
+  background: '#263238', // Fondo gris azulado oscuro
+  card: '#37474F',
+  text: '#CFD8DC',
+  secondaryText: '#90A4AE',
 };
 
 export const colors = {
   light,
   dark,
+  spring,
+  summer,
+  autumn,
+  winter,
 };

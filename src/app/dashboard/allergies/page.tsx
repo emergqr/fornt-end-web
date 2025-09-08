@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Box from '@mui/material/Box';
@@ -48,7 +48,7 @@ export default function AllergiesPage() {
   const [editingAllergy, setEditingAllergy] = React.useState<AllergyRead | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -133,9 +133,27 @@ export default function AllergiesPage() {
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Typography variant="h6" gutterBottom>{editingAllergy ? 'Editar Alergia' : 'Añadir Nueva Alergia'}</Typography>
-            <TextField {...register('allergen')} label="Nombre del Alérgeno" fullWidth margin="normal" required error={!!errors.allergen} helperText={errors.allergen?.message} />
-            <TextField {...register('reaction_type')} label="Tipo de Reacción (Opcional)" fullWidth margin="normal" />
-            <TextField {...register('severity')} label="Severidad (Opcional)" fullWidth margin="normal" />
+            <Controller
+              name="allergen"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} label="Nombre del Alérgeno" fullWidth margin="normal" required error={!!errors.allergen} helperText={errors.allergen?.message} />
+              )}
+            />
+            <Controller
+              name="reaction_type"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} label="Tipo de Reacción (Opcional)" fullWidth margin="normal" />
+              )}
+            />
+            <Controller
+              name="severity"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} label="Severidad (Opcional)" fullWidth margin="normal" />
+              )}
+            />
             <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
               {isSubmitting ? 'Guardando...' : (editingAllergy ? 'Guardar Cambios' : 'Guardar Alergia')}
             </Button>

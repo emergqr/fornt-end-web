@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -36,12 +36,17 @@ export default function PerfilPage() {
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileFormInputs>({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: '',
+      phone: '',
+      birth_date: '',
+    },
   });
 
   React.useEffect(() => {
@@ -87,7 +92,6 @@ export default function PerfilPage() {
       <Paper sx={{ p: 3, mt: 2 }}>
         <Grid container spacing={4}>
           {/* --- Avatar Column --- */}
-          {/* CORRECTED: Explicitly added component="div" to satisfy TypeScript overload resolution */}
           <Grid component="div" item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <ProfileAvatar />
             <Typography variant="h5" sx={{ mt: 2 }}>{user.name}</Typography>
@@ -104,16 +108,34 @@ export default function PerfilPage() {
               )}
               <Grid container spacing={2}>
                 <Grid component="div" item xs={12}>
-                  <TextField fullWidth required id="name" label="Nombre Completo" {...register('name')} error={!!errors.name} helperText={errors.name?.message} />
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} fullWidth required id="name" label="Nombre Completo" error={!!errors.name} helperText={errors.name?.message} />
+                    )}
+                  />
                 </Grid>
                 <Grid component="div" item xs={12}>
                   <TextField fullWidth disabled id="email" label="Correo Electrónico" value={user.email} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <TextField fullWidth id="phone" label="Teléfono" {...register('phone')} error={!!errors.phone} helperText={errors.phone?.message} />
+                  <Controller
+                    name="phone"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} fullWidth id="phone" label="Teléfono" error={!!errors.phone} helperText={errors.phone?.message} />
+                    )}
+                  />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <TextField fullWidth id="birth_date" label="Fecha de Nacimiento" type="date" InputLabelProps={{ shrink: true }} {...register('birth_date')} error={!!errors.birth_date} helperText={errors.birth_date?.message} />
+                  <Controller
+                    name="birth_date"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} fullWidth id="birth_date" label="Fecha de Nacimiento" type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />
+                    )}
+                  />
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>

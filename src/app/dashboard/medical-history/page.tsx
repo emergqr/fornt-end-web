@@ -56,6 +56,14 @@ export default function MedicalHistoryPage() {
     formState: { errors, isSubmitting },
   } = useForm<EventFormInputs>({
     resolver: zodResolver(eventSchema),
+    defaultValues: {
+      title: '',
+      event_type: '',
+      event_date: '',
+      description: '',
+      location: '',
+      doctor_name: '',
+    },
   });
 
   React.useEffect(() => {
@@ -96,10 +104,38 @@ export default function MedicalHistoryPage() {
       <Box component="form" onSubmit={handleSubmit(onAddEvent)} noValidate sx={{ mb: 4 }}>
         <Typography variant="h6">Añadir Nuevo Evento</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
-        <TextField {...register('title')} label="Título del Evento (ej. Cirugía de rodilla)" fullWidth margin="normal" required error={!!errors.title} helperText={errors.title?.message} />
-        <TextField {...register('event_type')} label="Tipo de Evento (ej. Cirugía, Cita, Estudio)" fullWidth margin="normal" required error={!!errors.event_type} helperText={errors.event_type?.message} />
-        <TextField {...register('event_date')} label="Fecha del Evento" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.event_date} helperText={errors.event_date?.message} />
-        <TextField {...register('description')} label="Descripción (Opcional)" fullWidth margin="normal" multiline rows={2} />
+        
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Título del Evento (ej. Cirugía de rodilla)" fullWidth margin="normal" required error={!!errors.title} helperText={errors.title?.message} />
+          )}
+        />
+
+        <Controller
+          name="event_type"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Tipo de Evento (ej. Cirugía, Cita, Estudio)" fullWidth margin="normal" required error={!!errors.event_type} helperText={errors.event_type?.message} />
+          )}
+        />
+
+        <Controller
+          name="event_date"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Fecha del Evento" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.event_date} helperText={errors.event_date?.message} />
+          )}
+        />
+
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} label="Descripción (Opcional)" fullWidth margin="normal" multiline rows={2} />
+          )}
+        />
         
         <Button component="label" variant="outlined" startIcon={<CloudUploadIcon />} sx={{ mt: 2 }}>
           Adjuntar Documentos

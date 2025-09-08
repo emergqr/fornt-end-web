@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Box from '@mui/material/Box';
@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Link from 'next/link';
+import MuiLink from '@mui/material/Link';
 import { useRouter } from 'next/navigation';
 
 import { useAuthStore } from '@/store/auth/auth.store';
@@ -30,11 +31,12 @@ export default function LoginPage() {
   const [serverError, setServerError] = React.useState<string | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
   });
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data: AuthCredentials) => {
@@ -61,14 +63,51 @@ export default function LoginPage() {
         <Typography component="h1" variant="h5">Iniciar Sesión</Typography>
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
           {serverError && <Alert severity="error" sx={{ width: '100%', mb: 2 }}>{serverError}</Alert>}
-          <TextField margin="normal" required fullWidth id="email" label="Correo Electrónico" autoComplete="email" autoFocus {...register('email')} error={!!errors.email} helperText={errors.email?.message} />
-          <TextField margin="normal" required fullWidth label="Contraseña" type="password" id="password" autoComplete="current-password" {...register('password')} error={!!errors.password} helperText={errors.password?.message} />
+          
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Correo Electrónico"
+                autoComplete="email"
+                autoFocus
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                margin="normal"
+                required
+                fullWidth
+                label="Contraseña"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+            )}
+          />
+
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={isSubmitting}>
             {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
           <Box textAlign="center">
             <Link href="/auth/registro" passHref>
-               <MuiLink component="span" variant="body2">{"¿No tienes una cuenta? Regístrate"}</MuiLink>
+               <MuiLink variant="body2">¿No tienes una cuenta? Regístrate</MuiLink>
             </Link>
           </Box>
         </Box>
@@ -76,7 +115,3 @@ export default function LoginPage() {
     </Container>
   );
 }
-
-const MuiLink = React.forwardRef<HTMLAnchorElement, { component: React.ElementType, variant: string, children: React.ReactNode }>(function MuiLink(props, ref) {
-    return <Typography ref={ref} {...props} />;
-});

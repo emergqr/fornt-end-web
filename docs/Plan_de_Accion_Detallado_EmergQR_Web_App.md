@@ -92,16 +92,20 @@
 ### 🆘 Gestión de Contactos de Emergencia
 #### Listado
 - [ ] Llamar a `GET /api/v1/contacts/` al cargar la página
-- [ ] Mostrar tabla o lista de contactos (nombre, relación, teléfono, acciones)
+- [ ] Mostrar tabla o lista de contactos (nombre, relación, teléfono, estado de visibilidad, acciones)
 
-#### Formulario para Añadir
-- [ ] Botón “+ Añadir Contacto”
-- [ ] Modal o sección con formulario (nombre, relación, teléfono, email opcional)
-- [ ] Enviar con `POST /api/v1/contacts/`
+#### Formulario para Añadir/Editar Contacto
+- [ ] Un único formulario (modal o en línea) para crear y editar.
+- [ ] Botón "+ Añadir Contacto" para abrir el formulario en modo creación.
+- [ ] Botón "Editar" junto a cada contacto para abrir el formulario en modo edición con los datos precargados.
+- [ ] Campos del formulario: nombre, relación, teléfono, email (opcional) y un **interruptor (toggle/checkbox) para "Hacer visible en QR público"**.
+- [ ] Lógica de envío:
+  - Si es nuevo → `POST /api/v1/contacts/`
+  - Si es existente → `PUT /api/v1/contacts/{uuid}`
 
 #### Eliminar Contacto
-- [ ] Botón “Eliminar” junto a cada contacto
-- [ ] Confirmación antes de `DELETE /api/v1/contacts/{uuid}`
+- [ ] Botón “Eliminar” junto a cada contacto.
+- [ ] Confirmación antes de `DELETE /api/v1/contacts/{uuid}`.
 
 > ✅ *Al final del Día 5: Usuario puede ver/editar su perfil y gestionar contactos de emergencia (CRUD básico). MVP COMPLETADO.*
 

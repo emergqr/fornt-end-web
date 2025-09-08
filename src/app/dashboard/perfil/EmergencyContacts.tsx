@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Box from '@mui/material/Box';
@@ -15,17 +15,22 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { useContactStore } from '@/store/contacts/contact.store';
-import { ContactCreate } from '@/interfaces/client/contact.interface';
+import { Contact, ContactCreate, ContactUpdate } from '@/interfaces/client/contact.interface';
+import { getApiErrorMessage } from '@/services/apiErrors';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'El nombre es requerido'),
-  email: z.string().email('Debe ser un email válido'),
+  email: z.string().email({ message: 'Debe ser un email válido' }),
   phone: z.string().min(7, 'El teléfono es requerido'),
   relationship_type: z.string().min(3, 'La relación es requerida'),
+  is_emergency_contact: z.boolean(),
 });
 
 type ContactFormInputs = z.infer<typeof contactSchema>;
@@ -35,35 +40,78 @@ export default function EmergencyContacts() {
     contacts,
     isLoading,
     error,
-    fetchContacts, // CORRECTED: Use the correct function name from the store
+    fetchContacts,
     addContact,
-    removeContact: deleteContact, // Keep using deleteContact in the component for clarity if you wish
+    editContact,
+    removeContact: deleteContact,
   } = useContactStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [editingContact, setEditingContact] = React.useState<Contact | null>(null);
 
   const {
-    register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormInputs>({
     resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      relationship_type: '',
+      is_emergency_contact: true,
+    },
   });
 
-  // Cargar los contactos al montar el componente
   React.useEffect(() => {
-    fetchContacts(); // CORRECTED: Call the correct function
+    void fetchContacts();
   }, [fetchContacts]);
 
-  const onAddContact: SubmitHandler<ContactFormInputs> = async (data) => {
+  // Corregido: Usar reset() para actualizar todo el formulario de una vez.
+  React.useEffect(() => {
+    if (editingContact) {
+      reset({
+        name: editingContact.name || '',
+        email: editingContact.email || '',
+        phone: editingContact.phone || '',
+        relationship_type: editingContact.relationship_type || '',
+        is_emergency_contact: !!editingContact.is_emergency_contact,
+      });
+    } else {
+      // Al cancelar, volvemos a los valores por defecto.
+      reset({
+        name: '',
+        email: '',
+        phone: '',
+        relationship_type: '',
+        is_emergency_contact: true,
+      });
+    }
+  }, [editingContact, reset]);
+
+  const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
     setFeedback(null);
     try {
-      await addContact(data as ContactCreate);
-      setFeedback({ type: 'success', message: '¡Contacto añadido con éxito!' });
-      reset(); // Limpia el formulario
-    } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'No se pudo añadir el contacto.' });
+      if (editingContact) {
+        const updateData: ContactUpdate = {
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            relationship_type: data.relationship_type,
+            is_emergency_contact: data.is_emergency_contact,
+        };
+        await editContact(editingContact.uuid, updateData);
+        setFeedback({ type: 'success', message: '¡Contacto actualizado con éxito!' });
+      } else {
+        await addContact(data as ContactCreate);
+        setFeedback({ type: 'success', message: '¡Contacto añadido con éxito!' });
+      }
+      setEditingContact(null);
+    } catch (err) {
+        const message = getApiErrorMessage(err);
+        setFeedback({ type: 'error', message });
     }
   };
 
@@ -72,10 +120,20 @@ export default function EmergencyContacts() {
       try {
         await deleteContact(uuid);
         setFeedback({ type: 'success', message: 'Contacto eliminado.' });
-      } catch (err: any) {
-        setFeedback({ type: 'error', message: err.message || 'No se pudo eliminar el contacto.' });
+      } catch (err) {
+        const message = getApiErrorMessage(err);
+        setFeedback({ type: 'error', message });
       }
     }
+  };
+
+  const handleEdit = (contact: Contact) => {
+    setEditingContact(contact);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingContact(null);
   };
 
   return (
@@ -83,23 +141,106 @@ export default function EmergencyContacts() {
       <Typography variant="h5" component="h2" gutterBottom>
         Contactos de Emergencia
       </Typography>
-      
-      {/* Formulario para añadir contacto */}
-      <Box component="form" onSubmit={handleSubmit(onAddContact)} noValidate sx={{ mb: 4 }}>
-        <Typography variant="h6">Añadir Nuevo Contacto</Typography>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mb: 4 }}>
+        <Typography variant="h6">{editingContact ? 'Editar Contacto' : 'Añadir Nuevo Contacto'}</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
-        <TextField {...register('name')} label="Nombre Completo" fullWidth margin="normal" required error={!!errors.name} helperText={errors.name?.message} />
-        <TextField {...register('email')} label="Correo Electrónico" fullWidth margin="normal" required error={!!errors.email} helperText={errors.email?.message} />
-        <TextField {...register('phone')} label="Teléfono" fullWidth margin="normal" required error={!!errors.phone} helperText={errors.phone?.message} />
-        <TextField {...register('relationship_type')} label="Relación (Ej: Padre, Médico)" fullWidth margin="normal" required error={!!errors.relationship_type} helperText={errors.relationship_type?.message} />
-        <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
-          {isSubmitting ? 'Añadiendo...' : 'Añadir Contacto'}
-        </Button>
+        
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Nombre Completo"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Correo Electrónico"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Teléfono"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="relationship_type"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Relación (Ej: Padre, Médico)"
+              fullWidth
+              margin="normal"
+              required
+              error={!!errors.relationship_type}
+              helperText={errors.relationship_type?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="is_emergency_contact"
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+              }
+              label="Marcar como Contacto de Emergencia"
+            />
+          )}
+        />
+
+        <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
+            {isSubmitting ? 'Guardando...' : editingContact ? 'Guardar Cambios' : 'Añadir Contacto'}
+          </Button>
+          {editingContact && (
+            <Button variant="outlined" onClick={handleCancelEdit}>
+              Cancelar
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <Divider sx={{ my: 2 }} />
 
-      {/* Lista de contactos existentes */}
       <Typography variant="h6">Mis Contactos</Typography>
       {isLoading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !isLoading && <Alert severity="error">{error}</Alert>}
@@ -108,17 +249,22 @@ export default function EmergencyContacts() {
       )}
       <List>
         {contacts.map((contact) => (
-          <ListItem 
-            key={contact.uuid} 
+          <ListItem
+            key={contact.uuid}
             secondaryAction={
-              <IconButton edge="end" aria-label="delete" onClick={() => onDeleteContact(contact.uuid)}>
-                <DeleteIcon />
-              </IconButton>
+              <>
+                <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(contact)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteContact(contact.uuid)}>
+                  <DeleteIcon />
+                </IconButton>
+              </>
             }
           >
-            <ListItemText 
+            <ListItemText
               primary={contact.name}
-              secondary={`${contact.relationship_type} - ${contact.phone}`}
+              secondary={`${contact.relationship_type} - ${contact.phone} | ${contact.is_emergency_contact ? 'Contacto de Emergencia' : 'Contacto General'}`}
             />
           </ListItem>
         ))}

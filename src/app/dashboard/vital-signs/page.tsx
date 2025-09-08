@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Box from '@mui/material/Box';
@@ -57,11 +57,20 @@ export default function VitalSignsPage() {
   const [isFormVisible, setIsFormVisible] = React.useState(false);
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<VitalSignFormInputs>({ resolver: zodResolver(vitalSignSchema) });
+  } = useForm<VitalSignFormInputs>({
+    resolver: zodResolver(vitalSignSchema),
+    defaultValues: {
+      type: '',
+      value_numeric: '',
+      value_secondary: '',
+      unit: '',
+      notes: '',
+    },
+  });
 
   React.useEffect(() => {
     fetchMyVitalSigns();
@@ -111,16 +120,46 @@ export default function VitalSignsPage() {
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onAddVitalSign)} noValidate>
             <Typography variant="h6" gutterBottom>Añadir Nuevo Registro</Typography>
-            <FormControl fullWidth margin="normal" required error={!!errors.type}>
-              <InputLabel id="type-label">Tipo de Signo Vital</InputLabel>
-              <Select labelId="type-label" label="Tipo de Signo Vital" {...register('type')}>
-                {types.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
-              </Select>
-            </FormControl>
-            <TextField {...register('value_numeric')} label="Valor Principal" type="number" fullWidth margin="normal" />
-            <TextField {...register('value_secondary')} label="Valor Secundario (ej. Diastólica)" type="number" fullWidth margin="normal" />
-            <TextField {...register('unit')} label="Unidad (ej. mmHg, kg, °C)" fullWidth margin="normal" />
-            <TextField {...register('notes')} label="Notas (Opcional)" fullWidth margin="normal" multiline rows={2} />
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth margin="normal" required error={!!errors.type}>
+                  <InputLabel id="type-label">Tipo de Signo Vital</InputLabel>
+                  <Select {...field} labelId="type-label" label="Tipo de Signo Vital">
+                    {types.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="value_numeric"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} value={field.value || ''} label="Valor Principal" type="number" fullWidth margin="normal" />
+              )}
+            />
+            <Controller
+              name="value_secondary"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} value={field.value || ''} label="Valor Secundario (ej. Diastólica)" type="number" fullWidth margin="normal" />
+              )}
+            />
+            <Controller
+              name="unit"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} value={field.value || ''} label="Unidad (ej. mmHg, kg, °C)" fullWidth margin="normal" />
+              )}
+            />
+            <Controller
+              name="notes"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} value={field.value || ''} label="Notas (Opcional)" fullWidth margin="normal" multiline rows={2} />
+              )}
+            />
             <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
               {isSubmitting ? 'Añadiendo...' : 'Guardar Registro'}
             </Button>
