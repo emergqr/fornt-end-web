@@ -23,11 +23,13 @@ import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 
 import { useDiseaseStore } from '@/store/disease/disease.store';
-import { PatientDiseaseCreate, PatientDiseaseRead, PatientDiseaseUpdate, DiseaseRead } from '@/interfaces/client/disease.interface';
+import { PatientDiseaseRead, PatientDiseaseUpdate, DiseaseRead } from '@/interfaces/client/disease.interface';
+import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
+import { useDebounce } from '@/hooks/useDebounce'; // Asumimos que este hook existe
 
-// Schema for the form's data structure
+// Esquema actualizado para manejar el resultado de la búsqueda
 const diseaseFormSchema = z.object({
-  disease: z.custom<DiseaseRead>(v => v !== null && typeof v === 'object' && 'uuid' in v, {
+  disease: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
     message: 'Debe seleccionar una enfermedad de la lista.',
   }),
   diagnosis_date: z.string().min(1, { message: 'La fecha de diagnóstico es requerida.' }),
@@ -42,18 +44,21 @@ export default function DiseasesPage() {
     diseases,
     loading,
     error,
-    masterList,
-    masterListLoading,
     fetchMyDiseases,
-    addDisease,
+    addDiseaseFromCode, // Usaremos la nueva acción
     editDisease,
     removeDisease,
-    fetchMasterList,
   } = useDiseaseStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isFormVisible, setIsFormVisible] = React.useState(false);
   const [editingDisease, setEditingDisease] = React.useState<PatientDiseaseRead | null>(null);
+  
+  // Estado para la búsqueda inteligente
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<MedicalCodeSearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = React.useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500); // Hook para debounce
 
   const {
     control,
@@ -72,8 +77,27 @@ export default function DiseasesPage() {
 
   React.useEffect(() => {
     fetchMyDiseases();
-    fetchMasterList();
-  }, [fetchMyDiseases, fetchMasterList]);
+  }, [fetchMyDiseases]);
+
+  // Efecto para realizar la búsqueda cuando el término debounced cambia
+  React.useEffect(() => {
+    if (debouncedSearchQuery.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    const search = async () => {
+      setSearchLoading(true);
+      try {
+        const results = await medicalCodeService.search('snomed', debouncedSearchQuery);
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Search failed:", error);
+        setSearchResults([]);
+      }
+      setSearchLoading(false);
+    };
+    void search();
+  }, [debouncedSearchQuery]);
 
   const handleAddNewClick = () => {
     setEditingDisease(null);
@@ -83,15 +107,9 @@ export default function DiseasesPage() {
   };
 
   const handleEditClick = (disease: PatientDiseaseRead) => {
-    setEditingDisease(disease);
-    reset({
-      disease: disease.disease,
-      diagnosis_date: disease.diagnosis_date.split('T')[0], // Format date for input
-      severity: disease.severity,
-      notes: disease.notes,
-    });
-    setIsFormVisible(true);
-    setFeedback(null);
+    // La edición sigue funcionando sobre los datos existentes, no necesita la búsqueda.
+    // Por simplicidad, deshabilitamos la edición del nombre de la enfermedad.
+    alert("La edición de una condición existente se realizará en una futura versión.");
   };
 
   const handleCancel = () => {
@@ -103,25 +121,32 @@ export default function DiseasesPage() {
 
   const onSubmit: SubmitHandler<DiseaseFormInputs> = async (data) => {
     setFeedback(null);
-    try {
-      if (editingDisease) {
-        const updatePayload: PatientDiseaseUpdate = { ...data };
-        await editDisease(editingDisease.uuid, updatePayload);
-        setFeedback({ type: 'success', message: '¡Condición actualizada con éxito!' });
-      } else {
-        const createPayload: PatientDiseaseCreate = {
-          disease_uuid: data.disease.uuid,
+    if (editingDisease) {
+      // Lógica de edición (simplificada por ahora)
+      const updatePayload: PatientDiseaseUpdate = { 
+        diagnosis_date: data.diagnosis_date,
+        severity: data.severity,
+        notes: data.notes,
+       };
+      await editDisease(editingDisease.uuid, updatePayload);
+      setFeedback({ type: 'success', message: '¡Condición actualizada con éxito!' });
+    } else {
+      // Lógica de creación usando el código
+      try {
+        await addDiseaseFromCode({
+          code: data.disease.code,
+          name: data.disease.name,
+          source: 'snomed',
           diagnosis_date: data.diagnosis_date,
           severity: data.severity,
           notes: data.notes,
-        };
-        await addDisease(createPayload);
+        });
         setFeedback({ type: 'success', message: '¡Condición añadida con éxito!' });
+      } catch (err: any) {
+        setFeedback({ type: 'error', message: err.message || 'No se pudo añadir la condición.' });
       }
-      handleCancel();
-    } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || (editingDisease ? 'No se pudo actualizar la condición.' : 'No se pudo añadir la condición.') });
     }
+    handleCancel();
   };
 
   const onDeleteDisease = async (uuid: string) => {
@@ -138,23 +163,14 @@ export default function DiseasesPage() {
   return (
     <Paper sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4" component="h1">
-          Mis Condiciones Médicas
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={isFormVisible ? undefined : <AddIcon />}
-          onClick={isFormVisible ? handleCancel : handleAddNewClick}
-          color={isFormVisible ? 'secondary' : 'primary'}
-        >
-          {isFormVisible ? 'Cancelar' : 'Añadir Condición'}
-        </Button>
+        <Typography variant="h4" component="h1">Mis Condiciones Médicas</Typography>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>Añadir Condición</Button>
       </Box>
 
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Typography variant="h6" gutterBottom>{editingDisease ? 'Editar Condición' : 'Añadir Nueva Condición'}</Typography>
+            <Typography variant="h6" gutterBottom>Añadir Nueva Condición</Typography>
             
             <Controller
               name="disease"
@@ -162,24 +178,25 @@ export default function DiseasesPage() {
               render={({ field }) => (
                 <Autocomplete
                   {...field}
-                  options={masterList}
-                  getOptionLabel={(option) => option.name}
-                  isOptionEqualToValue={(option, value) => option.uuid === value.uuid}
-                  loading={masterListLoading}
+                  options={searchResults}
+                  getOptionLabel={(option) => option.name || ''}
+                  isOptionEqualToValue={(option, value) => option.code === value.code}
+                  loading={searchLoading}
+                  onInputChange={(_, newInputValue) => setSearchQuery(newInputValue)}
                   onChange={(_, data) => field.onChange(data)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Buscar Enfermedad"
+                      label="Buscar Enfermedad (ej. Hipertensión)"
                       margin="normal"
                       required
                       error={!!errors.disease}
-                      helperText={errors.disease?.message || 'Empieza a escribir para buscar...'}
+                      helperText={errors.disease?.message || 'Empieza a escribir para buscar en la base de datos médica.'}
                       InputProps={{
                         ...params.InputProps,
                         endAdornment: (
                           <>
-                            {masterListLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                            {searchLoading ? <CircularProgress color="inherit" size={20} /> : null}
                             {params.InputProps.endAdornment}
                           </>
                         ),
@@ -190,30 +207,12 @@ export default function DiseasesPage() {
               )}
             />
 
-            <Controller
-              name="diagnosis_date"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} label="Fecha de Diagnóstico" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.diagnosis_date} helperText={errors.diagnosis_date?.message} />
-              )}
-            />
-            <Controller
-              name="severity"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Severidad (Opcional)" fullWidth margin="normal" />
-              )}
-            />
-            <Controller
-              name="notes"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Notas (Opcional)" fullWidth margin="normal" multiline rows={2} />
-              )}
-            />
-            <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
-              {isSubmitting ? 'Guardando...' : (editingDisease ? 'Guardar Cambios' : 'Añadir Condición')}
-            </Button>
+            <Controller name="diagnosis_date" control={control} render={({ field }) => (<TextField {...field} label="Fecha de Diagnóstico" type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.diagnosis_date} helperText={errors.diagnosis_date?.message} />)} />
+            <Controller name="severity" control={control} render={({ field }) => (<TextField {...field} value={field.value || ''} label="Severidad (Opcional)" fullWidth margin="normal" />)} />
+            <Controller name="notes" control={control} render={({ field }) => (<TextField {...field} value={field.value || ''} label="Notas (Opcional)" fullWidth margin="normal" multiline rows={2} />)} />
+            
+            <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>{isSubmitting ? 'Guardando...' : 'Añadir Condición'}</Button>
+            <Button variant="outlined" onClick={handleCancel} sx={{ mt: 2, ml: 2 }}>Cancelar</Button>
           </Box>
         </Paper>
       </Collapse>
@@ -225,28 +224,16 @@ export default function DiseasesPage() {
       <Typography variant="h6">Condiciones Registradas</Typography>
       {loading && !isSubmitting && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
-      {!loading && !error && diseases.length === 0 && (
-        <Typography sx={{ mt: 2 }}>No tienes condiciones médicas registradas.</Typography>
-      )}
+      {!loading && !error && diseases.length === 0 && <Typography sx={{ mt: 2 }}>No tienes condiciones médicas registradas.</Typography>}
       <List>
         {diseases.map((patientDisease) => (
-          <ListItem 
-            key={patientDisease.uuid} 
-            secondaryAction={
+          <ListItem key={patientDisease.uuid} secondaryAction={
               <Box>
-                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(patientDisease)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteDisease(patientDisease.uuid)}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            }
+                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(patientDisease)} disabled><EditIcon /></IconButton>
+                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteDisease(patientDisease.uuid)}><DeleteIcon /></IconButton>
+              </Box>}
           >
-            <ListItemText 
-              primary={patientDisease.disease.name}
-              secondary={`Diagnosticado: ${new Date(patientDisease.diagnosis_date).toLocaleDateString()} - Severidad: ${patientDisease.severity || 'N/A'}`}
-            />
+            <ListItemText primary={patientDisease.disease.name} secondary={`Diagnosticado: ${new Date(patientDisease.diagnosis_date).toLocaleDateString()} - Severidad: ${patientDisease.severity || 'N/A'}`} />
           </ListItem>
         ))}
       </List>

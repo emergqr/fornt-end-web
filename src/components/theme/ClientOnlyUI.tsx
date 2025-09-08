@@ -27,6 +27,7 @@ import { a_languages } from '@/constants/languages';
 // --- Icons, Stores, and Types ---
 import PaletteIcon from '@mui/icons-material/Palette';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import TimelineIcon from '@mui/icons-material/Timeline'; // Icono para la nueva página
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
@@ -52,6 +53,7 @@ function DashboardNav() {
 
   const navItems = [
     { key: 'dashboard_summary', path: '/dashboard', icon: <DashboardIcon sx={{ color: '#1976d2' }} /> },
+    { key: 'dashboard_timeline', path: '/dashboard/timeline', icon: <TimelineIcon sx={{ color: '#ff9800' }} /> }, // Nueva página
     { key: 'dashboard_qr', path: '/dashboard/qr-code', icon: <QrCode2Icon sx={{ color: '#6a1b9a' }} /> },
     { key: 'dashboard_profile', path: '/dashboard/perfil', icon: <AccountCircleIcon sx={{ color: '#00796b' }} /> },
     { key: 'dashboard_allergies', path: '/dashboard/allergies', icon: <MedicalInformationIcon sx={{ color: '#d32f2f' }} /> },

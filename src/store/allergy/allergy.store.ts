@@ -4,8 +4,8 @@ import {
   AllergyRead,
   AllergyUpdate,
   ReactionHistoryCreate,
+  AllergyCreateFromCode, // Importar la nueva interfaz
 } from '@/interfaces/client/allergy.interface';
-// CORRECTED IMPORT: Import the service object directly.
 import { allergyService } from '@/services/client/allergyService';
 
 interface AllergyState {
@@ -14,6 +14,7 @@ interface AllergyState {
   error: string | null;
   fetchMyAllergies: () => Promise<void>;
   addAllergy: (data: AllergyCreate) => Promise<AllergyRead>;
+  addAllergyFromCode: (data: AllergyCreateFromCode) => Promise<void>; // Nueva acción
   editAllergy: (uuid: string, data: AllergyUpdate) => Promise<AllergyRead>;
   removeAllergy: (uuid: string) => Promise<void>;
   addNewReaction: (allergyUuid: string, data: ReactionHistoryCreate) => Promise<void>;
@@ -53,6 +54,20 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
     }
   },
 
+  // Implementación de la nueva acción
+  addAllergyFromCode: async (data: AllergyCreateFromCode) => {
+    set({ error: null });
+    try {
+      const newAllergy = await allergyService.createAllergyFromCode(data);
+      set((state) => ({
+        allergies: [...state.allergies, newAllergy],
+      }));
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to add allergy from code' });
+      throw e;
+    }
+  },
+
   editAllergy: async (uuid: string, data: AllergyUpdate) => {
     set({ loading: true, error: null });
     try {
@@ -69,7 +84,6 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
   },
 
   removeAllergy: async (uuid: string) => {
-    // No es necesario un estado de carga individual, el de la lista es suficiente.
     try {
       await allergyService.deleteAllergy(uuid);
       set((state) => ({
@@ -82,7 +96,6 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
   },
 
   addNewReaction: async (allergyUuid: string, data: ReactionHistoryCreate) => {
-    // Llama al servicio y actualiza la alergia específica en el estado.
     try {
       const updatedAllergy = await allergyService.addReactionToAllergy(allergyUuid, data);
        set((state) => ({

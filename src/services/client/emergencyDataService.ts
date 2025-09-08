@@ -1,37 +1,29 @@
-import { ApiHandler } from '../apiHandler';
-import { EmergencyData, EmergencyDataCreate, EmergencyDataUpdate } from '@/interfaces/client/emergencyData.interface';
-import { EmergDataPaths } from '@/constants/apiPaths';
+import api from '@/services/api';
+import {
+  EmergencyDataRead,
+  EmergencyDataUpdate,
+} from '@/interfaces/client/emergency-data.interface';
+
+const BASE_URL = '/emerg-data';
 
 /**
- * Obtiene los datos de emergencia del usuario autenticado.
- * @returns {Promise<EmergencyData>} Una promesa que se resuelve con los datos de emergencia del usuario.
+ * Fetches the emergency data for the authenticated client.
  */
-export const getMyEmergencyData = async (): Promise<EmergencyData> => {
-    return ApiHandler.get<EmergencyData>(EmergDataPaths.ME);
+const getEmergencyData = async (): Promise<EmergencyDataRead> => {
+  // El endpoint de la API para obtener los datos del usuario es /me
+  const response = await api.get<EmergencyDataRead>(`${BASE_URL}/me`);
+  return response.data;
 };
 
 /**
- * Crea o actualiza los datos de emergencia del usuario autenticado.
- * @param {EmergDataUpdate} data - Los datos a actualizar.
- * @returns {Promise<EmergencyData>} Una promesa que se resuelve con los datos de emergencia actualizados.
+ * Creates or updates the emergency data for the client.
  */
-export const updateMyEmergencyData = async (data: EmergencyDataUpdate): Promise<EmergencyData> => { // This should be PUT
-    return ApiHandler.put<EmergencyDataUpdate, EmergencyData>(EmergDataPaths.ME, data);
+const updateEmergencyData = async (data: EmergencyDataUpdate): Promise<EmergencyDataRead> => {
+  const response = await api.put<EmergencyDataRead>(`${BASE_URL}/me`, data);
+  return response.data;
 };
 
-/**
- * Crea un nuevo registro de datos de emergencia para el usuario autenticado.
- * @param {EmergencyDataCreate} data - Los datos a crear.
- * @returns {Promise<EmergencyData>} Una promesa que se resuelve con los datos recién creados.
- */
-export const createEmergencyData = async (data: EmergencyDataCreate): Promise<EmergencyData> => { // This should be POST
-    return ApiHandler.post<EmergencyDataCreate, EmergencyData>(EmergDataPaths.BASE, data);
-};
-
-/**
- * Elimina los datos de emergencia del usuario autenticado.
- * @returns {Promise<void>}
- */
-export const deleteMyEmergencyData = async (): Promise<void> => {
-    return ApiHandler.delete<void>(EmergDataPaths.ME);
+export const emergencyDataService = {
+  getEmergencyData,
+  updateEmergencyData,
 };

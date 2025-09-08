@@ -1,153 +1,60 @@
-# 🚀 **Plan de Acción: EmergQR Web App (MVP en 5 días)**  
-**Objetivo**: MVP funcional con sección pública informativa + sección privada (perfil + contactos de emergencia), alineado con la app móvil.
+# 🚀 **Plan de Acción: EmergQR Web App**
+**Objetivo**: Construir una aplicación web completa y robusta para la gestión de perfiles de salud de emergencia.
 
 ---
 
-## ✅ **Pila Tecnológica Confirmada**
-*(Marcar como completado si estás de acuerdo)*
-
-- [ ] **Framework**: Next.js (con React)  
-- [ ] **UI Library**: MUI o Chakra UI *(elegir uno)*  
-- [ ] **Gestión de Estado**: Zustand (consistencia con app móvil)  
-- [ ] **Cliente HTTP**: Axios  
-- [ ] **Validación de Formularios**: react-hook-form  
-
-> ✅ *Una vez confirmada, proceder con la estructura base.*
+## ✅ **Fase 1: MVP (Completado)**
+- [x] Setup del Proyecto
+- [x] Páginas Públicas
+- [x] Autenticación y Acceso Privado
+- [x] Funcionalidad Central del Perfil
+- [x] Gestión de Contactos de Emergencia
 
 ---
 
-# 🗓️ **Fase 1: MVP (Días 1-5)**
+## ✅ **Fase 2: Módulos de Salud (Completado)**
+- [x] Gestión de Alergias, Enfermedades, Medicamentos, Signos Vitales e Historial Médico.
+- [x] Dashboard Principal con widgets y gráficos.
+- [x] Sistema avanzado de temas con 6 paletas de colores.
 
 ---
 
-## 📅 **DÍA 1: Estructura Inicial + Parte Pública**
+## 🚀 **Fase 3: Funcionalidades Avanzadas (En Progreso)**
 
-### 🛠️ Setup del Proyecto
-- [ ] Crear nuevo proyecto Next.js: `npx create-next-app emergqr-web`
-- [ ] Instalar dependencias:
-  ```bash
-  npm install axios zustand react-hook-form @mui/material @emotion/react @emotion/styled
-  # o si usas Chakra UI:
-  # npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion
-  ```
-- [ ] Configurar ESLint + Prettier (opcional, pero recomendado)
+### ⭐ **Completadas en esta fase**
 
-### 🖼️ Páginas Públicas (Estáticas)
-- [ ] Crear `pages/index.tsx` → Página de inicio (landing)
-- [ ] Crear `pages/quienes-somos.tsx` → Misión, visión, valores
-- [ ] Crear `pages/servicios.tsx` → Descripción de servicios
+- [x] **Línea de Tiempo Médica Unificada**: Vista cronológica de todo el historial de salud.
+- [x] **Gestión de Contraseña desde el Perfil**: Formulario para que el usuario cambie su propia contraseña.
+- [x] **Restablecimiento de Contraseña Olvidada**: Flujo completo para recuperar la cuenta desde la página de Login.
+- [x] **Búsqueda Inteligente de Enfermedades y Alergias**: Buscador conectado a bases de datos médicas (SNOMED) para estandarizar los datos.
 
-### 🧱 Layout Público
-- [ ] Crear `components/layout/PublicLayout.tsx`
-  - [ ] Incluir cabecera con logo + menú de navegación (Inicio, Quiénes Somos, Servicios)
-  - [ ] Incluir pie de página (copyright, enlaces básicos)
-  - [ ] Botón/Enlace “Iniciar Sesión” en cabecera
+### ⭐ **Tareas Pendientes (Priorizadas)**
 
-> ✅ *Al final del Día 1: La app debe renderizar páginas públicas con navegación funcional.*
+- [ ] **Gestión de Direcciones (En curso)**
+  - **Descripción**: Añadir una sección en el perfil para que el usuario pueda gestionar sus direcciones postales (añadir, editar, eliminar).
+  - **Valor**: Dato clave para emergencias.
+  - **Endpoints**: CRUD en `/api/v1/addresses/`.
 
----
+- [ ] **Campos de Datos de Emergencia**
+  - **Descripción**: Añadir campos específicos en el perfil para **Grupo Sanguíneo** y **Sistema de Salud / Nº de Póliza**.
+  - **Valor**: Información de altísimo valor para los servicios de emergencia.
+  - **Endpoint**: `PUT /api/v1/emerg-data/me`.
 
-## 📅 **DÍAS 2-3: Autenticación y Acceso Privado**
+- [ ] **Eliminación de Cuenta**
+  - **Descripción**: Añadir un botón en una sección de "Ajustes Avanzados" para que el usuario pueda eliminar su cuenta.
+  - **Valor**: Otorga al usuario control total sobre sus datos.
+  - **Endpoint**: `DELETE /api/v1/clients/me`.
 
-### 🔐 Páginas de Autenticación
-- [ ] Crear `pages/auth/login.tsx` → Formulario con email + password
-- [ ] Crear `pages/auth/registro.tsx` → Formulario con nombre, email, password, confirmación
-
-### ⚙️ Servicio de Autenticación (`services/authService.ts`)
-- [ ] Implementar función `login(credentials)` → POST `/api/v1/auth/login`
-- [ ] Implementar función `register(userData)` → POST `/api/v1/auth/register`
-- [ ] Manejo de errores y mensajes de feedback
-
-### 🧠 Store de Zustand (`stores/auth.store.ts`)
-- [ ] Crear store global con:
-  - `token: string | null`
-  - `user: Client | null`
-  - `isAuthenticated: boolean`
-  - Acciones: `login`, `logout`, `setUser`, `persistToken`
-
-### 🚧 Rutas Protegidas
-- [ ] Crear HOC o middleware de autenticación (`components/auth/ProtectedRoute.tsx`)
-  - Redirige a `/auth/login` si no hay token válido
-- [ ] Aplicar `ProtectedRoute` a rutas privadas (ej: `/dashboard/*`)
-
-> ✅ *Al final del Día 3: Usuario puede registrarse, iniciar sesión, y acceder a rutas protegidas. Token persiste en Zustand.*
-
----
-
-## 📅 **DÍAS 4-5: Funcionalidad Central – Perfil + Contactos de Emergencia**
-
-### 👤 Página de Perfil (`pages/dashboard/perfil.tsx`)
-- [ ] Layout privado básico (sidebar o navbar simple)
-- [ ] Título “Mi Perfil” + datos del usuario
-
-### 🔄 Servicio de Cliente (`services/clientService.ts`)
-- [ ] `getProfile()` → GET `/api/v1/clients/me`
-- [ ] `updateProfile(data)` → PUT `/api/v1/clients/me`
-
-### 📝 Formulario de Perfil (dentro de `perfil.tsx`)
-- [ ] Mostrar y editar: nombre, email, teléfono, fecha de nacimiento
-- [ ] Validación con `react-hook-form`
-- [ ] Botón “Guardar Cambios” → actualiza perfil vía API
-
-### 🆘 Gestión de Contactos de Emergencia
-#### Listado
-- [ ] Llamar a `GET /api/v1/contacts/` al cargar la página
-- [ ] Mostrar tabla o lista de contactos (nombre, relación, teléfono, estado de visibilidad, acciones)
-
-#### Formulario para Añadir/Editar Contacto
-- [ ] Un único formulario (modal o en línea) para crear y editar.
-- [ ] Botón "+ Añadir Contacto" para abrir el formulario en modo creación.
-- [ ] Botón "Editar" junto a cada contacto para abrir el formulario en modo edición con los datos precargados.
-- [ ] Campos del formulario: nombre, relación, teléfono, email (opcional) y un **interruptor (toggle/checkbox) para "Hacer visible en QR público"**.
-- [ ] Lógica de envío:
-  - Si es nuevo → `POST /api/v1/contacts/`
-  - Si es existente → `PUT /api/v1/contacts/{uuid}`
-
-#### Eliminar Contacto
-- [ ] Botón “Eliminar” junto a cada contacto.
-- [ ] Confirmación antes de `DELETE /api/v1/contacts/{uuid}`.
-
-> ✅ *Al final del Día 5: Usuario puede ver/editar su perfil y gestionar contactos de emergencia (CRUD básico). MVP COMPLETADO.*
-
----
-
-# 📈 **Fase 2: Extensión Post-MVP (Priorización Futura)**
-
-*(Marcar como “Listo para desarrollo” cuando MVP esté estable y desplegado)*
-
-- [ ] **Historial Médico**: Línea de tiempo con eventos (GET `/api/v1/medical-events/`)
-- [ ] **Gestión de Alergias**: CRUD completo (GET/POST/PUT/DELETE `/api/v1/allergies/`)
-- [ ] **Gestión de Enfermedades**: CRUD completo (GET/POST/PUT/DELETE `/api/v1/conditions/`)
-- [ ] **Signos Vitales**: Formularios + gráficos de evolución (POST `/api/v1/vital-signs/`)
-- [ ] **Planes de Medicación**: Gestión de medicamentos + recordatorios (CRUD `/api/v1/medications/`)
-- [ ] **Subida de Archivos**: Adjuntar PDFs/Imágenes a eventos médicos (POST `/api/v1/documents/`)
-
-> ✅ *Priorizar según feedback de usuarios o necesidades clínicas más urgentes.*
-
----
-
-# 🚦 **Próximos Pasos Inmediatos**
-
-1. [ ] **Confirmar pila tecnológica y plan de acción** (✅ checklist arriba)
-2. [ ] **Asignar responsable de iniciar estructura base (Día 1)**
-3. [ ] **Definir entorno de desarrollo compartido (Git, branches, etc.)**
-4. [ ] **Configurar variables de entorno (.env.local) con URL base de API**
-5. [ ] **Definir criterios de aceptación para cada tarea (QA básico)**
+- [ ] **Completar Campos de Perfil**
+  - **Descripción**: Añadir los campos de `sexo` y `ocupación` al formulario del perfil.
+  - **Valor**: Enriquece el perfil demográfico del usuario.
+  - **Endpoint**: `PUT /api/v1/clients/me`.
 
 ---
 
 ## 📌 Notas Adicionales
 
-- **Despliegue sugerido**: Vercel (integración nativa con Next.js)
-- **Testing básico**: Validar flujos principales (registro → login → perfil → editar → logout)
-- **Diseño responsive**: Asegurar que funcione en móvil (importante para complementar app móvil)
-- **Feedback loop**: Revisión diaria de avances (daily standup si es equipo)
+- **Próxima Tarea**: Cuando estemos listos, el siguiente gran desafío será la **aplicación móvil**.
+- **Feedback Loop**: Continuar con la revisión de funcionalidades y la priorización según las necesidades que surjan.
 
----
-
-✅ **¡Listo para ejecutar!**  
-Cada checkbox te permite visualizar el progreso día a día. Puedes copiar este plan a Notion, Trello, GitHub Projects, o simplemente imprimirlo y marcarlo manualmente.
-
-¿Quieres que te genere también una plantilla en formato **Notion** o **Markdown para GitHub**? ¡Solo dime y lo preparo!
-
-¡Vamos por ese MVP en 5 días! 💪🚀
+✅ **¡Plan actualizado y listo para seguir avanzando!**

@@ -46,3 +46,14 @@ export interface MedicalEventRead {
 export type MedicalEventCreate = Omit<MedicalEventRead, 'uuid' | 'documents'>;
 
 export type MedicalEventUpdate = Partial<MedicalEventCreate>;
+
+/**
+ * Representa un único item en la línea de tiempo unificada del paciente.
+ * Coincide con el schema TimelineItemRead.
+ */
+export interface TimelineItemRead {
+  type: 'disease' | 'event' | 'allergy' | 'medication';
+  date: string; // Formato ISO 8601 (date)
+  title: string;
+  details: string;
+}
