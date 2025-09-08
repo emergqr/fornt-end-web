@@ -4,6 +4,7 @@ import {
   AllergyRead,
   AllergyUpdate,
   ReactionHistoryCreate,
+  AllergyCreateFromCode, // Importar la nueva interfaz
 } from '@/interfaces/client/allergy.interface';
  
 const BASE_URL = '/allergies';
@@ -15,6 +16,18 @@ const getMyAllergies = async (): Promise<AllergyRead[]> => {
 
 const createAllergy = async (data: AllergyCreate): Promise<AllergyRead> => {
   const response = await api.post<AllergyRead>(`${BASE_URL}/`, data);
+  return response.data;
+};
+
+/**
+ * Creates and associates an allergy from a standardized medical code.
+ * @param data - The data containing the code, name, and source.
+ * @returns A promise that resolves with the newly created AllergyRead.
+ */
+const createAllergyFromCode = async (
+  data: AllergyCreateFromCode
+): Promise<AllergyRead> => {
+  const response = await api.post<AllergyRead>(`${BASE_URL}/from-code`, data);
   return response.data;
 };
 
@@ -35,10 +48,10 @@ const addReactionToAllergy = async (
   return response.data;
 };
 
-// CORRECTED: Export all functions as a single, consistent service object.
 export const allergyService = {
     getMyAllergies,
     createAllergy,
+    createAllergyFromCode, // Añadir la nueva función al objeto exportado
     updateAllergy,
     deleteAllergy,
     addReactionToAllergy,

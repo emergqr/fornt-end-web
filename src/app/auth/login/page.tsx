@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Link from 'next/link';
 import MuiLink from '@mui/material/Link';
+import Grid from '@mui/material/Grid'; // Importar Grid
 import { useRouter } from 'next/navigation';
 
 import { useAuthStore } from '@/store/auth/auth.store';
@@ -105,11 +106,21 @@ export default function LoginPage() {
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={isSubmitting}>
             {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
-          <Box textAlign="center">
-            <Link href="/auth/registro" passHref>
-               <MuiLink variant="body2">¿No tienes una cuenta? Regístrate</MuiLink>
-            </Link>
-          </Box>
+          
+          {/* Añadido Grid para los enlaces */}
+          <Grid container>
+            <Grid item xs>
+              <Link href="/auth/forgot-password" passHref>
+                <MuiLink variant="body2">¿Has olvidado tu contraseña?</MuiLink>
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="/auth/registro" passHref>
+                <MuiLink variant="body2">¿No tienes una cuenta? Regístrate</MuiLink>
+              </Link>
+            </Grid>
+          </Grid>
+
         </Box>
       </Box>
     </Container>

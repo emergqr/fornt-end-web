@@ -4,8 +4,8 @@ import {
   DiseaseRead,
   PatientDiseaseCreate,
   PatientDiseaseUpdate,
+  DiseaseCreateFromCode, // Importar la nueva interfaz
 } from '@/interfaces/client/disease.interface';
-// CORRECTED IMPORT: Import the service object directly.
 import { diseaseService } from '@/services/client/diseaseService';
 
 /**
@@ -19,6 +19,7 @@ interface DiseaseState {
   masterListLoading: boolean;
   fetchMyDiseases: () => Promise<void>;
   addDisease: (data: PatientDiseaseCreate) => Promise<void>;
+  addDiseaseFromCode: (data: DiseaseCreateFromCode) => Promise<void>; // Nueva acción
   editDisease: (uuid: string, data: PatientDiseaseUpdate) => Promise<void>;
   removeDisease: (uuid: string) => Promise<void>;
   fetchMasterList: () => Promise<void>;
@@ -38,10 +39,8 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
 
   // --- ACCIONES ---
 
-  /** Limpia el estado de error. */
   clearError: () => set({ error: null }),
 
-  /** Obtiene todas las enfermedades del paciente desde la API. */
   fetchMyDiseases: async () => {
     if (get().loading) return;
     set({ loading: true, error: null });
@@ -53,9 +52,8 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
     }
   },
 
-  /** Añade una nueva enfermedad y la agrega al estado local. */
   addDisease: async (data: PatientDiseaseCreate) => {
-    set({ error: null }); // Limpia errores previos
+    set({ error: null });
     try {
       const newDisease = await diseaseService.createDisease(data);
       set((state) => ({
@@ -63,11 +61,24 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
       }));
     } catch (e: any) {
       set({ error: e.message || 'Failed to add disease' });
-      throw e; // Re-lanza para que la UI pueda manejarlo (e.g., Toast)
+      throw e;
     }
   },
 
-  /** Edita una enfermedad y actualiza el estado local. */
+  // Implementación de la nueva acción
+  addDiseaseFromCode: async (data: DiseaseCreateFromCode) => {
+    set({ error: null });
+    try {
+      const newDisease = await diseaseService.createDiseaseFromCode(data);
+      set((state) => ({
+        diseases: [...state.diseases, newDisease].sort((a, b) => new Date(b.diagnosis_date).getTime() - new Date(a.diagnosis_date).getTime()),
+      }));
+    } catch (e: any) {
+      set({ error: e.message || 'Failed to add disease from code' });
+      throw e;
+    }
+  },
+
   editDisease: async (uuid: string, data: PatientDiseaseUpdate) => {
     set({ error: null });
     try {
@@ -81,22 +92,18 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
     }
   },
 
-  /** Elimina una enfermedad del estado local y de la API. */
   removeDisease: async (uuid: string) => {
     await diseaseService.deleteDisease(uuid);
     set((state) => ({ diseases: state.diseases.filter((d) => d.uuid !== uuid) }));
   },
 
-  /** Obtiene la lista maestra de enfermedades desde la API. */
   fetchMasterList: async () => {
-    // Evita re-fetching si ya está cargando o si ya tenemos la lista.
     if (get().masterListLoading || get().masterList.length > 0) return;
     set({ masterListLoading: true });
     try {
       const masterList = await diseaseService.getDiseasesMasterList();
       set({ masterList, masterListLoading: false });
     } catch (e: any) {
-      // No es un error crítico para el usuario, lo logueamos para depuración.
       console.error('Failed to fetch diseases master list:', e.message);
       set({ masterListLoading: false });
     }

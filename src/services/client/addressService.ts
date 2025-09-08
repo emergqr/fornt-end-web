@@ -1,55 +1,49 @@
-import { ApiHandler } from '../apiHandler';
-import { Address } from '@/interfaces/client/address.interface';
-import { AddressPaths } from '@/constants/apiPaths';
+import api from '@/services/api';
+import {
+  AddressRead,
+  AddressCreate,
+  AddressUpdate,
+} from '@/interfaces/client/address.interface';
 
-const { EXPO_PUBLIC_API_ADDRESSES_BASE: ADDRESSES_BASE_ENDPOINT } = process.env;
-
-if (!ADDRESSES_BASE_ENDPOINT) {
-    throw new Error(
-        'The addresses base API endpoint is not defined in environment variables.',
-    );
-}
-/**
- * El tipo de datos que se envía a la API para crear o actualizar una dirección.
- * Omitimos los campos 'id' y 'uuid' porque son gestionados por el servidor.
- */
-export type AddressPayload = Omit<Address, 'id' | 'uuid'>;
+const BASE_URL = '/addresses';
 
 /**
- * Obtiene la lista de todas las direcciones del usuario autenticado.
- * @returns {Promise<Address[]>} Una promesa que se resuelve con un array de direcciones.
+ * Fetches the list of addresses for the authenticated client.
  */
-export const getAddresses = async (): Promise<Address[]> => {
-    const url = `${ADDRESSES_BASE_ENDPOINT}${AddressPaths.BASE}`;
-    return ApiHandler.get<Address[]>(url);
+const getMyAddresses = async (): Promise<AddressRead[]> => {
+  const response = await api.get<AddressRead[]>(`${BASE_URL}/`);
+  return response.data;
 };
 
 /**
- * Crea una nueva dirección para el usuario.
- * @param {AddressPayload} data - Los datos de la dirección a crear.
- * @returns {Promise<Address>} Una promesa que se resuelve con la dirección recién creada.
+ * Creates a new address for the client.
  */
-export const createAddress = async (data: AddressPayload): Promise<Address> => {
-    const url = `${ADDRESSES_BASE_ENDPOINT}${AddressPaths.BASE}`;
-    return ApiHandler.post<AddressPayload, Address>(url, data);
+const createAddress = async (data: AddressCreate): Promise<AddressRead> => {
+  const response = await api.post<AddressRead>(`${BASE_URL}/`, data);
+  return response.data;
 };
 
 /**
- * Actualiza una dirección existente.
- * @param {string} uuid - El UUID de la dirección a actualizar.
- * @param {AddressPayload} data - Los nuevos datos para la dirección.
- * @returns {Promise<Address>} Una promesa que se resuelve con la dirección actualizada.
+ * Updates an existing address.
  */
-export const updateAddress = async (uuid: string, data: AddressPayload): Promise<Address> => {
-    const url = `${ADDRESSES_BASE_ENDPOINT}${AddressPaths.BY_UUID(uuid)}`;
-    return ApiHandler.put<AddressPayload, Address>(url, data);
+const updateAddress = async (
+  uuid: string,
+  data: AddressUpdate
+): Promise<AddressRead> => {
+  const response = await api.put<AddressRead>(`${BASE_URL}/${uuid}`, data);
+  return response.data;
 };
 
 /**
- * Elimina una dirección.
- * @param {string} uuid - El UUID de la dirección a eliminar.
+ * Deletes an address.
  */
-export const deleteAddress = async (uuid: string): Promise<void> => {
-    const url = `${ADDRESSES_BASE_ENDPOINT}${AddressPaths.BY_UUID(uuid)}`;
-    return ApiHandler.delete<void>(url);
+const deleteAddress = async (uuid: string): Promise<void> => {
+  await api.delete(`${BASE_URL}/${uuid}`);
+};
+
+export const addressService = {
+  getMyAddresses,
+  createAddress,
+  updateAddress,
+  deleteAddress,
 };

@@ -4,13 +4,11 @@ import { AuthCredentials } from '@/interfaces/auth-credentials.interface';
 import { RegisterPayload } from '@/interfaces/auth/register-payload.interface';
 import { ChangePasswordDto } from "@/interfaces/auth/change-password.dto";
 
-// Define the base path for authentication endpoints for clarity.
 const AUTH_BASE_PATH = '/auth';
+const CLIENTS_BASE_PATH = '/clients';
 
 /**
- * Registers a new user with the provided credentials.
- * @param payload - The user's registration data.
- * @returns A promise that resolves to an object containing the auth token and client data.
+ * Registers a new user.
  */
 const register = async (payload: RegisterPayload): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
@@ -21,9 +19,7 @@ const register = async (payload: RegisterPayload): Promise<AuthResponse> => {
 };
 
 /**
- * Logs in a user with the provided credentials.
- * @param credentials - The user's email and password.
- * @returns A promise that resolves to an object containing the auth token and client data.
+ * Logs in a user.
  */
 const login = async (credentials: AuthCredentials): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
@@ -34,25 +30,30 @@ const login = async (credentials: AuthCredentials): Promise<AuthResponse> => {
 };
 
 /**
- * Changes the password for the currently authenticated user.
- * @param passwordData - The old and new password data.
+ * Changes the password for the authenticated user.
  */
 const changePassword = async (passwordData: ChangePasswordDto): Promise<void> => {
   await api.post(`${AUTH_BASE_PATH}/change-password`, passwordData);
 };
 
 /**
- * Initiates the password reset process for a given email.
- * @param email - The user's email.
+ * Initiates the password reset process.
  */
 const requestPasswordReset = async (email: string): Promise<void> => {
   await api.post(`${AUTH_BASE_PATH}/reset-password`, { email });
 };
 
-// Export all functions as a single service object for consistent usage.
+/**
+ * Deletes the currently authenticated user's account.
+ */
+const deleteAccount = async (): Promise<void> => {
+  await api.delete(`${CLIENTS_BASE_PATH}/me`);
+};
+
 export const authService = {
   register,
   login,
   changePassword,
   requestPasswordReset,
+  deleteAccount, // Añadir la nueva función
 };

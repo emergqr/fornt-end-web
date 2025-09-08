@@ -3,11 +3,11 @@
 import { create } from 'zustand';
 import { Client } from '@/interfaces/client/client.interface';
 import { profileService } from '@/services/profileService';
-import api from '@/services/api'; // <-- CORRECTED IMPORT
+import { authService } from '@/services/auth/authService'; // Importar authService
+import api from '@/services/api';
 
 /**
  * Helper para configurar el token en los encabezados de la instancia de Axios.
- * @param token - El token JWT.
  */
 const setAuthToken = (token: string | null) => {
   if (token) {
@@ -24,11 +24,12 @@ interface AuthStore {
   user: Client | null;
   token: string | null;
   isAuthenticated: boolean;
-  isChecking: boolean; // Para el estado de carga inicial al verificar el token
+  isChecking: boolean;
   login: (token: string, user: Client) => void;
   logout: () => void;
   checkAuthStatus: () => Promise<void>;
   setUser: (user: Client) => void;
+  deleteAccount: () => Promise<void>; // Nueva acción
 }
 
 /**
@@ -38,30 +39,20 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
   token: null,
   isAuthenticated: false,
-  isChecking: true, // Inicia en true para indicar que estamos verificando la sesión
+  isChecking: true,
 
-  /**
-   * Guarda el token y los datos del usuario al iniciar sesión.
-   */
   login: (token, user) => {
     localStorage.setItem('authToken', token);
     setAuthToken(token);
     set({ user, token, isAuthenticated: true });
   },
 
-  /**
-   * Limpia el estado y el almacenamiento local al cerrar sesión.
-   */
   logout: () => {
     localStorage.removeItem('authToken');
     setAuthToken(null);
     set({ user: null, token: null, isAuthenticated: false });
   },
 
-  /**
-   * Verifica si existe un token en localStorage al cargar la app,
-   * y si es válido, obtiene los datos del usuario.
-   */
   checkAuthStatus: async () => {
     try {
       const token = localStorage.getItem('authToken');
@@ -71,7 +62,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       }
 
       setAuthToken(token);
-      const user = await profileService.getProfile(); // Llama al servicio para obtener el perfil
+      const user = await profileService.getProfile();
 
       set({
         user,
@@ -80,16 +71,25 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         isChecking: false,
       });
     } catch (error) {
-      // Si el token es inválido o hay un error, se limpia todo.
       get().logout();
       set({ isChecking: false });
     }
   },
 
-  /**
-   * Permite actualizar los datos del usuario en el store.
-   */
   setUser: (user: Client) => set({ user }),
+
+  // Implementación de la nueva acción
+  deleteAccount: async () => {
+    try {
+      await authService.deleteAccount();
+      // Si la eliminación en el backend es exitosa, deslogueamos al usuario.
+      get().logout();
+    } catch (error) {
+      // Si hay un error, lo lanzamos para que la UI pueda manejarlo.
+      console.error("Error deleting account:", error);
+      throw error;
+    }
+  },
 }));
 
 /**

@@ -20,13 +20,20 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/auth/auth.store';
 import { profileService } from '@/services/profileService';
 import { ClientUpdate } from '@/interfaces/client/client-update.interface';
-import EmergencyContacts from './EmergencyContacts';
 import ProfileAvatar from './ProfileAvatar';
+import EmergencyDataCard from './EmergencyDataCard';
+import AddressCard from './AddressCard';
+import EmergencyContacts from './EmergencyContacts';
+import ChangePasswordForm from './ChangePasswordForm';
+import DeleteAccountCard from './DeleteAccountCard';
 
+// Esquema actualizado para incluir los nuevos campos
 const profileSchema = z.object({
   name: z.string().min(2, 'El nombre es requerido'),
   phone: z.string().optional(),
   birth_date: z.string().optional(),
+  sex: z.string().optional(),
+  occupation: z.string().optional(),
 });
 
 type ProfileFormInputs = z.infer<typeof profileSchema>;
@@ -46,6 +53,8 @@ export default function PerfilPage() {
       name: '',
       phone: '',
       birth_date: '',
+      sex: '',
+      occupation: '',
     },
   });
 
@@ -55,6 +64,8 @@ export default function PerfilPage() {
         name: user.name || '',
         phone: user.phone || '',
         birth_date: user.birth_date || '',
+        sex: user.sex || '',
+        occupation: user.occupation || '',
       });
     }
   }, [user, reset]);
@@ -91,14 +102,12 @@ export default function PerfilPage() {
       </Typography>
       <Paper sx={{ p: 3, mt: 2 }}>
         <Grid container spacing={4}>
-          {/* --- Avatar Column --- */}
           <Grid component="div" item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <ProfileAvatar />
             <Typography variant="h5" sx={{ mt: 2 }}>{user.name}</Typography>
             <Typography color="text.secondary">{user.email}</Typography>
           </Grid>
 
-          {/* --- Form Column --- */}
           <Grid component="div" item xs={12} md={8}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               {feedback && (
@@ -108,34 +117,23 @@ export default function PerfilPage() {
               )}
               <Grid container spacing={2}>
                 <Grid component="div" item xs={12}>
-                  <Controller
-                    name="name"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField {...field} fullWidth required id="name" label="Nombre Completo" error={!!errors.name} helperText={errors.name?.message} />
-                    )}
-                  />
+                  <Controller name="name" control={control} render={({ field }) => <TextField {...field} fullWidth required label="Nombre Completo" error={!!errors.name} helperText={errors.name?.message} />} />
                 </Grid>
                 <Grid component="div" item xs={12}>
-                  <TextField fullWidth disabled id="email" label="Correo Electrónico" value={user.email} />
+                  <TextField fullWidth disabled label="Correo Electrónico" value={user.email} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller
-                    name="phone"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField {...field} fullWidth id="phone" label="Teléfono" error={!!errors.phone} helperText={errors.phone?.message} />
-                    )}
-                  />
+                  <Controller name="phone" control={control} render={({ field }) => <TextField {...field} fullWidth label="Teléfono" error={!!errors.phone} helperText={errors.phone?.message} />} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller
-                    name="birth_date"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField {...field} fullWidth id="birth_date" label="Fecha de Nacimiento" type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />
-                    )}
-                  />
+                  <Controller name="birth_date" control={control} render={({ field }) => <TextField {...field} fullWidth label="Fecha de Nacimiento" type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />} />
+                </Grid>
+                {/* --- Nuevos Campos --- */}
+                <Grid component="div" item xs={12} sm={6}>
+                  <Controller name="sex" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label="Sexo" error={!!errors.sex} helperText={errors.sex?.message} />} />
+                </Grid>
+                <Grid component="div" item xs={12} sm={6}>
+                  <Controller name="occupation" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label="Ocupación" error={!!errors.occupation} helperText={errors.occupation?.message} />} />
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
@@ -148,7 +146,11 @@ export default function PerfilPage() {
         </Grid>
       </Paper>
 
+      <EmergencyDataCard />
+      <AddressCard />
       <EmergencyContacts />
+      <ChangePasswordForm />
+      <DeleteAccountCard />
 
     </Container>
   );

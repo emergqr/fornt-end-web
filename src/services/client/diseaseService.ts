@@ -4,13 +4,13 @@ import {
   DiseaseRead,
   PatientDiseaseCreate,
   PatientDiseaseUpdate,
+  DiseaseCreateFromCode, // Importar la nueva interfaz
 } from '@/interfaces/client/disease.interface';
 
 const BASE_URL = '/diseases';
 
 /**
  * Fetches the list of diseases associated with the authenticated patient.
- * @returns A promise that resolves with an array of PatientDiseaseRead.
  */
 const getMyDiseases = async (): Promise<PatientDiseaseRead[]> => {
   const response = await api.get<PatientDiseaseRead[]>(`${BASE_URL}/`);
@@ -19,7 +19,6 @@ const getMyDiseases = async (): Promise<PatientDiseaseRead[]> => {
 
 /**
  * Fetches the master list of all available diseases in the system.
- * @returns A promise that resolves with an array of DiseaseRead.
  */
 const getDiseasesMasterList = async (): Promise<DiseaseRead[]> => {
   const response = await api.get<DiseaseRead[]>(`${BASE_URL}/master-list`);
@@ -28,8 +27,6 @@ const getDiseasesMasterList = async (): Promise<DiseaseRead[]> => {
 
 /**
  * Associates a new disease with the patient's profile.
- * @param data - The data for the new disease association.
- * @returns A promise that resolves with the newly created PatientDiseaseRead.
  */
 const createDisease = async (
   data: PatientDiseaseCreate
@@ -39,10 +36,19 @@ const createDisease = async (
 };
 
 /**
+ * Creates and associates a disease from a standardized medical code.
+ * @param data - The data containing the code, name, and source.
+ * @returns A promise that resolves with the newly created PatientDiseaseRead.
+ */
+const createDiseaseFromCode = async (
+  data: DiseaseCreateFromCode
+): Promise<PatientDiseaseRead> => {
+  const response = await api.post<PatientDiseaseRead>(`${BASE_URL}/from-code`, data);
+  return response.data;
+};
+
+/**
  * Updates the details of an associated disease.
- * @param associationUuid - The UUID of the patient-disease association.
- * @param data - The data to update.
- * @returns A promise that resolves with the updated PatientDiseaseRead.
  */
 const updateDisease = async (
   associationUuid: string,
@@ -54,7 +60,6 @@ const updateDisease = async (
 
 /**
  * Deletes a disease association from the patient's profile.
- * @param associationUuid - The UUID of the association to delete.
  */
 const deleteDisease = async (associationUuid: string): Promise<void> => {
   await api.delete(`${BASE_URL}/${associationUuid}`);
@@ -64,6 +69,7 @@ export const diseaseService = {
   getMyDiseases,
   getDiseasesMasterList,
   createDisease,
+  createDiseaseFromCode, // Añadir la nueva función al objeto exportado
   updateDisease,
   deleteDisease,
 };
