@@ -1,0 +1,55 @@
+{
+  "locale_code": "nl",
+  "navigation": {
+    "aboutUs": "Over Ons",
+    "services": "Diensten",
+    "dashboard_summary": "Overzicht",
+    "dashboard_qr": "Mijn QR Code",
+    "dashboard_profile": "Mijn Profiel",
+    "dashboard_allergies": "Mijn Allergieën",
+    "dashboard_diseases": "Medische Condities",
+    "dashboard_vitals": "Vitale Functies",
+    "dashboard_medications": "Medicijnen",
+    "dashboard_history": "Medische Geschiedenis"
+  },
+  "footer": {
+    "copyright": "Copyright © {{year}}"
+  },
+  "homePage": {
+    "title": "Welkom bij EmergQR",
+    "subtitle": "Uw kritische medische informatie, altijd toegankelijk wanneer u die het meest nodig heeft.",
+    "description": "Beheer uw gezondheidsprofiel, noodcontacten, allergieën en nog veel meer. Alles op één plek, veilig en 24/7 beschikbaar.",
+    "ctaRegister": "Maak uw gratis account aan",
+    "ctaLogin": "Inloggen"
+  },
+  "aboutUsPage": {
+    "title": "Over Ons",
+    "missionTitle": "Onze Missie",
+    "missionText": "Bij EmergQR is het onze missie om mensen in staat te stellen de controle over hun gezondheidsinformatie te nemen. Wij geloven dat snelle en veilige toegang tot medische gegevens levens kan redden in noodsituaties en de kwaliteit van de dagelijkse medische zorg kan verbeteren.",
+    "visionTitle": "Onze Visie",
+    "visionText": "Wij streven naar een toekomst waarin elk individu eigenaar is van zijn medische geschiedenis, en doorbreken de barrières van traditionele gezondheidssystemen. We willen dat EmergQR het universele hulpmiddel is dat patiënten, artsen en nooddiensten naadloos en veilig met elkaar verbindt.",
+    "valuesTitle": "Onze Waarden",
+    "valuesText": "- **Privacy en Veiligheid:** De bescherming van uw gegevens is onze hoogste prioriteit.\n- **Toegankelijkheid:** Uw informatie, beschikbaar voor u en wie u ook kiest, altijd en overal.\n- **Empowerment:** Wij geven u de tools om proactief uw gezondheid te beheren.\n- **Innovatie:** We zijn voortdurend op zoek naar new manieren om de gezondheidszorg te verbeteren door middel van technologie."
+  },
+  "servicesPage": {
+    "title": "Onze Diensten",
+    "subtitle": "Alles wat u nodig heeft om uw gezondheid uitgebreid te beheren.",
+    "service1_title": "Gecentraliseerd Noodprofiel",
+    "service1_text": "Uw vitale informatie (bloedgroep, allergieën, aandoeningen) direct toegankelijk via een QR-code.",
+    "service2_title": "Beheer van Medische Geschiedenis",
+    "service2_text": "Houd een chronologisch overzicht bij van uw operaties, diagnoses, behandelingen en onderzoeken. Upload en organiseer uw medische documenten.",
+    "service3_title": "Medicatiecontrole",
+    "service3_text": "Registreer uw medicijnen, doseringen en schema's. Stel herinneringen in zodat u nooit een dosis mist.",
+    "service4_title": "Noodcontacten",
+    "service4_text": "Houd een bijgewerkte lijst van contacten bij om in geval van nood te waarschuwen, toegankelijk vanuit uw openbare profiel.",
+    "service5_title": "Mobiele en Webapplicatie",
+    "service5_text": "Toegang tot uw informatie vanaf elke locatie, of het nu vanaf onze mobiele applicatie is of vanaf dit webplatform."
+  },
+  "login": {
+    "title": "Inloggen"
+  },
+  "dashboard": {
+    "loggedInAs": "Hallo, {{name}}",
+    "logout": "Uitloggen"
+  }
+}

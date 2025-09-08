@@ -1,0 +1,55 @@
+{
+  "locale_code": "en",
+  "navigation": {
+    "aboutUs": "About Us",
+    "services": "Services",
+    "dashboard_summary": "Summary",
+    "dashboard_qr": "My QR Code",
+    "dashboard_profile": "My Profile",
+    "dashboard_allergies": "My Allergies",
+    "dashboard_diseases": "Medical Conditions",
+    "dashboard_vitals": "Vital Signs",
+    "dashboard_medications": "Medications",
+    "dashboard_history": "Medical History"
+  },
+  "footer": {
+    "copyright": "Copyright © {{year}}"
+  },
+  "homePage": {
+    "title": "Welcome to EmergQR",
+    "subtitle": "Your critical medical information, always accessible when you need it most.",
+    "description": "Manage your health profile, emergency contacts, allergies, and much more. All in one place, secure and available 24/7.",
+    "ctaRegister": "Create your free account",
+    "ctaLogin": "Sign In"
+  },
+  "aboutUsPage": {
+    "title": "About Us",
+    "missionTitle": "Our Mission",
+    "missionText": "At EmergQR, our mission is to empower people to take control of their health information. We believe that fast and secure access to medical data can save lives in emergency situations and improve the quality of daily medical care.",
+    "visionTitle": "Our Vision",
+    "visionText": "We strive for a future where every individual owns their medical history, breaking the barriers of traditional health systems. We want EmergQR to be the universal tool that seamlessly and securely connects patients, doctors, and emergency services.",
+    "valuesTitle": "Our Values",
+    "valuesText": "- **Privacy and Security:** Protecting your data is our highest priority.\n- **Accessibility:** Your information, available to you and whoever you decide, anytime, anywhere.\n- **Empowerment:** We give you the tools to proactively manage your health.\n- **Innovation:** We are constantly looking for new ways to improve healthcare through technology."
+  },
+  "servicesPage": {
+    "title": "Our Services",
+    "subtitle": "Everything you need to manage your health comprehensively.",
+    "service1_title": "Centralized Emergency Profile",
+    "service1_text": "Your vital information (blood type, allergies, conditions) instantly accessible through a QR code.",
+    "service2_title": "Medical History Management",
+    "service2_text": "Keep a chronological record of your surgeries, diagnoses, treatments, and studies. Upload and organize your medical documents.",
+    "service3_title": "Medication Control",
+    "service3_text": "Log your medications, dosages, and schedules. Set reminders so you never miss a dose.",
+    "service4_title": "Emergency Contacts",
+    "service4_text": "Maintain an updated list of contacts to notify in case of an emergency, accessible from your public profile.",
+    "service5_title": "Mobile and Web Application",
+    "service5_text": "Access your information from anywhere, whether from our mobile application or this web platform."
+  },
+  "login": {
+    "title": "Sign In"
+  },
+  "dashboard": {
+    "loggedInAs": "Hello, {{name}}",
+    "logout": "Sign Out"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "locale_code": "es",
+  "navigation": {
+    "aboutUs": "Quiénes Somos",
+    "services": "Servicios",
+    "dashboard_summary": "Resumen",
+    "dashboard_qr": "Mi Código QR",
+    "dashboard_profile": "Mi Perfil",
+    "dashboard_allergies": "Mis Alergias",
+    "dashboard_diseases": "Condiciones Médicas",
+    "dashboard_vitals": "Signos Vitales",
+    "dashboard_medications": "Medicamentos",
+    "dashboard_history": "Historial Médico"
+  },
+  "footer": {
+    "copyright": "Copyright © {{year}}"
+  },
+  "homePage": {
+    "title": "Bienvenido a EmergQR",
+    "subtitle": "Tu información médica crítica, siempre accesible cuando más la necesitas.",
+    "description": "Gestiona tu perfil de salud, contactos de emergencia, alergias y mucho más. Todo en un solo lugar, seguro y disponible 24/7.",
+    "ctaRegister": "Crea tu cuenta gratis",
+    "ctaLogin": "Iniciar Sesión"
+  },
+  "aboutUsPage": {
+    "title": "Quiénes Somos",
+    "missionTitle": "Nuestra Misión",
+    "missionText": "En EmergQR, nuestra misión es empoderar a las personas para que tomen el control de su información de salud. Creemos que el acceso rápido y seguro a los datos médicos puede salvar vidas en situaciones de emergencia y mejorar la calidad de la atención médica diaria.",
+    "visionTitle": "Nuestra Visión",
+    "visionText": "Nos esforzamos por un futuro en el que cada individuo sea el dueño de su historial médico, rompiendo las barreras de los sistemas de salud tradicionales. Queremos que EmergQR sea la herramienta universal que conecta a pacientes, médicos y servicios de emergencia de manera fluida y segura.",
+    "valuesTitle": "Nuestros Valores",
+    "valuesText": "- **Privacidad y Seguridad:** La protección de tus datos es nuestra máxima prioridad.\n- **Accesibilidad:** Tu información, disponible para ti y para quien tú decidas, en cualquier momento y lugar.\n- **Empoderamiento:** Te damos las herramientas para que gestiones tu salud de forma proactiva.\n- **Innovación:** Buscamos constantemente nuevas formas de mejorar la atención médica a través de la tecnología."
+  },
+  "servicesPage": {
+    "title": "Nuestros Servicios",
+    "subtitle": "Todo lo que necesitas para gestionar tu salud de forma integral.",
+    "service1_title": "Perfil de Emergencia Centralizado",
+    "service1_text": "Tu información vital (tipo de sangre, alergias, condiciones) accesible al instante a través de un código QR.",
+    "service2_title": "Gestión de Historial Médico",
+    "service2_text": "Lleva un registro cronológico de tus cirugías, diagnósticos, tratamientos y estudios. Sube y organiza tus documentos médicos.",
+    "service3_title": "Control de Medicamentos",
+    "service3_text": "Registra tus medicamentos, dosis y horarios. Configura recordatorios para no olvidar ninguna toma.",
+    "service4_title": "Contactos de Emergencia",
+    "service4_text": "Mantén una lista actualizada de contactos a notificar en caso de una emergencia, accesibles desde tu perfil público.",
+    "service5_title": "Aplicación Móvil y Web",
+    "service5_text": "Accede a tu información desde cualquier lugar, ya sea desde nuestra aplicación móvil o desde esta plataforma web."
+  },
+  "login": {
+    "title": "Iniciar Sesión"
+  },
+  "dashboard": {
+    "loggedInAs": "Hola, {{name}}",
+    "logout": "Cerrar Sesión"
+  }
+}

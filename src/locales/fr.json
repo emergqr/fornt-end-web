@@ -1,0 +1,55 @@
+{
+  "locale_code": "fr",
+  "navigation": {
+    "aboutUs": "À Propos",
+    "services": "Services",
+    "dashboard_summary": "Résumé",
+    "dashboard_qr": "Mon Code QR",
+    "dashboard_profile": "Mon Profil",
+    "dashboard_allergies": "Mes Allergies",
+    "dashboard_diseases": "Conditions Médicales",
+    "dashboard_vitals": "Signes Vitaux",
+    "dashboard_medications": "Médicaments",
+    "dashboard_history": "Historique Médical"
+  },
+  "footer": {
+    "copyright": "Copyright © {{year}}"
+  },
+  "homePage": {
+    "title": "Bienvenue chez EmergQR",
+    "subtitle": "Vos informations médicales critiques, toujours accessibles quand vous en avez le plus besoin.",
+    "description": "Gérez votre profil de santé, vos contacts d'urgence, vos allergies, et bien plus encore. Tout en un seul endroit, sécurisé et disponible 24/7.",
+    "ctaRegister": "Créez votre compte gratuit",
+    "ctaLogin": "Se Connecter"
+  },
+  "aboutUsPage": {
+    "title": "À Propos de Nous",
+    "missionTitle": "Notre Mission",
+    "missionText": "Chez EmergQR, notre mission est de donner aux gens les moyens de contrôler leurs informations de santé. Nous croyons qu'un accès rapide et sécurisé aux données médicales peut sauver des vies dans des situations d'urgence et améliorer la qualité des soins quotidiens.",
+    "visionTitle": "Notre Vision",
+    "visionText": "Nous aspirons à un avenir où chaque individu est propriétaire de son dossier médical, brisant les barrières des systèmes de santé traditionnels. Nous voulons qu'EmergQR soit l'outil universel qui connecte de manière transparente et sécurisée les patients, les médecins et les services d'urgence.",
+    "valuesTitle": "Nos Valeurs",
+    "valuesText": "- **Confidentialité et Sécurité:** La protection de vos données est notre plus haute priorité.\n- **Accessibilité:** Vos informations, disponibles pour vous et pour qui vous décidez, à tout moment et en tout lieu.\n- **Autonomisation:** Nous vous donnons les outils pour gérer votre santé de manière proactive.\n- **Innovation:** Nous recherchons constamment de nouvelles façons d'améliorer les soins de santé grâce à la technologie."
+  },
+  "servicesPage": {
+    "title": "Nos Services",
+    "subtitle": "Tout ce dont vous avez besoin pour gérer votre santé de manière globale.",
+    "service1_title": "Profil d'Urgence Centralisé",
+    "service1_text": "Vos informations vitales (groupe sanguin, allergies, conditions) accessibles instantanément via un code QR.",
+    "service2_title": "Gestion de l'Historique Médical",
+    "service2_text": "Tenez un registre chronologique de vos chirurgies, diagnostics, traitements et examens. Téléchargez et organisez vos documents médicaux.",
+    "service3_title": "Contrôle des Médicaments",
+    "service3_text": "Enregistrez vos médicaments, dosages et horaires. Configurez des rappels pour ne jamais oublier une prise.",
+    "service4_title": "Contacts d'Urgence",
+    "service4_text": "Maintenez une liste à jour de contacts à notifier en cas d'urgence, accessible depuis votre profil public.",
+    "service5_title": "Application Mobile et Web",
+    "service5_text": "Accédez à vos informations de n'importe où, que ce soit depuis notre application mobile ou cette plateforme web."
+  },
+  "login": {
+    "title": "Se Connecter"
+  },
+  "dashboard": {
+    "loggedInAs": "Bonjour, {{name}}",
+    "logout": "Se Déconnecter"
+  }
+}
