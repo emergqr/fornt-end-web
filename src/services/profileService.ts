@@ -1,6 +1,9 @@
+'use client';
+
 /**
  * @file This file centralizes all API calls related to user profiles.
- * It provides a clean interface for components to interact with profile-related endpoints.
+ * It provides a clean and reusable interface for components and stores
+ * to interact with profile-related endpoints, such as fetching, updating, and uploading avatars.
  */
 
 import api from './api';
@@ -10,6 +13,7 @@ import { PublicProfileResponse } from '@/interfaces/client/client-full-profile.i
 
 /**
  * Fetches the complete profile of the currently authenticated user.
+ * Corresponds to the GET /clients/me endpoint.
  * @returns {Promise<Client>} A promise that resolves with the client's profile data.
  */
 const getProfile = async (): Promise<Client> => {
@@ -19,7 +23,8 @@ const getProfile = async (): Promise<Client> => {
 
 /**
  * Updates the profile of the currently authenticated user.
- * @param {ClientUpdate} data - The data to update.
+ * Corresponds to the PUT /clients/me endpoint.
+ * @param {ClientUpdate} data - An object containing the fields to update.
  * @returns {Promise<Client>} A promise that resolves with the updated client profile.
  */
 const updateProfile = async (data: ClientUpdate): Promise<Client> => {
@@ -29,7 +34,8 @@ const updateProfile = async (data: ClientUpdate): Promise<Client> => {
 
 /**
  * Fetches the public emergency profile for a given user UUID.
- * This endpoint does not require authentication.
+ * This endpoint does not require authentication and is used for the public QR code view.
+ * Corresponds to the GET /public-profile/{uuid} endpoint.
  * @param {string} uuid - The UUID of the user.
  * @returns {Promise<PublicProfileResponse>} A promise that resolves with the public profile data.
  */
@@ -40,16 +46,17 @@ const getPublicProfile = async (uuid: string): Promise<PublicProfileResponse> =>
 
 /**
  * Uploads a user's avatar image to the backend.
+ * This function constructs a FormData object to handle the file upload.
+ * Corresponds to the POST /clients/me/avatar endpoint.
  * @param {File} file - The image file selected by the user.
- * @returns {Promise<Client>} A promise that resolves with the updated client profile.
+ * @returns {Promise<Client>} A promise that resolves with the updated client profile, including the new avatar URL.
  */
 const uploadAvatar = async (file: File): Promise<Client> => {
-  // FormData is used to construct a set of key/value pairs representing form fields and their values,
-  // which is necessary for file uploads.
+  // FormData is required for sending files in an HTTP request.
   const formData = new FormData();
   formData.append('file', file);
 
-  // The Content-Type header is overridden to 'multipart/form-data' for the file upload.
+  // The Content-Type header must be overridden to 'multipart/form-data' for the file upload.
   const response = await api.post<Client>('/clients/me/avatar', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -60,7 +67,7 @@ const uploadAvatar = async (file: File): Promise<Client> => {
 };
 
 /**
- * An object that groups all profile-related service functions.
+ * An object that groups all profile-related service functions for easy import.
  */
 export const profileService = {
   getProfile,

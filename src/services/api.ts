@@ -1,6 +1,8 @@
+'use client';
+
 /**
  * @file This file initializes and configures the central Axios instance for all API communications.
- * It sets up the base URL, headers, and crucial interceptors for logging and data transformation.
+ * It sets up the base URL, default headers, and crucial interceptors for logging and transforming API responses.
  */
 
 import axios from 'axios';
@@ -18,7 +20,9 @@ if (!serverUrl) {
 // Construct the full base URL for the API, including the version prefix.
 const fullBaseURL = `${serverUrl}/api/v1`;
 
-// Create a new Axios instance with default configuration.
+/**
+ * The global Axios instance used for all API requests.
+ */
 const api = axios.create({
   baseURL: fullBaseURL,
   headers: {
@@ -30,22 +34,23 @@ const api = axios.create({
 // This interceptor runs before each request is sent.
 api.interceptors.request.use(
   (config) => {
-    // Log the outgoing request for debugging purposes.
+    // For debugging purposes, log the outgoing request details.
     const finalUrl = axios.getUri(config);
     console.log(`[API Request] -> ${config.method?.toUpperCase()} ${finalUrl}`);
     return config;
   },
   (error) => {
-    // Log any errors that occur during request setup.
+    // Log any errors that occur during the request setup phase.
     console.error('[API Request Error]', error);
     return Promise.reject(error);
   }
 );
 
 /**
- * A centralized utility function to resolve the correct public URL for an API asset.
- * This is crucial for environments where the backend exposes assets on an internal port (e.g., 8000)
- * that is different from the public-facing port.
+ * A centralized utility to resolve the correct public URL for an API asset.
+ * This is crucial for development environments where the backend (e.g., on port 8000)
+ * is different from the public-facing frontend URL.
+ * It replaces the internal backend port with the public one.
  * @param {string | null | undefined} path - The asset path or URL from the API response.
  * @returns {string | null | undefined} The resolved, publicly accessible URL.
  */
@@ -54,13 +59,13 @@ export const resolveApiAssetUrl = (path: string | null | undefined): string | nu
     return path;
   }
 
-  const internalPort = ':8000';
+  const internalPort = ':8000'; // The internal port of the backend API.
   let publicPort = '';
   try {
     const publicUrl = new URL(serverUrl);
     publicPort = publicUrl.port ? `:${publicUrl.port}` : '';
   } catch (e) {
-    // If the base URL is invalid, we cannot proceed.
+    // If the base URL is invalid, we cannot proceed with the correction.
     return path;
   }
 
@@ -74,13 +79,13 @@ export const resolveApiAssetUrl = (path: string | null | undefined): string | nu
     return `${serverUrl}${path}`;
   }
 
-  // If it's already a valid, full URL, return it as is.
+  // If it's already a valid, full URL without the internal port, return it as is.
   return path;
 };
 
 // --- Response Interceptor ---
 /**
- * Recursively traverses an object or array and applies the `resolveApiAssetUrl` function
+ * Recursively traverses an object or array and applies `resolveApiAssetUrl`
  * to any keys that are known to contain asset URLs.
  * @param {*} data - The data to traverse (can be an object, array, or primitive).
  * @returns {*} The data with corrected asset URLs.
@@ -93,7 +98,7 @@ const recursiveUrlCorrection = (data: any): any => {
   }
 
   if (typeof data === 'object') {
-    // A list of keys that are known to contain asset URLs.
+    // A list of keys that are known to contain asset URLs that need correction.
     const urlKeys = ['avatar_url', 'full_avatar_url', 'url', 'file_path', 'flag'];
     
     return Object.entries(data).reduce((acc, [key, value]) => {
@@ -120,7 +125,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Log any errors that occur in the API response.
+    // Log any errors that occur in the API response for easier debugging.
     console.error('[API Response Error]', error.response?.data || error.message);
     return Promise.reject(error);
   }

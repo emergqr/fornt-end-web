@@ -1,24 +1,35 @@
+'use client';
+
 /**
- * Basado en los schemas Address de openapi.json
+ * @file This file defines the interfaces related to the Address entity.
+ * It includes types for reading, creating, and updating an address,
+ * corresponding to the Address schemas in the openapi.json specification.
  */
 
 /**
- * Representa una dirección, tal como se lee desde la API.
- * Coincide con el schema AddressRead.
+ * Represents a complete address object as it is read from the API.
+ * Corresponds to the 'AddressRead' schema.
  */
 export interface AddressRead {
+  /** The unique identifier for the address (UUID). */
   uuid: string;
+  /** The street name and number. */
   street: string;
+  /** The city. */
   city: string;
+  /** The state, province, or region. */
   state: string;
+  /** The postal code. */
   postal_code: string;
+  /** The country. */
   country: string;
+  /** A flag indicating if this is the user's primary address. */
   is_active: boolean;
 }
 
 /**
- * Representa los datos necesarios para crear una nueva dirección.
- * Coincide con el schema AddressCreate.
+ * Defines the data structure required to create a new address.
+ * Corresponds to the 'AddressCreate' schema.
  */
 export interface AddressCreate {
   street: string;
@@ -30,8 +41,9 @@ export interface AddressCreate {
 }
 
 /**
- * Representa los datos para actualizar una dirección existente.
- * Todos los campos son opcionales.
- * Coincide con el schema AddressUpdate.
+ * Defines the data structure for updating an existing address.
+ * It uses TypeScript's Partial utility type to make all fields of AddressCreate optional,
+ * allowing for partial updates.
+ * Corresponds to the 'AddressUpdate' schema.
  */
 export type AddressUpdate = Partial<AddressCreate>;

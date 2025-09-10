@@ -1,6 +1,8 @@
+'use client';
+
 /**
  * @file This file provides a centralized system for handling and interpreting API errors.
- * It defines a custom ApiError class and a utility function to generate user-friendly error messages.
+ * It defines a custom ApiError class and a utility function to generate standardized, user-friendly error messages.
  */
 
 import { isAxiosError } from 'axios';
@@ -11,7 +13,7 @@ import { isAxiosError } from 'axios';
  * specific error handling logic based on the server's response.
  */
 export class ApiError extends Error {
-  /** The HTTP status code of the API response. */
+  /** The HTTP status code from the API response. */
   status: number;
 
   /**
@@ -28,8 +30,8 @@ export class ApiError extends Error {
 
 /**
  * Interprets a caught error object and returns a user-friendly string.
- * This function is designed to be the single source of truth for API error messages,
- * handling various scenarios like network errors, server errors, and client-side errors.
+ * This function is the single source of truth for API error messages, handling various
+ * scenarios like network errors, server errors (with or without specific messages), and client-side errors.
  * 
  * @param {unknown} error - The error object caught in a try-catch block.
  * @returns {string} A user-friendly error message suitable for display in the UI.

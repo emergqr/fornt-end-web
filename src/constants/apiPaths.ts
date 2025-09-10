@@ -1,7 +1,9 @@
+'use client';
+
 /**
  * @file This file centralizes all API path segments for the application.
  * Using constants for API paths avoids magic strings, reduces typos, and makes
- * the codebase easier to maintain. If an API endpoint changes, it only needs to be updated here.
+ * the codebase easier to maintain. If an API endpoint changes, it only needs to be updated in this single location.
  */
 
 /**
@@ -32,7 +34,7 @@ export const AddressPaths = {
   /**
    * Generates the path for a specific address by its UUID.
    * @param {string} uuid - The unique identifier of the address.
-   * @returns {string} The formatted API path segment.
+   * @returns {string} The formatted API path segment (e.g., '/123e4567-e89b-12d3-a456-426614174000').
    */
   BY_UUID: (uuid: string) => `/${uuid}`,
 };

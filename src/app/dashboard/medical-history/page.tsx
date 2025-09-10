@@ -26,10 +26,17 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 
+// Import stores, services, and interfaces
 import { useMedicalHistoryStore } from '@/store/medical-history/medical-history.store';
 import { MedicalEventCreate } from '@/interfaces/client/medical-history.interface';
 import { getMedicalEventTypes } from '@/services/client/medicalHistoryService';
 
+/**
+ * Zod schema for medical event form validation.
+ * It ensures that title, event_type, and event_date are provided.
+ * @param t - The translation function from react-i18next.
+ * @returns The Zod schema for the event form.
+ */
 const getEventSchema = (t: (key: string) => string) => z.object({
   title: z.string().min(3, { message: t('validation.titleRequired') }),
   event_type: z.string().min(1, { message: t('validation.eventTypeRequired') }),
@@ -37,11 +44,17 @@ const getEventSchema = (t: (key: string) => string) => z.object({
   description: z.string().optional(),
   location: z.string().optional(),
   doctor_name: z.string().optional(),
-  files: z.custom<FileList>().optional(),
+  files: z.custom<FileList>().optional(), // For file uploads
 });
 
+// Type definition for the form inputs, inferred from the Zod schema.
 type EventFormInputs = z.infer<ReturnType<typeof getEventSchema>>;
 
+/**
+ * Renders the medical history page.
+ * This component allows users to add, view, and delete their medical events.
+ * It dynamically fetches event types to populate the form's select field.
+ */
 export default function MedicalHistoryPage() {
   const { t } = useTranslation();
   const {
@@ -53,12 +66,17 @@ export default function MedicalHistoryPage() {
     removeMedicalEvent,
   } = useMedicalHistoryStore();
 
+  // State for user feedback messages (e.g., success, error).
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  // State to store the dynamically fetched event types.
   const [eventTypes, setEventTypes] = React.useState<string[]>([]);
+  // Loading state specifically for the event types dropdown.
   const [eventTypesLoading, setEventTypesLoading] = React.useState(true);
 
+  // Initialize the form validation schema with the translation function.
   const eventSchema = getEventSchema(t);
 
+  // React Hook Form setup for form state management and validation.
   const {
     control,
     register,
@@ -77,10 +95,12 @@ export default function MedicalHistoryPage() {
     },
   });
 
+  // Fetch the user's medical history when the component mounts.
   React.useEffect(() => {
     fetchMedicalHistory();
   }, [fetchMedicalHistory]);
 
+  // Fetch the available medical event types to populate the dropdown.
   React.useEffect(() => {
     const fetchEventTypes = async () => {
       try {
@@ -98,6 +118,7 @@ export default function MedicalHistoryPage() {
     fetchEventTypes();
   }, [t]);
 
+  // Form submission handler for adding a new medical event.
   const onAddEvent: SubmitHandler<EventFormInputs> = async (data) => {
     setFeedback(null);
     const { files, ...eventData } = data;
@@ -112,6 +133,7 @@ export default function MedicalHistoryPage() {
     }
   };
 
+  // Handler to delete a medical event with a confirmation dialog.
   const onDeleteEvent = async (uuid: string) => {
     if (window.confirm(t('dashboard_history.feedback.deleteConfirm'))) {
       try {
@@ -125,10 +147,12 @@ export default function MedicalHistoryPage() {
 
   return (
     <Paper sx={{ p: 3 }}>
+      {/* Page Header */}
       <Typography variant="h4" component="h1" gutterBottom>
         {t('dashboard_history.title')}
       </Typography>
       
+      {/* Add New Event Form */}
       <Box component="form" onSubmit={handleSubmit(onAddEvent)} noValidate sx={{ mb: 4 }}>
         <Typography variant="h6">{t('dashboard_history.form.title')}</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
@@ -180,11 +204,13 @@ export default function MedicalHistoryPage() {
           )}
         />
         
+        {/* File upload button */}
         <Button component="label" variant="outlined" startIcon={<CloudUploadIcon />} sx={{ mt: 2 }}>
           {t('dashboard_history.form.attachButton')}
           <input type="file" {...register('files')} multiple hidden />
         </Button>
 
+        {/* Form Action Buttons */}
         <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2, ml: 2 }}>
           {isSubmitting ? t('dashboard_history.form.submittingButton') : t('dashboard_history.form.submitButton')}
         </Button>
@@ -192,6 +218,7 @@ export default function MedicalHistoryPage() {
 
       <Divider sx={{ my: 2 }} />
 
+      {/* List of Registered Medical Events */}
       <Typography variant="h6">{t('dashboard_history.list.title')}</Typography>
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}

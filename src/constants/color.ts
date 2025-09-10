@@ -2,12 +2,12 @@ import { ThemeColors } from '@/interfaces/ThemeColors.interface';
 
 /**
  * @file This file defines the color palettes for all supported themes in the application.
- * It establishes a consistent and centralized color system.
+ * It establishes a consistent and centralized color system to ensure brand consistency and easy theming.
  */
 
 /**
- * A collection of common, reusable colors to maintain consistency across themes.
- * This avoids magic strings and makes it easy to update a color in one place.
+ * A collection of common, reusable colors to maintain consistency across different themes.
+ * This avoids the use of magic strings and makes it easy to update a core color in one place.
  */
 const commonColors = {
   white: '#FFFFFF',
@@ -19,7 +19,7 @@ const commonColors = {
   green: '#5cb85c',
   surfGreen: '#3f673f',
   surfOrange: '#f59e0b',
-  // Grayscale palette
+  // Grayscale palette for text, backgrounds, and borders.
   gray50: '#f9fafb',
   gray100: '#f3f4f6',
   gray200: '#e5e7eb',
@@ -32,6 +32,7 @@ const commonColors = {
 
 /**
  * Defines the color palette for the standard light theme.
+ * This serves as the base for other light-based themes.
  */
 const light: ThemeColors = {
   surface: commonColors.surfOrange,
@@ -131,7 +132,8 @@ const winter: ThemeColors = {
 
 /**
  * A collection of all theme palettes, keyed by their respective mode names.
- * This object is used by the ThemeRegistry to select the appropriate theme.
+ * This object is used by the ThemeRegistry to select the appropriate theme based on the mode
+ * stored in the `useThemeStore`.
  */
 export const colors = {
   light,

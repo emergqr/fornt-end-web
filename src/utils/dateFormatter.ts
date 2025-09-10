@@ -1,6 +1,8 @@
+'use client';
+
 /**
  * @file This file provides utility functions for formatting dates, ensuring a consistent
- * date representation between the API and the user interface.
+ * date representation between the API (YYYY-MM-DD) and the user interface (localized format).
  */
 
 /**
@@ -9,7 +11,7 @@
  * returning a standardized string or null.
  * 
  * @param {Date | string | null | undefined} date - The Date object or string to format.
- * @returns {string | null} A formatted date string in 'YYYY-MM-DD' format, or null if the input is invalid.
+ * @returns {string | null} A formatted date string in 'YYYY-MM-DD' format, or null if the input is invalid or nullish.
  */
 export const formatDateForApi = (
   date: Date | string | null | undefined,
@@ -18,7 +20,7 @@ export const formatDateForApi = (
     return null;
   }
 
-  // If the input is already a Date object, use it; otherwise, parse the string.
+  // If the input is already a Date object, use it; otherwise, attempt to parse the string.
   const dateObj = date instanceof Date ? date : new Date(date);
 
   // Check if the resulting date is valid. `new Date('invalid-string')` results in an invalid date.
@@ -26,16 +28,17 @@ export const formatDateForApi = (
     return null;
   }
 
-  // `toISOString()` returns 'YYYY-MM-DDTHH:mm:ss.sssZ'. We split at 'T' to get the date part,
-  // ensuring a consistent UTC-based format for the API.
+  // `toISOString()` returns a UTC-based string 'YYYY-MM-DDTHH:mm:ss.sssZ'.
+  // We split at 'T' to get just the date part, ensuring a consistent format for the API.
   return dateObj.toISOString().split('T')[0];
 };
 
 /**
  * Formats a Date object or a date string into a user-friendly, localized format (e.g., 'DD/MM/YYYY').
+ * This is ideal for displaying dates in the UI.
  * 
  * @param {Date | string | null | undefined} date - The Date object or string to format.
- * @returns {string} A formatted date string for display, or an empty string if the date is invalid.
+ * @returns {string} A formatted date string for display, or an empty string if the date is invalid or nullish.
  */
 export const formatDateForDisplay = (
   date: Date | string | null | undefined,
@@ -50,8 +53,8 @@ export const formatDateForDisplay = (
     return '';
   }
 
-  // `toLocaleDateString` is used to format the date according to the user's locale,
-  // which is generally preferred for display purposes. The 'es-ES' is an example locale.
-  // For more advanced formatting, a library like `date-fns` would be beneficial.
-  return dateObj.toLocaleDateString('es-ES');
+  // `toLocaleDateString` formats the date according to the user's browser locale,
+  // which is generally preferred for display purposes. For more advanced needs,
+  // a library like `date-fns` would be beneficial.
+  return dateObj.toLocaleDateString();
 };

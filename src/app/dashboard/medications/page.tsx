@@ -19,9 +19,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 
+// Import stores and interfaces
 import { useMedicationStore } from '@/store/medication/medication.store';
 import { MedicationScheduleCreate } from '@/interfaces/client/medication.interface';
 
+/**
+ * Zod schema for medication form validation.
+ * Ensures all required fields are filled correctly.
+ * @param t - The translation function from react-i18next.
+ * @returns The Zod schema for the medication form.
+ */
 const getMedicationSchema = (t: (key: string) => string) => z.object({
   medication_name: z.string().min(2, { message: t('validation.medicationNameRequired') }),
   dosage: z.string().min(1, { message: t('validation.dosageRequired') }),
@@ -30,8 +37,13 @@ const getMedicationSchema = (t: (key: string) => string) => z.object({
   end_date: z.string().optional(),
 });
 
+// Type definition for the form inputs, inferred from the Zod schema.
 type MedicationFormInputs = z.infer<ReturnType<typeof getMedicationSchema>>;
 
+/**
+ * Renders the medications management page.
+ * This component allows users to add, view, and delete their medication schedules.
+ */
 export default function MedicationsPage() {
   const { t } = useTranslation();
   const {
@@ -43,10 +55,13 @@ export default function MedicationsPage() {
     deleteSchedule,
   } = useMedicationStore();
 
+  // State for user feedback messages (e.g., success, error).
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Initialize the form validation schema with the translation function.
   const medicationSchema = getMedicationSchema(t);
 
+  // React Hook Form setup for form state management and validation.
   const {
     control,
     handleSubmit,
@@ -63,21 +78,24 @@ export default function MedicationsPage() {
     },
   });
 
+  // Fetch user's medication schedules when the component mounts.
   React.useEffect(() => {
     fetchSchedules();
   }, [fetchSchedules]);
 
+  // Form submission handler for adding a new medication schedule.
   const onAddSchedule: SubmitHandler<MedicationFormInputs> = async (data) => {
     setFeedback(null);
     try {
       await addSchedule(data as MedicationScheduleCreate);
       setFeedback({ type: 'success', message: t('dashboard_medications.feedback.addSuccess') });
-      reset();
+      reset(); // Clear the form after successful submission.
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message || t('dashboard_medications.feedback.addError') });
     }
   };
 
+  // Handler to delete a medication schedule with a confirmation dialog.
   const onDeleteSchedule = async (uuid: string) => {
     if (window.confirm(t('dashboard_medications.feedback.deleteConfirm'))) {
       try {
@@ -91,10 +109,12 @@ export default function MedicationsPage() {
 
   return (
     <Paper sx={{ p: 3 }}>
+      {/* Page Header */}
       <Typography variant="h4" component="h1" gutterBottom>
         {t('dashboard_medications.title')}
       </Typography>
       
+      {/* Add New Medication Plan Form */}
       <Box component="form" onSubmit={handleSubmit(onAddSchedule)} noValidate sx={{ mb: 4 }}>
         <Typography variant="h6">{t('dashboard_medications.form.title')}</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
@@ -187,6 +207,7 @@ export default function MedicationsPage() {
 
       <Divider sx={{ my: 2 }} />
 
+      {/* List of Registered Medication Plans */}
       <Typography variant="h6">{t('dashboard_medications.list.title')}</Typography>
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}

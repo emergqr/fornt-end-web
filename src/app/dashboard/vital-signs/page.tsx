@@ -28,10 +28,17 @@ import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+// Import stores, services, and interfaces
 import { useVitalSignStore } from '@/store/vital-sign/vital-sign.store';
 import { VitalSignCreate, VitalSignRead } from '@/interfaces/client/vital-sign.interface';
 import VitalSignsChart from './VitalSignsChart';
 
+/**
+ * Zod schema for vital sign form validation.
+ * Ensures that the 'type' field is selected.
+ * @param t - The translation function from react-i18next.
+ * @returns The Zod schema for the vital sign form.
+ */
 const getVitalSignSchema = (t: (key: string) => string) => z.object({
   type: z.string().min(1, { message: t('validation.vitalTypeRequired') }),
   value_numeric: z.coerce.number().optional(),
@@ -40,8 +47,14 @@ const getVitalSignSchema = (t: (key: string) => string) => z.object({
   notes: z.string().optional(),
 });
 
+// Type definition for the form inputs, inferred from the Zod schema.
 type VitalSignFormInputs = z.infer<ReturnType<typeof getVitalSignSchema>>;
 
+/**
+ * Renders the vital signs management page.
+ * This component allows users to add, view, and delete their vital sign records.
+ * It also displays a chart visualizing the vital signs over time.
+ */
 export default function VitalSignsPage() {
   const { t } = useTranslation();
   const {
@@ -55,11 +68,15 @@ export default function VitalSignsPage() {
     removeVitalSign,
   } = useVitalSignStore();
 
+  // State for user feedback messages (e.g., success, error).
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  // State to manage the visibility of the add/edit form.
   const [isFormVisible, setIsFormVisible] = React.useState(false);
 
+  // Initialize the form validation schema with the translation function.
   const vitalSignSchema = getVitalSignSchema(t);
 
+  // React Hook Form setup for form state management and validation.
   const {
     control,
     handleSubmit,
@@ -76,11 +93,13 @@ export default function VitalSignsPage() {
     },
   });
 
+  // Fetch user's vital signs and available types when the component mounts.
   React.useEffect(() => {
     fetchMyVitalSigns();
     fetchVitalSignTypes();
   }, [fetchMyVitalSigns, fetchVitalSignTypes]);
 
+  // Memoized computation to group vital signs by type for display.
   const groupedSigns = React.useMemo(() => {
     return vitalSigns.reduce((acc, sign) => {
       (acc[sign.type] = acc[sign.type] || []).push(sign);
@@ -88,6 +107,7 @@ export default function VitalSignsPage() {
     }, {} as Record<string, VitalSignRead[]>);
   }, [vitalSigns]);
 
+  // Form submission handler for adding a new vital sign.
   const onAddVitalSign: SubmitHandler<VitalSignFormInputs> = async (data) => {
     setFeedback(null);
     try {
@@ -100,6 +120,7 @@ export default function VitalSignsPage() {
     }
   };
 
+  // Handler to delete a vital sign record with a confirmation dialog.
   const onDeleteVitalSign = async (uuid: string) => {
     if (window.confirm(t('dashboard_vitals.feedback.deleteConfirm'))) {
       try {
@@ -113,6 +134,7 @@ export default function VitalSignsPage() {
 
   return (
     <Paper sx={{ p: 3 }}>
+      {/* Page Header with a toggle button for the form */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1">{t('dashboard_vitals.title')}</Typography>
         <Button variant="contained" startIcon={isFormVisible ? undefined : <AddIcon />} onClick={() => setIsFormVisible(!isFormVisible)} color={isFormVisible ? 'secondary' : 'primary'}>
@@ -120,6 +142,7 @@ export default function VitalSignsPage() {
         </Button>
       </Box>
 
+      {/* Add New Vital Sign Form (Collapsible) */}
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onAddVitalSign)} noValidate>
@@ -171,16 +194,20 @@ export default function VitalSignsPage() {
         </Paper>
       </Collapse>
 
+      {/* User Feedback Alert */}
       {feedback && <Alert severity={feedback.type} sx={{ my: 2 }} onClose={() => setFeedback(null)}>{feedback.message}</Alert>}
       
+      {/* Chart for visualizing vital signs */}
       <VitalSignsChart data={vitalSigns} />
 
+      {/* Loading and Error States for the list */}
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
       {!loading && !error && Object.keys(groupedSigns).length === 0 && (
         <Typography sx={{ mt: 2, textAlign: 'center' }}>{t('dashboard_vitals.list.noVitals')}</Typography>
       )}
 
+      {/* Display vital signs grouped by type in tables */}
       {Object.entries(groupedSigns).map(([type, signs]) => (
         <Box key={type} sx={{ my: 4 }}>
           <Typography variant="h5" component="h2" gutterBottom>{type}</Typography>
