@@ -1,8 +1,5 @@
-'use client';
-
 /**
  * @file This file provides a service layer for interacting with the infectious disease-related API endpoints.
- * It encapsulates all the logic for fetching, creating, updating, and deleting user infectious disease records.
  */
 
 import api from '@/services/api';
@@ -12,12 +9,11 @@ import {
   InfectiousDiseaseUpdate,
 } from '@/interfaces/client/infectious-disease.interface';
 
-// The base URL for all infectious disease-related API requests.
-const BASE_URL = '/infectious-diseases';
+const BASE_URL = '/infectious-diseases/infectious-diseases';
 
 /**
  * Fetches the list of infectious diseases for the authenticated client.
- * @returns {Promise<InfectiousDiseaseRead[]>} A promise that resolves with an array of the client's infectious disease records.
+ * @returns {Promise<InfectiousDiseaseRead[]>} A promise that resolves with an array of the client's infectious diseases.
  */
 const getMyInfectiousDiseases = async (): Promise<InfectiousDiseaseRead[]> => {
   const response = await api.get<InfectiousDiseaseRead[]>(`${BASE_URL}/`);
@@ -25,9 +21,9 @@ const getMyInfectiousDiseases = async (): Promise<InfectiousDiseaseRead[]> => {
 };
 
 /**
- * Creates a new infectious disease record for the authenticated client.
- * @param {InfectiousDiseaseCreate} data - The data for the new record.
- * @returns {Promise<InfectiousDiseaseRead>} A promise that resolves with the newly created record data.
+ * Creates a new infectious disease for the authenticated client.
+ * @param {InfectiousDiseaseCreate} data - The data for the new infectious disease.
+ * @returns {Promise<InfectiousDiseaseRead>} A promise that resolves with the newly created infectious disease data.
  */
 const createInfectiousDisease = async (data: InfectiousDiseaseCreate): Promise<InfectiousDiseaseRead> => {
   const response = await api.post<InfectiousDiseaseRead>(`${BASE_URL}/`, data);
@@ -35,28 +31,28 @@ const createInfectiousDisease = async (data: InfectiousDiseaseCreate): Promise<I
 };
 
 /**
- * Updates an existing infectious disease record by its UUID.
- * @param {string} uuid - The unique identifier of the record to update.
- * @param {InfectiousDiseaseUpdate} data - An object containing the fields to update.
- * @returns {Promise<InfectiousDiseaseRead>} A promise that resolves with the updated record data.
+ * Updates an existing infectious disease by its UUID.
+ * @param {string} uuid - The unique identifier of the infectious disease to update.
+ * @param {InfectiousDiseaseUpdate} data - An object containing the infectious disease fields to update.
+ * @returns {Promise<InfectiousDiseaseRead>} A promise that resolves with the updated infectious disease data.
  */
-const updateInfectiousDisease = async (uuid: string, data: InfectiousDiseaseUpdate): Promise<InfectiousDiseaseRead> => {
+const updateInfectiousDisease = async (
+  uuid: string,
+  data: InfectiousDiseaseUpdate
+): Promise<InfectiousDiseaseRead> => {
   const response = await api.put<InfectiousDiseaseRead>(`${BASE_URL}/${uuid}`, data);
   return response.data;
 };
 
 /**
- * Deletes an infectious disease record by its UUID.
- * @param {string} uuid - The unique identifier of the record to delete.
+ * Deletes an infectious disease by its UUID.
+ * @param {string} uuid - The unique identifier of the infectious disease to delete.
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteInfectiousDisease = async (uuid: string): Promise<void> => {
   await api.delete(`${BASE_URL}/${uuid}`);
 };
 
-/**
- * An object that groups all infectious disease-related service functions for easy import and usage.
- */
 export const infectiousDiseaseService = {
   getMyInfectiousDiseases,
   createInfectiousDisease,
