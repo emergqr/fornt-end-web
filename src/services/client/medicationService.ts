@@ -1,15 +1,24 @@
+'use client';
+
+/**
+ * @file This file provides a service layer for interacting with the medication schedule API endpoints.
+ * It encapsulates all the logic for fetching and creating user medication schedules.
+ * NOTE: As of the current API specification, update and delete operations are not supported.
+ */
+
 import api from '@/services/api';
 import {
   MedicationScheduleCreate,
   MedicationScheduleRead,
-  MedicationScheduleUpdate,
 } from '@/interfaces/client/medication.interface';
 
-// Correct base URL for medication schedules as per the API specification
+// The base URL for all medication schedule-related API requests.
 const BASE_URL = '/medical-history/schedules';
 
 /**
- * Fetches all medication schedules for the current user.
+ * Fetches all medication schedules for the authenticated user.
+ * Corresponds to the GET /medical-history/schedules endpoint.
+ * @returns {Promise<MedicationScheduleRead[]>} A promise that resolves with an array of the user's medication schedules.
  */
 const getMySchedules = async (): Promise<MedicationScheduleRead[]> => {
   const response = await api.get<MedicationScheduleRead[]>(`${BASE_URL}/`);
@@ -17,7 +26,10 @@ const getMySchedules = async (): Promise<MedicationScheduleRead[]> => {
 };
 
 /**
- * Creates a new medication schedule.
+ * Creates a new medication schedule for the authenticated user.
+ * Corresponds to the POST /medical-history/schedules endpoint.
+ * @param {MedicationScheduleCreate} data - The data for the new medication schedule.
+ * @returns {Promise<MedicationScheduleRead>} A promise that resolves with the newly created schedule data.
  */
 const createSchedule = async (data: MedicationScheduleCreate): Promise<MedicationScheduleRead> => {
   const response = await api.post<MedicationScheduleRead>(`${BASE_URL}/`, data);
@@ -25,28 +37,9 @@ const createSchedule = async (data: MedicationScheduleCreate): Promise<Medicatio
 };
 
 /**
- * Updates an existing medication schedule.
- * NOTE: The API specification does not include an update endpoint for medication schedules.
- * This function is included for completeness, but it will likely fail if the endpoint doesn't exist.
- * We will assume a PATCH or PUT to /medical-history/schedules/{uuid} is the standard.
+ * An object that groups all available medication service functions for easy import and usage.
  */
-const updateSchedule = async (uuid: string, data: MedicationScheduleUpdate): Promise<MedicationScheduleRead> => {
-  const response = await api.put<MedicationScheduleRead>(`${BASE_URL}/${uuid}`, data);
-  return response.data;
-};
-
-/**
- * Deletes a medication schedule.
- * NOTE: The API specification does not include a delete endpoint for medication schedules.
- * This function is included for completeness, assuming a DELETE to /medical-history/schedules/{uuid}.
- */
-const deleteSchedule = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
-};
-
 export const medicationService = {
   getMySchedules,
   createSchedule,
-  updateSchedule,
-  deleteSchedule,
 };

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -27,20 +28,20 @@ import EmergencyContacts from './EmergencyContacts';
 import ChangePasswordForm from './ChangePasswordForm';
 import DeleteAccountCard from './DeleteAccountCard';
 
-// Esquema actualizado para incluir los nuevos campos
-const profileSchema = z.object({
-  name: z.string().min(2, 'El nombre es requerido'),
-  phone: z.string().optional(),
-  birth_date: z.string().optional(),
-  sex: z.string().optional(),
-  occupation: z.string().optional(),
-});
-
-type ProfileFormInputs = z.infer<typeof profileSchema>;
-
 export default function PerfilPage() {
+  const { t } = useTranslation();
   const { user, setUser } = useAuthStore();
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const profileSchema = z.object({
+    name: z.string().min(2, t('validation.nameRequired')),
+    phone: z.string().optional(),
+    birth_date: z.string().optional(),
+    sex: z.string().optional(),
+    occupation: z.string().optional(),
+  });
+
+  type ProfileFormInputs = z.infer<typeof profileSchema>;
 
   const {
     control,
@@ -75,9 +76,9 @@ export default function PerfilPage() {
     try {
       const updatedUser = await profileService.updateProfile(data);
       setUser(updatedUser);
-      setFeedback({ type: 'success', message: '¡Perfil actualizado con éxito!' });
+      setFeedback({ type: 'success', message: t('dashboard_profile.updateSuccess') });
     } catch (error: unknown) {
-      let errorMessage = 'No se pudo actualizar el perfil.';
+      let errorMessage = t('dashboard_profile.updateError');
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error instanceof Error) {
@@ -98,7 +99,7 @@ export default function PerfilPage() {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" component="h1" gutterBottom>
-        Mi Perfil
+        {t('dashboard_profile.title')}
       </Typography>
       <Paper sx={{ p: 3, mt: 2 }}>
         <Grid container spacing={4}>
@@ -117,28 +118,28 @@ export default function PerfilPage() {
               )}
               <Grid container spacing={2}>
                 <Grid component="div" item xs={12}>
-                  <Controller name="name" control={control} render={({ field }) => <TextField {...field} fullWidth required label="Nombre Completo" error={!!errors.name} helperText={errors.name?.message} />} />
+                  <Controller name="name" control={control} render={({ field }) => <TextField {...field} fullWidth required label={t('dashboard_profile.form.nameLabel')} error={!!errors.name} helperText={errors.name?.message} />} />
                 </Grid>
                 <Grid component="div" item xs={12}>
-                  <TextField fullWidth disabled label="Correo Electrónico" value={user.email} />
+                  <TextField fullWidth disabled label={t('dashboard_profile.form.emailLabel')} value={user.email} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="phone" control={control} render={({ field }) => <TextField {...field} fullWidth label="Teléfono" error={!!errors.phone} helperText={errors.phone?.message} />} />
+                  <Controller name="phone" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.phoneLabel')} error={!!errors.phone} helperText={errors.phone?.message} />} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="birth_date" control={control} render={({ field }) => <TextField {...field} fullWidth label="Fecha de Nacimiento" type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />} />
+                  <Controller name="birth_date" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.birthDateLabel')} type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />} />
                 </Grid>
                 {/* --- Nuevos Campos --- */}
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="sex" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label="Sexo" error={!!errors.sex} helperText={errors.sex?.message} />} />
+                  <Controller name="sex" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label={t('dashboard_profile.form.sexLabel')} error={!!errors.sex} helperText={errors.sex?.message} />} />
                 </Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="occupation" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label="Ocupación" error={!!errors.occupation} helperText={errors.occupation?.message} />} />
+                  <Controller name="occupation" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label={t('dashboard_profile.form.occupationLabel')} error={!!errors.occupation} helperText={errors.occupation?.message} />} />
                 </Grid>
               </Grid>
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button type="submit" variant="contained" disabled={isSubmitting || !isDirty}>
-                  {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                  {isSubmitting ? t('common.saving') : t('common.saveChanges')}
                 </Button>
               </Box>
             </Box>

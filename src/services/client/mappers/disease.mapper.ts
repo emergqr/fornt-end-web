@@ -1,3 +1,11 @@
+'use client';
+
+/**
+ * @file This file provides mapping functions to transform data between the API's snake_case format
+ * and the client-side camelCase format for the disease module. This acts as an anti-corruption layer,
+ * isolating the frontend from backend naming conventions.
+ */
+
 import {
   PatientDisease,
   PatientDiseaseCreate,
@@ -5,9 +13,9 @@ import {
 } from '@/interfaces/client/disease.interface';
 
 /**
- * Mapea los datos de la API (snake_case) a la interfaz del cliente (camelCase).
- * @param apiData - Los datos de la enfermedad del paciente desde la API.
- * @returns Un objeto PatientDisease para el cliente.
+ * Maps patient disease data from the API (snake_case) to the client-side interface (camelCase).
+ * @param {any} apiData - The raw patient disease data received from the API.
+ * @returns {PatientDisease} A `PatientDisease` object formatted for use in the client application.
  */
 export const mapToPatientDiseaseClient = (apiData: any): PatientDisease => ({
   uuid: apiData.uuid,
@@ -26,9 +34,9 @@ export const mapToPatientDiseaseClient = (apiData: any): PatientDisease => ({
 });
 
 /**
- * Mapea los datos de creación del cliente (camelCase) al formato de la API (snake_case).
- * @param clientData - Los datos para crear una asociación de enfermedad.
- * @returns Un objeto listo para ser enviado a la API.
+ * Maps the client-side disease creation data (camelCase) to the API's expected format (snake_case).
+ * @param {PatientDiseaseCreate} clientData - The data for creating a new patient-disease association.
+ * @returns {any} An object formatted to be sent to the API for creation.
  */
 export const mapToPatientDiseaseCreateApi = (
   clientData: PatientDiseaseCreate
@@ -41,9 +49,9 @@ export const mapToPatientDiseaseCreateApi = (
 });
 
 /**
- * Mapea los datos de actualización del cliente (camelCase) al formato de la API (snake_case).
- * @param clientData - Los datos para actualizar una asociación de enfermedad.
- * @returns Un objeto listo para ser enviado a la API.
+ * Maps the client-side disease update data (camelCase) to the API's expected format (snake_case).
+ * @param {PatientDiseaseUpdate} clientData - The data for updating a patient-disease association.
+ * @returns {any} An object formatted to be sent to the API for an update.
  */
 export const mapToPatientDiseaseUpdateApi = (
   clientData: PatientDiseaseUpdate

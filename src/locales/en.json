@@ -1,16 +1,80 @@
 {
   "locale_code": "en",
+  "common": {
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "emailInvalid": "Must be a valid email",
+    "phoneRequired": "Phone is required",
+    "relationshipRequired": "Relationship is required",
+    "streetRequired": "Street is required",
+    "cityRequired": "City is required",
+    "stateRequired": "State or province is required",
+    "postalCodeRequired": "Postal code is required",
+    "countryRequired": "Country is required",
+    "currentPasswordRequired": "Current password is required",
+    "newPasswordMinLength": "New password must be at least 6 characters",
+    "repeatNewPasswordRequired": "You must repeat the new password",
+    "passwordsDoNotMatch": "The new passwords do not match",
+    "allergenRequired": "You must select an allergy from the list.",
+    "diseaseRequired": "You must select a disease from the list.",
+    "diagnosisDateRequired": "Diagnosis date is required.",
+    "vitalTypeRequired": "Type is required.",
+    "medicationNameRequired": "Medication name is required",
+    "dosageRequired": "Dosage is required",
+    "frequencyRequired": "Frequency is required",
+    "startDateRequired": "Start date is required",
+    "titleRequired": "Title is required",
+    "eventTypeRequired": "Event type is required",
+    "eventDateRequired": "Date is required",
+    "loginEmailInvalid": "Please enter a valid email address",
+    "loginPasswordMinLength": "Password must be at least 6 characters",
+    "registerNameMinLength": "Name must be at least 2 characters",
+    "registerPasswordMinLength": "Password must be at least 6 characters",
+    "registerPasswordRepeatMinLength": "Password must be at least 6 characters",
+    "registerPasswordsDoNotMatch": "Passwords do not match",
+    "addictionNameRequired": "Addiction name is required.",
+    "addictionStartDateRequired": "Start date is required.",
+    "infectiousDiseaseNameRequired": "Disease name is required.",
+    "infectiousDiseaseDiagnosisDateRequired": "Diagnosis date is required."
+  },
   "navigation": {
     "aboutUs": "About Us",
     "services": "Services",
     "dashboard_summary": "Summary",
+    "dashboard_timeline": "Timeline",
     "dashboard_qr": "My QR Code",
     "dashboard_profile": "My Profile",
     "dashboard_allergies": "My Allergies",
     "dashboard_diseases": "Medical Conditions",
+    "dashboard_addictions": "Addictions",
+    "dashboard_infectious_diseases": "Infectious Diseases",
+    "dashboard_psychiatric": "Psychiatric Conditions",
+    "dashboard_menstrual_cycle": "Menstrual Cycle",
+    "dashboard_pregnancy": "Pregnancy Tracking",
     "dashboard_vitals": "Vital Signs",
     "dashboard_medications": "Medications",
-    "dashboard_history": "Medical History"
+    "dashboard_history": "Medical History",
+    "logoAlt": "EmergQR Logo"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "spring": "Spring",
+    "summer": "Summer",
+    "autumn": "Autumn",
+    "winter": "Winter"
+  },
+  "languages": {
+    "es": "Spanish",
+    "en": "English",
+    "fr": "French",
+    "pt": "Portuguese",
+    "nl": "Dutch"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -48,8 +112,382 @@
   "login": {
     "title": "Sign In"
   },
+  "auth_login": {
+    "title": "Sign In",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "submitButton": "Sign In",
+    "submittingButton": "Signing In...",
+    "forgotPasswordLink": "Forgot your password?",
+    "noAccountLink": "Don't have an account? Sign Up",
+    "defaultError": "Incorrect credentials. Please try again."
+  },
+  "auth_register": {
+    "title": "Create an account",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "passwordRepeatLabel": "Repeat Password",
+    "submitButton": "Create Account",
+    "submittingButton": "Creating account...",
+    "hasAccountLink": "Already have an account? Sign in",
+    "defaultError": "Could not complete registration. Please try again."
+  },
+  "auth_forgot_password": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email address and we will send you a link to recover your account.",
+    "emailLabel": "Email Address",
+    "submitButton": "Send Recovery Link",
+    "submittingButton": "Sending...",
+    "backToLoginLink": "Back to Sign In",
+    "successMessage": "If an account with that email exists, instructions to reset your password have been sent."
+  },
+  "public_profile": {
+    "title": "Emergency Profile",
+    "fetchError": "Could not find the profile.",
+    "notAvailable": "Profile not available.",
+    "nameLabel": "Name",
+    "ageLabel": "Age",
+    "bloodTypeLabel": "Blood Type",
+    "healthInsuranceLabel": "Health Insurance",
+    "allergiesTitle": "Allergies",
+    "severityLabel": "Severity",
+    "noAllergies": "None registered.",
+    "conditionsTitle": "Medical Conditions",
+    "diagnosedLabel": "Diagnosed",
+    "noConditions": "None registered.",
+    "contactsTitle": "Emergency Contacts",
+    "noContacts": "None registered."
+  },
   "dashboard": {
     "loggedInAs": "Hello, {{name}}",
-    "logout": "Sign Out"
+    "logout": "Sign Out",
+    "defaultUser": "User"
+  },
+  "dashboard_summary": {
+    "greeting": "Hello, {{name}}!",
+    "subtitle": "Here is a summary of your health profile.",
+    "dateFilterTitle": "Filter by Date",
+    "dateFilterFrom": "From",
+    "dateFilterTo": "To",
+    "vitalsChartTitle": "Vital Records",
+    "chartNoData": "No data in the selected range.",
+    "medsChartTitle": "Active Medications per Day",
+    "widgetMedsTitle": "Active Medications",
+    "widgetAllergiesTitle": "Allergies",
+    "widgetDiseasesTitle": "Medical Conditions"
+  },
+  "dashboard_qr": {
+    "title": "My Emergency QR Code",
+    "subtitle": "Show this code to emergency personnel to instantly access your medical information.",
+    "downloadFilename": "EmergQR-Code.png",
+    "downloadButton": "Download QR",
+    "printButton": "Print"
+  },
+  "dashboard_profile": {
+    "title": "My Profile",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Could not update profile.",
+    "form": {
+      "nameLabel": "Full Name",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "birthDateLabel": "Date of Birth",
+      "sexLabel": "Sex",
+      "occupationLabel": "Occupation"
+    },
+    "avatar": {
+      "uploadError": "Error uploading image."
+    },
+    "emergency_data": {
+      "title": "Emergency Data",
+      "updateSuccess": "Emergency data updated successfully!",
+      "updateError": "Could not save data.",
+      "form": {
+        "bloodTypeLabel": "Blood Type (e.g., A+)",
+        "healthSystemLabel": "Health System / Policy Nº",
+        "saveButton": "Save Data"
+      },
+      "display": {
+        "bloodTypeLabel": "Blood Type:",
+        "healthSystemLabel": "Health System:",
+        "notSpecified": "Not specified"
+      }
+    },
+    "address": {
+      "title": "My Address",
+      "updateSuccess": "Address updated successfully!",
+      "addSuccess": "Address saved successfully!",
+      "updateError": "Could not save address.",
+      "noAddress": "You have not added an address yet. Click the edit button to add one.",
+      "form": {
+        "streetLabel": "Street and Number",
+        "cityLabel": "City",
+        "stateLabel": "State / Province",
+        "postalCodeLabel": "Postal Code",
+        "countryLabel": "Country",
+        "saveButton": "Save Address"
+      },
+      "deleteConfirmTitle": "Delete Address?",
+      "deleteConfirmText": "Are you sure you want to delete this address? This action cannot be undone.",
+      "deleteSuccess": "Address deleted successfully!",
+      "deleteError": "Could not delete address."
+    },
+    "change_password": {
+      "title": "Change Password",
+      "successMessage": "Password changed successfully!",
+      "form": {
+        "currentPasswordLabel": "Current Password",
+        "newPasswordLabel": "New Password",
+        "repeatNewPasswordLabel": "Repeat New Password",
+        "submitButton": "Change Password",
+        "submittingButton": "Changing..."
+      }
+    },
+    "delete_account": {
+      "title": "Danger Zone",
+      "warningText": "This action is irreversible. By deleting your account, all your medical data, profile, and contacts will be permanently deleted. You will not be able to recover your account.",
+      "deleteButton": "Delete My Account",
+      "deletingButton": "Deleting...",
+      "dialogTitle": "Are you absolutely sure?",
+      "dialogContent": "This action cannot be undone. This will permanently delete your account and all associated data. Do you wish to continue?",
+      "dialogConfirmButton": "Yes, delete my account"
+    }
+  },
+  "dashboard_allergies": {
+    "title": "My Allergies",
+    "addButton": "Add Allergy",
+    "form": {
+      "title": "Add New Allergy",
+      "searchLabel": "Search Allergen (e.g., Penicillin)",
+      "searchHelperText": "Start typing to search the medical database.",
+      "reactionLabel": "Reaction Type (Optional)",
+      "severityLabel": "Severity (Optional)",
+      "submitButton": "Add Allergy"
+    },
+    "list": {
+      "title": "Registered Allergies",
+      "noAllergies": "You have no registered allergies.",
+      "reactionLabel": "Reaction",
+      "severityLabel": "Severity",
+      "notAvailable": "N/A"
+    },
+    "feedback": {
+      "addSuccess": "Allergy added successfully!",
+      "addError": "Could not add allergy.",
+      "updateSuccess": "Allergy updated successfully!",
+      "deleteConfirm": "Are you sure you want to delete this allergy?",
+      "deleteSuccess": "Allergy deleted.",
+      "deleteError": "Could not delete allergy.",
+      "editNotAvailable": "Editing an existing allergy will be available in a future version."
+    }
+  },
+  "dashboard_diseases": {
+    "title": "My Medical Conditions",
+    "addButton": "Add Condition",
+    "form": {
+      "title": "Add New Condition",
+      "searchLabel": "Search Disease (e.g., Hypertension)",
+      "searchHelperText": "Start typing to search the medical database.",
+      "diagnosisDateLabel": "Diagnosis Date",
+      "severityLabel": "Severity (Optional)",
+      "notesLabel": "Notes (Optional)",
+      "submitButton": "Add Condition"
+    },
+    "list": {
+      "title": "Registered Conditions",
+      "noConditions": "You have no registered medical conditions.",
+      "diagnosedLabel": "Diagnosed",
+      "severityLabel": "Severity",
+      "notAvailable": "N/A"
+    },
+    "feedback": {
+      "addSuccess": "Condition added successfully!",
+      "addError": "Could not add condition.",
+      "updateSuccess": "Condition updated successfully!",
+      "deleteConfirm": "Are you sure you want to delete this condition?",
+      "deleteSuccess": "Condition deleted.",
+      "deleteError": "Could not delete condition.",
+      "editNotAvailable": "Editing an existing condition will be available in a future version."
+    }
+  },
+  "dashboard_vitals": {
+    "title": "My Vital Signs",
+    "addButton": "Add Record",
+    "form": {
+      "title": "Add New Record",
+      "typeLabel": "Vital Sign Type",
+      "primaryValueLabel": "Primary Value",
+      "secondaryValueLabel": "Secondary Value (e.g., Diastolic)",
+      "unitLabel": "Unit (e.g., mmHg, kg, °C)",
+      "notesLabel": "Notes (Optional)",
+      "submitButton": "Save Record",
+      "submittingButton": "Adding..."
+    },
+    "list": {
+      "noVitals": "You have no vital signs registered.",
+      "tableDate": "Date",
+      "tableValue": "Value",
+      "tableNotes": "Notes",
+      "tableActions": "Actions"
+    },
+    "feedback": {
+      "addSuccess": "Vital sign added successfully!",
+      "addError": "Could not add vital sign.",
+      "deleteConfirm": "Are you sure you want to delete this record?",
+      "deleteSuccess": "Record deleted.",
+      "deleteError": "Could not delete record."
+    }
+  },
+  "dashboard_medications": {
+    "title": "My Medications",
+    "form": {
+      "title": "Add New Medication Plan",
+      "medicationNameLabel": "Medication Name",
+      "dosageLabel": "Dosage (e.g., 1 pill, 10mg)",
+      "frequencyLabel": "Frequency (e.g., Daily, Every 8 hours)",
+      "startDateLabel": "Start Date",
+      "endDateLabel": "End Date (Optional)",
+      "submitButton": "Add Plan",
+      "submittingButton": "Adding..."
+    },
+    "list": {
+      "title": "Registered Plans",
+      "noSchedules": "You have no medication plans registered.",
+      "frequencyLabel": "Frequency",
+      "startsLabel": "Starts"
+    },
+    "feedback": {
+      "addSuccess": "Medication plan added successfully!",
+      "addError": "Could not add plan.",
+      "deleteConfirm": "Are you sure you want to delete this medication plan?",
+      "deleteSuccess": "Medication plan deleted.",
+      "deleteError": "Could not delete plan."
+    }
+  },
+  "dashboard_history": {
+    "title": "Medical History",
+    "form": {
+      "title": "Add New Event",
+      "titleLabel": "Event Title (e.g., Knee Surgery)",
+      "typeLabel": "Event Type",
+      "dateLabel": "Event Date",
+      "descriptionLabel": "Description (Optional)",
+      "attachButton": "Attach Documents",
+      "submitButton": "Add Event",
+      "submittingButton": "Adding..."
+    },
+    "list": {
+      "title": "Registered Events",
+      "noEvents": "You have no events in your medical history.",
+      "dateLabel": "Date:",
+      "documentsLabel": "Documents:"
+    },
+    "feedback": {
+      "fetchTypesError": "Could not load event types.",
+      "addSuccess": "Medical event added successfully!",
+      "addError": "Could not add event.",
+      "deleteConfirm": "Are you sure you want to delete this event?",
+      "deleteSuccess": "Event deleted.",
+      "deleteError": "Could not delete event."
+    }
+  },
+  "dashboard_addictions": {
+    "title": "My Addictions",
+    "addButton": "Add Addiction",
+    "form": {
+      "title": "Add New Addiction",
+      "nameLabel": "Addiction Name (e.g., Nicotine)",
+      "startDateLabel": "Start Date",
+      "statusLabel": "Status (e.g., Active, In Remission)",
+      "notesLabel": "Notes (Optional)",
+      "submitButton": "Add Addiction"
+    },
+    "list": {
+      "title": "Registered Addictions",
+      "noAddictions": "You have no registered addictions.",
+      "startedLabel": "Started",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Addiction added successfully!",
+      "addError": "Could not add addiction.",
+      "deleteConfirm": "Are you sure you want to delete this addiction?",
+      "deleteSuccess": "Addiction deleted.",
+      "deleteError": "Could not delete addiction."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "My Infectious Diseases",
+    "addButton": "Add Disease",
+    "form": {
+      "title": "Add New Infectious Disease",
+      "nameLabel": "Disease Name (e.g., COVID-19)",
+      "diagnosisDateLabel": "Diagnosis Date",
+      "statusLabel": "Status (e.g., Active, Cured)",
+      "notesLabel": "Notes (Optional)",
+      "submitButton": "Add Disease"
+    },
+    "list": {
+      "title": "Registered Diseases",
+      "noDiseases": "You have no registered infectious diseases.",
+      "diagnosedLabel": "Diagnosed",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Infectious disease added successfully!",
+      "addError": "Could not add infectious disease.",
+      "deleteConfirm": "Are you sure you want to delete this disease?",
+      "deleteSuccess": "Infectious disease deleted.",
+      "deleteError": "Could not delete infectious disease."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Panic Button",
+    "dialogTitle": "Activate Panic Alert?",
+    "dialogContent": "This will immediately notify all your emergency contacts. Are you sure you want to proceed?",
+    "confirmButton": "Activate",
+    "activatingButton": "Activating...",
+    "successMessage": "Panic alert activated! Your emergency contacts have been notified.",
+    "errorMessage": "Could not activate the panic alert. Please try again."
+  },
+  "dashboard_admin": {
+    "title": "User Administration",
+    "searchPlaceholder": "Search by name or email...",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "status": "Status",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "roleAdmin": "Admin",
+    "roleUser": "User",
+    "noUsers": "No users found."
+  },
+  "contacts": {
+    "title": "Emergency Contacts",
+    "addTitle": "Add New Contact",
+    "editTitle": "Edit Contact",
+    "myContactsTitle": "My Contacts",
+    "noContacts": "You have no emergency contacts added.",
+    "isEmergencyContact": "Emergency Contact",
+    "isGeneralContact": "General Contact",
+    "form": {
+      "nameLabel": "Full Name",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "relationshipLabel": "Relationship (e.g., Father, Doctor)",
+      "isEmergencyContactLabel": "Mark as Emergency Contact",
+      "addButton": "Add Contact"
+    },
+    "feedback": {
+      "updateSuccess": "Contact updated successfully!",
+      "addSuccess": "Contact added successfully!",
+      "deleteConfirm": "Are you sure you want to delete this contact?",
+      "deleteSuccess": "Contact deleted."
+    }
   }
 }

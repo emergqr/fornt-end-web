@@ -1,47 +1,65 @@
-import { ApiHandler } from '../apiHandler';
+'use client';
+
+/**
+ * @file This file provides a service layer for interacting with the contact-related API endpoints.
+ * It encapsulates all the logic for fetching, creating, updating, and deleting user contacts.
+ */
+
+import api from '@/services/api';
 import { Contact, ContactCreate, ContactUpdate } from '@/interfaces/client/contact.interface';
-import { ContactPaths } from '@/constants/apiPaths';
 
-const { EXPO_PUBLIC_API_CONTACTS_BASE: CONTACTS_BASE_ENDPOINT } = process.env;
-
-if (!CONTACTS_BASE_ENDPOINT) {
-    throw new Error('The contacts API endpoint is not defined in environment variables.');
-}
+// The base URL for all contact-related API requests.
+const BASE_URL = '/contacts';
 
 /**
- * Obtiene la lista de contactos del usuario autenticado.
- * @returns {Promise<Contact[]>} Una promesa que resuelve con la lista de contactos.
+ * Fetches the list of contacts for the authenticated client.
+ * Corresponds to the GET /contacts/ endpoint.
+ * @returns {Promise<Contact[]>} A promise that resolves with an array of the client's contacts.
  */
-export const getContacts = async (): Promise<Contact[]> => {
-    return ApiHandler.get<Contact[]>(`${CONTACTS_BASE_ENDPOINT}${ContactPaths.BASE}`);
+const getContacts = async (): Promise<Contact[]> => {
+    const response = await api.get<Contact[]>(`${BASE_URL}/`);
+    return response.data;
 };
 
 /**
- * Crea un nuevo contacto para el usuario autenticado.
- * @param {ContactCreate} data - Los datos del nuevo contacto.
- * @returns {Promise<Contact>} Una promesa que resuelve con el contacto recién creado.
+ * Creates a new contact for the authenticated client.
+ * Corresponds to the POST /contacts/ endpoint.
+ * @param {ContactCreate} data - The data for the new contact.
+ * @returns {Promise<Contact>} A promise that resolves with the newly created contact data.
  */
-export const createContact = async (data: ContactCreate): Promise<Contact> => {
-    return ApiHandler.post<ContactCreate, Contact>(`${CONTACTS_BASE_ENDPOINT}${ContactPaths.BASE}`, data);
+const createContact = async (data: ContactCreate): Promise<Contact> => {
+    const response = await api.post<Contact, ContactCreate>(`${BASE_URL}/`, data);
+    return response.data;
 };
 
 /**
- * Actualiza un contacto existente.
- * @param {string} uuid - El UUID del contacto a actualizar.
- * @param {ContactUpdate} data - Los datos a actualizar.
- * @returns {Promise<Contact>} Una promesa que resuelve con el contacto actualizado.
+ * Updates an existing contact by its UUID.
+ * Corresponds to the PUT /contacts/{uuid} endpoint.
+ * @param {string} uuid - The unique identifier of the contact to update.
+ * @param {ContactUpdate} data - An object containing the contact fields to update.
+ * @returns {Promise<Contact>} A promise that resolves with the updated contact data.
  */
-export const updateContact = async (uuid: string, data: ContactUpdate): Promise<Contact> => {
-    const path = ContactPaths.BY_UUID(uuid);
-    return ApiHandler.put<ContactUpdate, Contact>(`${CONTACTS_BASE_ENDPOINT}${path}`, data);
+const updateContact = async (uuid: string, data: ContactUpdate): Promise<Contact> => {
+    const response = await api.put<Contact, ContactUpdate>(`${BASE_URL}/${uuid}`, data);
+    return response.data;
 };
 
 /**
- * Elimina un contacto.
- * @param {string} uuid - El UUID del contacto a eliminar.
- * @returns {Promise<void>} Una promesa que resuelve cuando la operación se completa.
+ * Deletes a contact by its UUID.
+ * Corresponds to the DELETE /contacts/{uuid} endpoint.
+ * @param {string} uuid - The unique identifier of the contact to delete.
+ * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
-export const deleteContact = async (uuid: string): Promise<void> => {
-    const path = ContactPaths.BY_UUID(uuid);
-    return ApiHandler.delete<void>(`${CONTACTS_BASE_ENDPOINT}${path}`);
+const deleteContact = async (uuid: string): Promise<void> => {
+    await api.delete<void>(`${BASE_URL}/${uuid}`);
+};
+
+/**
+ * An object that groups all contact-related service functions for easy import and usage.
+ */
+export const contactService = {
+    getContacts,
+    createContact,
+    updateContact,
+    deleteContact,
 };

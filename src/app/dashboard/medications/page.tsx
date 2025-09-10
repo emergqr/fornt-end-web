@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -18,21 +19,33 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 
+// Import stores and interfaces
 import { useMedicationStore } from '@/store/medication/medication.store';
 import { MedicationScheduleCreate } from '@/interfaces/client/medication.interface';
 
-// Schema for the medication form validation
-const medicationSchema = z.object({
-  medication_name: z.string().min(2, { message: 'El nombre del medicamento es requerido' }),
-  dosage: z.string().min(1, { message: 'La dosis es requerida' }),
-  frequency_type: z.string().min(1, { message: 'La frecuencia es requerida' }),
-  start_date: z.string().min(1, { message: 'La fecha de inicio es requerida' }),
+/**
+ * Zod schema for medication form validation.
+ * Ensures all required fields are filled correctly.
+ * @param t - The translation function from react-i18next.
+ * @returns The Zod schema for the medication form.
+ */
+const getMedicationSchema = (t: (key: string) => string) => z.object({
+  medication_name: z.string().min(2, { message: t('validation.medicationNameRequired') }),
+  dosage: z.string().min(1, { message: t('validation.dosageRequired') }),
+  frequency_type: z.string().min(1, { message: t('validation.frequencyRequired') }),
+  start_date: z.string().min(1, { message: t('validation.startDateRequired') }),
   end_date: z.string().optional(),
 });
 
-type MedicationFormInputs = z.infer<typeof medicationSchema>;
+// Type definition for the form inputs, inferred from the Zod schema.
+type MedicationFormInputs = z.infer<ReturnType<typeof getMedicationSchema>>;
 
+/**
+ * Renders the medications management page.
+ * This component allows users to add, view, and delete their medication schedules.
+ */
 export default function MedicationsPage() {
+  const { t } = useTranslation();
   const {
     schedules,
     loading,
@@ -42,8 +55,13 @@ export default function MedicationsPage() {
     deleteSchedule,
   } = useMedicationStore();
 
+  // State for user feedback messages (e.g., success, error).
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Initialize the form validation schema with the translation function.
+  const medicationSchema = getMedicationSchema(t);
+
+  // React Hook Form setup for form state management and validation.
   const {
     control,
     handleSubmit,
@@ -60,41 +78,45 @@ export default function MedicationsPage() {
     },
   });
 
-  // Fetch schedules when the component mounts
+  // Fetch user's medication schedules when the component mounts.
   React.useEffect(() => {
     fetchSchedules();
   }, [fetchSchedules]);
 
+  // Form submission handler for adding a new medication schedule.
   const onAddSchedule: SubmitHandler<MedicationFormInputs> = async (data) => {
     setFeedback(null);
     try {
       await addSchedule(data as MedicationScheduleCreate);
-      setFeedback({ type: 'success', message: '¡Plan de medicación añadido con éxito!' });
-      reset(); // Clear the form
+      setFeedback({ type: 'success', message: t('dashboard_medications.feedback.addSuccess') });
+      reset(); // Clear the form after successful submission.
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'No se pudo añadir el plan.' });
+      setFeedback({ type: 'error', message: err.message || t('dashboard_medications.feedback.addError') });
     }
   };
 
+  // Handler to delete a medication schedule with a confirmation dialog.
   const onDeleteSchedule = async (uuid: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este plan de medicación?')) {
+    if (window.confirm(t('dashboard_medications.feedback.deleteConfirm'))) {
       try {
         await deleteSchedule(uuid);
-        setFeedback({ type: 'success', message: 'Plan de medicación eliminado.' });
+        setFeedback({ type: 'success', message: t('dashboard_medications.feedback.deleteSuccess') });
       } catch (err: any) {
-        setFeedback({ type: 'error', message: err.message || 'No se pudo eliminar el plan.' });
+        setFeedback({ type: 'error', message: err.message || t('dashboard_medications.feedback.deleteError') });
       }
     }
   };
 
   return (
     <Paper sx={{ p: 3 }}>
+      {/* Page Header */}
       <Typography variant="h4" component="h1" gutterBottom>
-        Mis Medicamentos
+        {t('dashboard_medications.title')}
       </Typography>
       
+      {/* Add New Medication Plan Form */}
       <Box component="form" onSubmit={handleSubmit(onAddSchedule)} noValidate sx={{ mb: 4 }}>
-        <Typography variant="h6">Añadir Nuevo Plan de Medicación</Typography>
+        <Typography variant="h6">{t('dashboard_medications.form.title')}</Typography>
         {feedback && <Alert severity={feedback.type} sx={{ my: 2 }}>{feedback.message}</Alert>}
         
         <Controller
@@ -103,7 +125,7 @@ export default function MedicationsPage() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Nombre del Medicamento"
+              label={t('dashboard_medications.form.medicationNameLabel')}
               fullWidth
               margin="normal"
               required
@@ -119,7 +141,7 @@ export default function MedicationsPage() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Dosis (ej. 1 pastilla, 10mg)"
+              label={t('dashboard_medications.form.dosageLabel')}
               fullWidth
               margin="normal"
               required
@@ -135,7 +157,7 @@ export default function MedicationsPage() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Frecuencia (ej. Diario, Cada 8 horas)"
+              label={t('dashboard_medications.form.frequencyLabel')}
               fullWidth
               margin="normal"
               required
@@ -151,7 +173,7 @@ export default function MedicationsPage() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Fecha de Inicio"
+              label={t('dashboard_medications.form.startDateLabel')}
               type="date"
               InputLabelProps={{ shrink: true }}
               fullWidth
@@ -169,7 +191,7 @@ export default function MedicationsPage() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Fecha de Fin (Opcional)"
+              label={t('dashboard_medications.form.endDateLabel')}
               type="date"
               InputLabelProps={{ shrink: true }}
               fullWidth
@@ -179,17 +201,18 @@ export default function MedicationsPage() {
         />
         
         <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
-          {isSubmitting ? 'Añadiendo...' : 'Añadir Plan'}
+          {isSubmitting ? t('dashboard_medications.form.submittingButton') : t('dashboard_medications.form.submitButton')}
         </Button>
       </Box>
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h6">Planes Registrados</Typography>
+      {/* List of Registered Medication Plans */}
+      <Typography variant="h6">{t('dashboard_medications.list.title')}</Typography>
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
       {!loading && !error && schedules.length === 0 && (
-        <Typography sx={{ mt: 2 }}>No tienes planes de medicación registrados.</Typography>
+        <Typography sx={{ mt: 2 }}>{t('dashboard_medications.list.noSchedules')}</Typography>
       )}
       <List>
         {schedules.map((schedule) => (
@@ -203,7 +226,7 @@ export default function MedicationsPage() {
           >
             <ListItemText 
               primary={`${schedule.medication_name} - ${schedule.dosage}`}
-              secondary={`Frecuencia: ${schedule.frequency_type} | Inicia: ${new Date(schedule.start_date).toLocaleDateString()}`}
+              secondary={`${t('dashboard_medications.list.frequencyLabel')}: ${schedule.frequency_type} | ${t('dashboard_medications.list.startsLabel')}: ${new Date(schedule.start_date).toLocaleDateString()}`}
             />
           </ListItem>
         ))}

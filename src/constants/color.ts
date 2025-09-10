@@ -1,7 +1,13 @@
 import { ThemeColors } from '@/interfaces/ThemeColors.interface';
 
 /**
- * Paleta de colores comunes para evitar la repetición.
+ * @file This file defines the color palettes for all supported themes in the application.
+ * It establishes a consistent and centralized color system to ensure brand consistency and easy theming.
+ */
+
+/**
+ * A collection of common, reusable colors to maintain consistency across different themes.
+ * This avoids the use of magic strings and makes it easy to update a core color in one place.
  */
 const commonColors = {
   white: '#FFFFFF',
@@ -13,7 +19,7 @@ const commonColors = {
   green: '#5cb85c',
   surfGreen: '#3f673f',
   surfOrange: '#f59e0b',
-  // Tonos de gris
+  // Grayscale palette for text, backgrounds, and borders.
   gray50: '#f9fafb',
   gray100: '#f3f4f6',
   gray200: '#e5e7eb',
@@ -25,7 +31,8 @@ const commonColors = {
 };
 
 /**
- * Definición del tema claro.
+ * Defines the color palette for the standard light theme.
+ * This serves as the base for other light-based themes.
  */
 const light: ThemeColors = {
   surface: commonColors.surfOrange,
@@ -50,14 +57,15 @@ const light: ThemeColors = {
 };
 
 /**
- * Definición del tema oscuro.
+ * Defines the color palette for the standard dark theme.
+ * It inherits from the light theme and overrides specific colors for a dark appearance.
  */
 const dark: ThemeColors = {
-  ...light, // Hereda propiedades para no redefinir todo
+  ...light, // Inherit from the light theme to avoid redefining all colors.
   primary: commonColors.blueGreen,
   secondary: commonColors.gray400,
-  background: commonColors.gray800, // Fondo gris semi-oscuro
-  card: commonColors.gray700,     // Tarjetas un poco más claras
+  background: commonColors.gray800,
+  card: commonColors.gray700,
   text: commonColors.gray50,
   secondaryText: commonColors.gray400,
   onSurfaceVariant: commonColors.gray400,
@@ -69,43 +77,64 @@ const dark: ThemeColors = {
   neutral: commonColors.gray800,
 };
 
-// --- TEMAS ESTACIONALES ---
+// --- SEASONAL THEMES ---
 
+/**
+ * Defines the color palette for the Spring theme.
+ * Inherits from the light theme with a fresh, green-dominant palette.
+ */
 const spring: ThemeColors = {
   ...light,
   primary: '#4CAF50',
   secondary: '#FFC107',
-  background: '#F1F8E9', // Fondo verde pastel
+  background: '#F1F8E9',
   text: '#2E7D32',
 };
 
+/**
+ * Defines the color palette for the Summer theme.
+ * Inherits from the light theme with a bright, blue-dominant palette.
+ */
 const summer: ThemeColors = {
   ...light,
   primary: '#2196F3',
   secondary: '#FFEB3B',
-  background: '#E3F2FD', // Fondo azul pastel
+  background: '#E3F2FD',
   text: '#1565C0',
 };
 
+/**
+ * Defines the color palette for the Autumn theme.
+ * Inherits from the light theme with a warm, orange-dominant palette.
+ */
 const autumn: ThemeColors = {
   ...light,
   primary: '#FF5722',
   secondary: '#795548',
-  background: '#FFF3E0', // Fondo naranja pastel
+  background: '#FFF3E0',
   text: '#BF360C',
   card: '#FEFBF8',
 };
 
+/**
+ * Defines the color palette for the Winter theme.
+ * Inherits from the dark theme with a cool, blue-gray palette.
+ */
 const winter: ThemeColors = {
-  ...dark, // Hereda la base del tema oscuro
+  ...dark, // Inherits from the dark theme for a darker base.
   primary: '#607D8B',
   secondary: '#00BCD4',
-  background: '#263238', // Fondo gris azulado oscuro
+  background: '#263238',
   card: '#37474F',
   text: '#CFD8DC',
   secondaryText: '#90A4AE',
 };
 
+/**
+ * A collection of all theme palettes, keyed by their respective mode names.
+ * This object is used by the ThemeRegistry to select the appropriate theme based on the mode
+ * stored in the `useThemeStore`.
+ */
 export const colors = {
   light,
   dark,

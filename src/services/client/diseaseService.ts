@@ -1,16 +1,26 @@
+'use client';
+
+/**
+ * @file This file provides a service layer for interacting with the disease-related API endpoints.
+ * It encapsulates all the logic for managing a user's diagnosed conditions (diseases).
+ */
+
 import api from '@/services/api';
 import {
   PatientDiseaseRead,
   DiseaseRead,
   PatientDiseaseCreate,
   PatientDiseaseUpdate,
-  DiseaseCreateFromCode, // Importar la nueva interfaz
+  DiseaseCreateFromCode,
 } from '@/interfaces/client/disease.interface';
 
+// The base URL for all disease-related API requests.
 const BASE_URL = '/diseases';
 
 /**
  * Fetches the list of diseases associated with the authenticated patient.
+ * Corresponds to the GET /diseases/ endpoint.
+ * @returns {Promise<PatientDiseaseRead[]>} A promise that resolves with an array of the user's diagnosed conditions.
  */
 const getMyDiseases = async (): Promise<PatientDiseaseRead[]> => {
   const response = await api.get<PatientDiseaseRead[]>(`${BASE_URL}/`);
@@ -19,6 +29,9 @@ const getMyDiseases = async (): Promise<PatientDiseaseRead[]> => {
 
 /**
  * Fetches the master list of all available diseases in the system.
+ * This is typically used for search and autocomplete features.
+ * Corresponds to the GET /diseases/master-list endpoint.
+ * @returns {Promise<DiseaseRead[]>} A promise that resolves with the master list of diseases.
  */
 const getDiseasesMasterList = async (): Promise<DiseaseRead[]> => {
   const response = await api.get<DiseaseRead[]>(`${BASE_URL}/master-list`);
@@ -26,7 +39,10 @@ const getDiseasesMasterList = async (): Promise<DiseaseRead[]> => {
 };
 
 /**
- * Associates a new disease with the patient's profile.
+ * Associates an existing disease from the master list with the patient's profile.
+ * Corresponds to the POST /diseases/ endpoint.
+ * @param {PatientDiseaseCreate} data - The data for the new disease association.
+ * @returns {Promise<PatientDiseaseRead>} A promise that resolves with the newly created patient-disease association.
  */
 const createDisease = async (
   data: PatientDiseaseCreate
@@ -36,9 +52,10 @@ const createDisease = async (
 };
 
 /**
- * Creates and associates a disease from a standardized medical code.
- * @param data - The data containing the code, name, and source.
- * @returns A promise that resolves with the newly created PatientDiseaseRead.
+ * Creates and associates a disease from a standardized medical code (e.g., SNOMED).
+ * Corresponds to the POST /diseases/from-code endpoint.
+ * @param {DiseaseCreateFromCode} data - The data containing the code, name, source, and diagnosis details.
+ * @returns {Promise<PatientDiseaseRead>} A promise that resolves with the newly created patient-disease association.
  */
 const createDiseaseFromCode = async (
   data: DiseaseCreateFromCode
@@ -48,7 +65,11 @@ const createDiseaseFromCode = async (
 };
 
 /**
- * Updates the details of an associated disease.
+ * Updates the details of a disease association (e.g., diagnosis date, severity).
+ * Corresponds to the PUT /diseases/{associationUuid} endpoint.
+ * @param {string} associationUuid - The unique identifier of the patient-disease association.
+ * @param {PatientDiseaseUpdate} data - An object containing the fields to update.
+ * @returns {Promise<PatientDiseaseRead>} A promise that resolves with the updated association data.
  */
 const updateDisease = async (
   associationUuid: string,
@@ -60,16 +81,22 @@ const updateDisease = async (
 
 /**
  * Deletes a disease association from the patient's profile.
+ * Corresponds to the DELETE /diseases/{associationUuid} endpoint.
+ * @param {string} associationUuid - The unique identifier of the association to delete.
+ * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteDisease = async (associationUuid: string): Promise<void> => {
   await api.delete(`${BASE_URL}/${associationUuid}`);
 };
 
+/**
+ * An object that groups all disease-related service functions for easy import and usage.
+ */
 export const diseaseService = {
   getMyDiseases,
   getDiseasesMasterList,
   createDisease,
-  createDiseaseFromCode, // Añadir la nueva función al objeto exportado
+  createDiseaseFromCode,
   updateDisease,
   deleteDisease,
 };

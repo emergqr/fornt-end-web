@@ -1,53 +1,77 @@
+'use client';
+
+/**
+ * @file This file defines the SnackbarContext and SnackbarProvider for displaying global notifications (snackbars).
+ * It allows any component to easily trigger a feedback message (e.g., for success or error).
+ * NOTE: This file has been refactored to use standard Material-UI components instead of react-native-paper.
+ */
+
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
-import { Snackbar, useTheme } from 'react-native-paper';
+import Snackbar from '@mui/material/Snackbar';
+import Alert, { AlertColor } from '@mui/material/Alert';
 
-type SnackbarType = 'success' | 'error' | 'info';
+/**
+ * Defines the severity levels for the snackbar, corresponding to Material-UI Alert colors.
+ */
+type SnackbarSeverity = AlertColor;
 
+/**
+ * Defines the shape of the context value that will be exposed to consumers.
+ */
 interface SnackbarContextType {
-    showSnackbar: (message: string, type?: SnackbarType, duration?: number) => void;
+    /**
+     * Function to trigger the display of a snackbar notification.
+     * @param {string} message - The text to be displayed in the snackbar.
+     * @param {SnackbarSeverity} [severity='info'] - The type of the snackbar, which affects its color and icon.
+     */
+    showSnackbar: (message: string, severity?: SnackbarSeverity) => void;
 }
 
+// Create a React Context to hold the snackbar functionality.
 export const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
 
 interface SnackbarProviderProps {
     children: ReactNode;
 }
 
+/**
+ * The provider component that wraps the application to provide global snackbar functionality.
+ * It manages the state of the snackbar and renders it when open.
+ * @param {SnackbarProviderProps} props - The component props, which include the children to be rendered.
+ * @returns {React.ReactElement} The provider component.
+ */
 export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
-    const theme = useTheme();
-    const [visible, setVisible] = useState(false);
+    // State management for the snackbar's properties.
+    const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [duration, setDuration] = useState(Snackbar.DURATION_SHORT);
-    const [type, setType] = useState<SnackbarType>('info');
+    const [severity, setSeverity] = useState<SnackbarSeverity>('info');
 
-    const onDismissSnackBar = () => setVisible(false);
-
-    const showSnackbar = useCallback((msg: string, snackbarType: SnackbarType = 'info', dur?: number) => {
+    // The function exposed to the rest of the app to show a snackbar.
+    // `useCallback` is used to memoize the function, preventing unnecessary re-renders of consumer components.
+    const showSnackbar = useCallback((msg: string, sev: SnackbarSeverity = 'info') => {
         setMessage(msg);
-        setType(snackbarType);
-        setDuration(dur || Snackbar.DURATION_SHORT);
-        setVisible(true);
+        setSeverity(sev);
+        setOpen(true);
     }, []);
 
-    const getBackgroundColor = () => {
-        // Puedes personalizar estos colores en tu tema si lo deseas
-        switch (type) {
-            case 'success':
-                return '#4CAF50'; // Un verde estándar para éxito
-            case 'error':
-                return theme.colors.error;
-            case 'info':
-            default:
-                // Color por defecto del Snackbar de react-native-paper
-                return theme.colors.onSurface;
+    // Callback to hide the snackbar.
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        // Prevent closing the snackbar on a click away, making it more intentional.
+        if (reason === 'clickaway') {
+            return;
         }
+        setOpen(false);
     };
 
     return (
         <SnackbarContext.Provider value={{ showSnackbar }}>
             {children}
-            <Snackbar visible={visible} onDismiss={onDismissSnackBar} duration={duration} style={{ backgroundColor: getBackgroundColor() }}>
-                {message}
+            {/* The Snackbar component from Material-UI, controlled by the provider's state. */}
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                {/* The Alert component provides the styling (color, icon) for the message. */}
+                <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+                    {message}
+                </Alert>
             </Snackbar>
         </SnackbarContext.Provider>
     );
