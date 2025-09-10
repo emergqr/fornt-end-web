@@ -79,7 +79,7 @@ function DashboardNav() {
     { key: 'dashboard_medications', path: '/dashboard/medications', icon: <VaccinesIcon sx={{ color: '#512da8' }} /> },
     { key: 'dashboard_history', path: '/dashboard/medical-history', icon: <ArticleIcon sx={{ color: '#757575' }} /> },
     // --- Phase 4 Modules (Frontend Skeleton Only) ---
-    { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} />, disabled: true },
+    { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} /> },
     { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} />, disabled: true },
     { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} />, disabled: true },
     { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} />, disabled: true },
