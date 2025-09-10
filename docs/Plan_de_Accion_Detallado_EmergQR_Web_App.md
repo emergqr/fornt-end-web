@@ -85,6 +85,20 @@
 
 ---
 
+## ✅ **Fase 5: Calidad de Proyecto y Mantenibilidad (Completado)**
+
+### ⭐ **Tareas Completadas**
+
+- [x] **Implementación de Pruebas Unitarias y de Integración**
+  - **Descripción**: Se ha configurado el entorno de pruebas con **Jest** y **React Testing Library**. Se ha añadido un script `test` y una prueba de ejemplo para validar la configuración.
+  - **Valor**: Aumenta la confianza en los despliegues, facilita la refactorización y garantiza el correcto funcionamiento de la lógica de negocio.
+
+- [x] **Generación de Documentación Automática**
+  - **Descripción**: Se ha implementado **TypeDoc** para generar un sitio web de documentación HTML a partir de los comentarios del código. Se ha configurado un script (`docs:generate`) en `package.json` para automatizar este proceso.
+  - **Valor**: Proporciona una documentación técnica siempre actualizada, accesible y fácil de navegar, crucial para la escalabilidad del proyecto.
+
+---
+
 ## 📌 Notas Adicionales
 
 - **Próxima Tarea**: El siguiente gran desafío es el desarrollo de la **aplicación móvil**.
