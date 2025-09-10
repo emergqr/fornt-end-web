@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -31,17 +32,18 @@ import { useVitalSignStore } from '@/store/vital-sign/vital-sign.store';
 import { VitalSignCreate, VitalSignRead } from '@/interfaces/client/vital-sign.interface';
 import VitalSignsChart from './VitalSignsChart';
 
-const vitalSignSchema = z.object({
-  type: z.string().min(1, { message: 'El tipo es requerido' }),
+const getVitalSignSchema = (t: (key: string) => string) => z.object({
+  type: z.string().min(1, { message: t('validation.vitalTypeRequired') }),
   value_numeric: z.coerce.number().optional(),
   value_secondary: z.coerce.number().optional(),
   unit: z.string().optional(),
   notes: z.string().optional(),
 });
 
-type VitalSignFormInputs = z.infer<typeof vitalSignSchema>;
+type VitalSignFormInputs = z.infer<ReturnType<typeof getVitalSignSchema>>;
 
 export default function VitalSignsPage() {
+  const { t } = useTranslation();
   const {
     vitalSigns,
     types,
@@ -55,6 +57,8 @@ export default function VitalSignsPage() {
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isFormVisible, setIsFormVisible] = React.useState(false);
+
+  const vitalSignSchema = getVitalSignSchema(t);
 
   const {
     control,
@@ -88,21 +92,21 @@ export default function VitalSignsPage() {
     setFeedback(null);
     try {
       await addVitalSign(data as VitalSignCreate);
-      setFeedback({ type: 'success', message: '¡Signo vital añadido con éxito!' });
+      setFeedback({ type: 'success', message: t('dashboard_vitals.feedback.addSuccess') });
       reset();
       setIsFormVisible(false);
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'No se pudo añadir el signo vital.' });
+      setFeedback({ type: 'error', message: err.message || t('dashboard_vitals.feedback.addError') });
     }
   };
 
   const onDeleteVitalSign = async (uuid: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este registro?')) {
+    if (window.confirm(t('dashboard_vitals.feedback.deleteConfirm'))) {
       try {
         await removeVitalSign(uuid);
-        setFeedback({ type: 'success', message: 'Registro eliminado.' });
+        setFeedback({ type: 'success', message: t('dashboard_vitals.feedback.deleteSuccess') });
       } catch (err: any) {
-        setFeedback({ type: 'error', message: err.message || 'No se pudo eliminar el registro.' });
+        setFeedback({ type: 'error', message: err.message || t('dashboard_vitals.feedback.deleteError') });
       }
     }
   };
@@ -110,23 +114,23 @@ export default function VitalSignsPage() {
   return (
     <Paper sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4" component="h1">Mis Signos Vitales</Typography>
+        <Typography variant="h4" component="h1">{t('dashboard_vitals.title')}</Typography>
         <Button variant="contained" startIcon={isFormVisible ? undefined : <AddIcon />} onClick={() => setIsFormVisible(!isFormVisible)} color={isFormVisible ? 'secondary' : 'primary'}>
-          {isFormVisible ? 'Cancelar' : 'Añadir Registro'}
+          {isFormVisible ? t('common.cancel') : t('dashboard_vitals.addButton')}
         </Button>
       </Box>
 
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onAddVitalSign)} noValidate>
-            <Typography variant="h6" gutterBottom>Añadir Nuevo Registro</Typography>
+            <Typography variant="h6" gutterBottom>{t('dashboard_vitals.form.title')}</Typography>
             <Controller
               name="type"
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth margin="normal" required error={!!errors.type}>
-                  <InputLabel id="type-label">Tipo de Signo Vital</InputLabel>
-                  <Select {...field} labelId="type-label" label="Tipo de Signo Vital">
+                  <InputLabel id="type-label">{t('dashboard_vitals.form.typeLabel')}</InputLabel>
+                  <Select {...field} labelId="type-label" label={t('dashboard_vitals.form.typeLabel')}>
                     {types.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
                   </Select>
                 </FormControl>
@@ -136,32 +140,32 @@ export default function VitalSignsPage() {
               name="value_numeric"
               control={control}
               render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Valor Principal" type="number" fullWidth margin="normal" />
+                <TextField {...field} value={field.value || ''} label={t('dashboard_vitals.form.primaryValueLabel')} type="number" fullWidth margin="normal" />
               )}
             />
             <Controller
               name="value_secondary"
               control={control}
               render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Valor Secundario (ej. Diastólica)" type="number" fullWidth margin="normal" />
+                <TextField {...field} value={field.value || ''} label={t('dashboard_vitals.form.secondaryValueLabel')} type="number" fullWidth margin="normal" />
               )}
             />
             <Controller
               name="unit"
               control={control}
               render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Unidad (ej. mmHg, kg, °C)" fullWidth margin="normal" />
+                <TextField {...field} value={field.value || ''} label={t('dashboard_vitals.form.unitLabel')} fullWidth margin="normal" />
               )}
             />
             <Controller
               name="notes"
               control={control}
               render={({ field }) => (
-                <TextField {...field} value={field.value || ''} label="Notas (Opcional)" fullWidth margin="normal" multiline rows={2} />
+                <TextField {...field} value={field.value || ''} label={t('dashboard_vitals.form.notesLabel')} fullWidth margin="normal" multiline rows={2} />
               )}
             />
             <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>
-              {isSubmitting ? 'Añadiendo...' : 'Guardar Registro'}
+              {isSubmitting ? t('dashboard_vitals.form.submittingButton') : t('dashboard_vitals.form.submitButton')}
             </Button>
           </Box>
         </Paper>
@@ -174,7 +178,7 @@ export default function VitalSignsPage() {
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
       {!loading && !error && Object.keys(groupedSigns).length === 0 && (
-        <Typography sx={{ mt: 2, textAlign: 'center' }}>No tienes signos vitales registrados.</Typography>
+        <Typography sx={{ mt: 2, textAlign: 'center' }}>{t('dashboard_vitals.list.noVitals')}</Typography>
       )}
 
       {Object.entries(groupedSigns).map(([type, signs]) => (
@@ -184,10 +188,10 @@ export default function VitalSignsPage() {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Valor</TableCell>
-                  <TableCell>Notas</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell>{t('dashboard_vitals.list.tableDate')}</TableCell>
+                  <TableCell>{t('dashboard_vitals.list.tableValue')}</TableCell>
+                  <TableCell>{t('dashboard_vitals.list.tableNotes')}</TableCell>
+                  <TableCell align="right">{t('dashboard_vitals.list.tableActions')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

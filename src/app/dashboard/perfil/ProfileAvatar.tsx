@@ -8,11 +8,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import EditIcon from '@mui/icons-material/Edit';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import { useAuthStore } from '@/store/auth/auth.store';
 import { profileService } from '@/services/profileService';
 
 export default function ProfileAvatar() {
+  const { t } = useTranslation();
   const { user, setUser } = useAuthStore();
   const [isUploading, setIsUploading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -33,7 +35,7 @@ export default function ProfileAvatar() {
       const updatedUser = await profileService.uploadAvatar(file);
       setUser(updatedUser); // Update the global state with the new user data
     } catch (err: any) {
-      setError(err.message || 'Error al subir la imagen.');
+      setError(err.message || t('dashboard_profile.avatar.uploadError'));
     } finally {
       setIsUploading(false);
     }

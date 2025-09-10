@@ -9,11 +9,13 @@ import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 import DownloadIcon from '@mui/icons-material/Download';
-import PrintIcon from '@mui/icons-material/Print'; // <-- Import Print Icon
+import PrintIcon from '@mui/icons-material/Print';
+import { useTranslation } from 'react-i18next';
 
 import { useQRStore } from '@/store/qr/qr.store';
 
 export default function QRCodePage() {
+  const { t } = useTranslation();
   const {
     qrData,
     isLoading,
@@ -35,7 +37,7 @@ export default function QRCodePage() {
         .replace('image/png', 'image/octet-stream');
       let downloadLink = document.createElement('a');
       downloadLink.href = pngUrl;
-      downloadLink.download = 'EmergQR-Code.png';
+      downloadLink.download = t('dashboard_qr.downloadFilename');
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -67,11 +69,11 @@ export default function QRCodePage() {
       `}</style>
 
       <Typography variant="h4" component="h1" gutterBottom>
-        Mi Código QR de Emergencia
+        {t('dashboard_qr.title')}
       </Typography>
       
       <Typography variant="body1" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
-        Muestra este código al personal de emergencias para que accedan a tu información médica al instante.
+        {t('dashboard_qr.subtitle')}
       </Typography>
 
       {isLoading && <CircularProgress sx={{ my: 4 }} />}
@@ -98,7 +100,7 @@ export default function QRCodePage() {
           onClick={handleDownload}
           disabled={!qrData || isLoading}
         >
-          Descargar QR
+          {t('dashboard_qr.downloadButton')}
         </Button>
         <Button 
           variant="outlined" 
@@ -106,7 +108,7 @@ export default function QRCodePage() {
           onClick={handlePrint}
           disabled={!qrData || isLoading}
         >
-          Imprimir
+          {t('dashboard_qr.printButton')}
         </Button>
       </Box>
     </Paper>

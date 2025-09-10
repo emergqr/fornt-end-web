@@ -5,21 +5,25 @@ import {
     MedicalEventUpdate,
 } from '@/interfaces/client/medical-history.interface';
 
-const MEDICAL_HISTORY_BASE_URL = '/medical-history/events';
+// CORREGIDO: Se eliminó el prefijo duplicado.
+const MEDICAL_HISTORY_API_PREFIX = '/medical-history';
 
 /**
- * NOTE: La funcionalidad de carga de archivos no está definida en el openapi.json actual.
- * Las funciones de este servicio manejan la creación/actualización de los datos del evento,
- * pero la lógica para adjuntar documentos deberá ser añadida cuando el API lo soporte.
- * La recomendación es un endpoint `multipart/form-data`.
+ * Obtiene la lista de tipos de eventos médicos permitidos.
+ * Corresponde a: GET /api/v1/medical-history/event-types
  */
+export const getMedicalEventTypes = async (): Promise<string[]> => {
+    const response = await api.get<string[]>(`${MEDICAL_HISTORY_API_PREFIX}/event-types`);
+    return response.data;
+};
+
 
 /**
  * Obtiene la lista cronológica de todos los eventos médicos del cliente.
  * Corresponde a: GET /api/v1/medical-history/events
  */
 export const getMedicalHistory = async (): Promise<MedicalEventRead[]> => {
-    const response = await api.get<MedicalEventRead[]>(MEDICAL_HISTORY_BASE_URL);
+    const response = await api.get<MedicalEventRead[]>(`${MEDICAL_HISTORY_API_PREFIX}/events`);
     return response.data;
 };
 
@@ -29,7 +33,7 @@ export const getMedicalHistory = async (): Promise<MedicalEventRead[]> => {
  * @param eventUuid - El UUID del evento médico.
  */
 export const getMedicalEvent = async (eventUuid: string): Promise<MedicalEventRead> => {
-    const response = await api.get<MedicalEventRead>(`${MEDICAL_HISTORY_BASE_URL}/${eventUuid}`);
+    const response = await api.get<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}/events/${eventUuid}`);
     return response.data;
 };
 
@@ -39,7 +43,7 @@ export const getMedicalEvent = async (eventUuid: string): Promise<MedicalEventRe
  * @param data - Los datos para el nuevo evento.
  */
 export const createMedicalEvent = async (data: MedicalEventCreate): Promise<MedicalEventRead> => {
-    const response = await api.post<MedicalEventRead>(MEDICAL_HISTORY_BASE_URL, data);
+    const response = await api.post<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}/events`, data);
     return response.data;
 };
 
@@ -50,7 +54,7 @@ export const createMedicalEvent = async (data: MedicalEventCreate): Promise<Medi
  * @param data - Los campos a actualizar.
  */
 export const updateMedicalEvent = async (eventUuid: string, data: MedicalEventUpdate): Promise<MedicalEventRead> => {
-    const response = await api.put<MedicalEventRead>(`${MEDICAL_HISTORY_BASE_URL}/${eventUuid}`, data);
+    const response = await api.put<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}/events/${eventUuid}`, data);
     return response.data;
 };
 
@@ -60,5 +64,5 @@ export const updateMedicalEvent = async (eventUuid: string, data: MedicalEventUp
  * @param eventUuid - El UUID del evento a eliminar.
  */
 export const deleteMedicalEvent = async (eventUuid: string): Promise<void> => {
-    await api.delete(`${MEDICAL_HISTORY_BASE_URL}/${eventUuid}`);
+    await api.delete(`${MEDICAL_HISTORY_API_PREFIX}/events/${eventUuid}`);
 };

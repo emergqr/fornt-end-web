@@ -7,9 +7,8 @@
  * Coincide con el schema EmergDataResponse.
  */
 export interface EmergencyDataRead {
-  blood_type?: string | null;
+  blood?: string | null; // Corregido de blood_type a blood
   social_security_health_system?: string | null;
-  // Añadimos otros campos que puedan venir en el futuro
   [key: string]: any;
 }
 
