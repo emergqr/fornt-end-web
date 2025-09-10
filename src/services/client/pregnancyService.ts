@@ -1,70 +1,61 @@
-'use client';
-
 /**
- * @file This file provides a mock service layer for the Pregnancy Tracking module.
- * NOTE: This is a placeholder service. The functions are defined but will not work
- * until the corresponding backend endpoints are implemented.
+ * @file This file provides a service layer for interacting with the pregnancy tracking-related API endpoints.
  */
 
+import api from '@/services/api';
 import {
   PregnancyRead,
   PregnancyCreate,
   PregnancyUpdate,
 } from '@/interfaces/client/pregnancy.interface';
 
-// The base URL for all pregnancy-related API requests.
-const BASE_URL = '/pregnancies';
+const BASE_URL = '/pregnancies/pregnancies';
 
 /**
- * Simulates fetching the list of pregnancy records for the authenticated user.
- * @returns {Promise<PregnancyRead[]>} A promise that resolves with an empty array.
+ * Fetches the list of pregnancy records for the authenticated user.
+ * @returns {Promise<PregnancyRead[]>} A promise that resolves with an array of the user's pregnancy records.
  */
-const getMyPregnancies = async (): Promise<PregnancyRead[]> => {
-  console.warn('getMyPregnancies service is a placeholder and not implemented.');
-  return Promise.resolve([]); // Return empty array for now
+const getMyPregnancyRecords = async (): Promise<PregnancyRead[]> => {
+  const response = await api.get<PregnancyRead[]>(`${BASE_URL}/`);
+  return response.data;
 };
 
 /**
- * Simulates creating a new pregnancy record.
- * @param {PregnancyCreate} data - The data for the new record.
- * @returns {Promise<PregnancyRead>} A promise that resolves with the mock created record.
+ * Creates a new pregnancy record for the authenticated user.
+ * @param {PregnancyCreate} data - The data for the new pregnancy record.
+ * @returns {Promise<PregnancyRead>} A promise that resolves with the newly created pregnancy record data.
  */
-const createPregnancy = async (data: PregnancyCreate): Promise<PregnancyRead> => {
-  console.warn('createPregnancy service is a placeholder and not implemented.');
-  // Return a mock response for now
-  return Promise.resolve({ 
-    uuid: `mock-uuid-${Date.now()}`,
-    ...data 
-  } as PregnancyRead);
+const createPregnancyRecord = async (data: PregnancyCreate): Promise<PregnancyRead> => {
+  const response = await api.post<PregnancyRead>(`${BASE_URL}/`, data);
+  return response.data;
 };
 
 /**
- * Simulates updating an existing pregnancy record.
- * @param {string} uuid - The UUID of the record to update.
- * @param {PregnancyUpdate} data - The data to update.
- * @returns {Promise<PregnancyRead>} A promise that resolves with the mock updated record.
+ * Updates an existing pregnancy record by its UUID.
+ * @param {string} uuid - The unique identifier of the record to update.
+ * @param {PregnancyUpdate} data - An object containing the record fields to update.
+ * @returns {Promise<PregnancyRead>} A promise that resolves with the updated record data.
  */
-const updatePregnancy = async (uuid: string, data: PregnancyUpdate): Promise<PregnancyRead> => {
-  console.warn(`updatePregnancy for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve({ uuid, due_date: '', last_period_date: '', ...data } as PregnancyRead);
+const updatePregnancyRecord = async (
+  uuid: string,
+  data: PregnancyUpdate
+): Promise<PregnancyRead> => {
+  const response = await api.put<PregnancyRead>(`${BASE_URL}/${uuid}`, data);
+  return response.data;
 };
 
 /**
- * Simulates deleting a pregnancy record.
- * @param {string} uuid - The UUID of the record to delete.
- * @returns {Promise<void>}
+ * Deletes a pregnancy record by its UUID.
+ * @param {string} uuid - The unique identifier of the record to delete.
+ * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
-const deletePregnancy = async (uuid: string): Promise<void> => {
-  console.warn(`deletePregnancy for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve();
+const deletePregnancyRecord = async (uuid: string): Promise<void> => {
+  await api.delete(`${BASE_URL}/${uuid}`);
 };
 
-/**
- * An object that groups all pregnancy-related service functions.
- */
 export const pregnancyService = {
-  getMyPregnancies,
-  createPregnancy,
-  updatePregnancy,
-  deletePregnancy,
+  getMyPregnancyRecords,
+  createPregnancyRecord,
+  updatePregnancyRecord,
+  deletePregnancyRecord,
 };

@@ -83,7 +83,7 @@ function DashboardNav() {
     { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} /> },
     { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} /> },
     { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} /> },
-    { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} />, disabled: true },
+    { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} /> },
   ];
 
   return (
