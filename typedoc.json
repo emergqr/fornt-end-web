@@ -1,0 +1,13 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src"],
+  "out": "./docs/tech",
+  "exclude": [
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "**/node_modules/**"
+  ],
+  "name": "EmergQR Web App - Technical Documentation",
+  "readme": "none",
+  "theme": "default"
+}
