@@ -1,16 +1,80 @@
 {
   "locale_code": "es",
+  "common": {
+    "saving": "Guardando...",
+    "saveChanges": "Guardar Cambios",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
+  },
+  "validation": {
+    "nameRequired": "El nombre es requerido",
+    "emailInvalid": "Debe ser un email válido",
+    "phoneRequired": "El teléfono es requerido",
+    "relationshipRequired": "La relación es requerida",
+    "streetRequired": "La calle es requerida",
+    "cityRequired": "La ciudad es requerida",
+    "stateRequired": "El estado o provincia es requerido",
+    "postalCodeRequired": "El código postal es requerido",
+    "countryRequired": "El país es requerido",
+    "currentPasswordRequired": "La contraseña actual es requerida",
+    "newPasswordMinLength": "La nueva contraseña debe tener al menos 6 caracteres",
+    "repeatNewPasswordRequired": "Debes repetir la nueva contraseña",
+    "passwordsDoNotMatch": "Las nuevas contraseñas no coinciden",
+    "allergenRequired": "Debe seleccionar una alergia de la lista.",
+    "diseaseRequired": "Debe seleccionar una enfermedad de la lista.",
+    "diagnosisDateRequired": "La fecha de diagnóstico es requerida.",
+    "vitalTypeRequired": "El tipo es requerido.",
+    "medicationNameRequired": "El nombre del medicamento es requerido",
+    "dosageRequired": "La dosis es requerida",
+    "frequencyRequired": "La frecuencia es requerida",
+    "startDateRequired": "La fecha de inicio es requerida",
+    "titleRequired": "El título es requerido",
+    "eventTypeRequired": "El tipo de evento es requerido",
+    "eventDateRequired": "La fecha es requerida",
+    "loginEmailInvalid": "Por favor, introduce un email válido",
+    "loginPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "registerNameMinLength": "El nombre debe tener al menos 2 caracteres",
+    "registerPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "registerPasswordRepeatMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "registerPasswordsDoNotMatch": "Las contraseñas no coinciden",
+    "addictionNameRequired": "El nombre de la adicción es requerido.",
+    "addictionStartDateRequired": "La fecha de inicio es requerida.",
+    "infectiousDiseaseNameRequired": "El nombre de la enfermedad es requerido.",
+    "infectiousDiseaseDiagnosisDateRequired": "La fecha de diagnóstico es requerida."
+  },
   "navigation": {
     "aboutUs": "Quiénes Somos",
     "services": "Servicios",
     "dashboard_summary": "Resumen",
+    "dashboard_timeline": "Línea de Tiempo",
     "dashboard_qr": "Mi Código QR",
     "dashboard_profile": "Mi Perfil",
     "dashboard_allergies": "Mis Alergias",
     "dashboard_diseases": "Condiciones Médicas",
+    "dashboard_addictions": "Adicciones",
+    "dashboard_infectious_diseases": "Enfermedades Infecciosas",
+    "dashboard_psychiatric": "Condiciones Psiquiátricas",
+    "dashboard_menstrual_cycle": "Ciclo Menstrual",
+    "dashboard_pregnancy": "Seguimiento de Embarazo",
     "dashboard_vitals": "Signos Vitales",
     "dashboard_medications": "Medicamentos",
-    "dashboard_history": "Historial Médico"
+    "dashboard_history": "Historial Médico",
+    "logoAlt": "Logo de EmergQR"
+  },
+  "themes": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "spring": "Primavera",
+    "summer": "Verano",
+    "autumn": "Otoño",
+    "winter": "Invierno"
+  },
+  "languages": {
+    "es": "Español",
+    "en": "Inglés",
+    "fr": "Francés",
+    "pt": "Portugués",
+    "nl": "Holandés"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -48,8 +112,382 @@
   "login": {
     "title": "Iniciar Sesión"
   },
+  "auth_login": {
+    "title": "Iniciar Sesión",
+    "emailLabel": "Correo Electrónico",
+    "passwordLabel": "Contraseña",
+    "submitButton": "Iniciar Sesión",
+    "submittingButton": "Iniciando sesión...",
+    "forgotPasswordLink": "¿Has olvidado tu contraseña?",
+    "noAccountLink": "¿No tienes una cuenta? Regístrate",
+    "defaultError": "Credenciales incorrectas. Por favor, inténtalo de nuevo."
+  },
+  "auth_register": {
+    "title": "Crear una cuenta",
+    "nameLabel": "Nombre Completo",
+    "emailLabel": "Correo Electrónico",
+    "passwordLabel": "Contraseña",
+    "passwordRepeatLabel": "Repetir Contraseña",
+    "submitButton": "Crear Cuenta",
+    "submittingButton": "Creando cuenta...",
+    "hasAccountLink": "¿Ya tienes una cuenta? Inicia sesión",
+    "defaultError": "No se pudo completar el registro. Por favor, inténtalo de nuevo."
+  },
+  "auth_forgot_password": {
+    "title": "Restablecer Contraseña",
+    "subtitle": "Introduce tu correo electrónico y te enviaremos un enlace para recuperar tu cuenta.",
+    "emailLabel": "Correo Electrónico",
+    "submitButton": "Enviar Enlace de Recuperación",
+    "submittingButton": "Enviando...",
+    "backToLoginLink": "Volver a Iniciar Sesión",
+    "successMessage": "Si existe una cuenta con ese correo, se han enviado las instrucciones para restablecer la contraseña."
+  },
+  "public_profile": {
+    "title": "Perfil de Emergencia",
+    "fetchError": "No se pudo encontrar el perfil.",
+    "notAvailable": "Perfil no disponible.",
+    "nameLabel": "Nombre",
+    "ageLabel": "Edad",
+    "bloodTypeLabel": "Tipo de Sangre",
+    "healthInsuranceLabel": "Seguro Médico",
+    "allergiesTitle": "Alergias",
+    "severityLabel": "Severidad",
+    "noAllergies": "Ninguna registrada.",
+    "conditionsTitle": "Condiciones Médicas",
+    "diagnosedLabel": "Diagnosticado",
+    "noConditions": "Ninguna registrada.",
+    "contactsTitle": "Contactos de Emergencia",
+    "noContacts": "Ninguno registrado."
+  },
   "dashboard": {
     "loggedInAs": "Hola, {{name}}",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "defaultUser": "Usuario"
+  },
+  "dashboard_summary": {
+    "greeting": "¡Hola, {{name}}!",
+    "subtitle": "Aquí tienes un resumen de tu perfil de salud.",
+    "dateFilterTitle": "Filtrar por Fecha",
+    "dateFilterFrom": "Desde",
+    "dateFilterTo": "Hasta",
+    "vitalsChartTitle": "Registros Vitales",
+    "chartNoData": "No hay datos en el rango seleccionado.",
+    "medsChartTitle": "Medicamentos Activos por Día",
+    "widgetMedsTitle": "Medicamentos Activos",
+    "widgetAllergiesTitle": "Alergias",
+    "widgetDiseasesTitle": "Condiciones Médicas"
+  },
+  "dashboard_qr": {
+    "title": "Mi Código QR de Emergencia",
+    "subtitle": "Muestra este código al personal de emergencias para que accedan a tu información médica al instante.",
+    "downloadFilename": "EmergQR-Codigo.png",
+    "downloadButton": "Descargar QR",
+    "printButton": "Imprimir"
+  },
+  "dashboard_profile": {
+    "title": "Mi Perfil",
+    "updateSuccess": "¡Perfil actualizado con éxito!",
+    "updateError": "No se pudo actualizar el perfil.",
+    "form": {
+      "nameLabel": "Nombre Completo",
+      "emailLabel": "Correo Electrónico",
+      "phoneLabel": "Teléfono",
+      "birthDateLabel": "Fecha de Nacimiento",
+      "sexLabel": "Sexo",
+      "occupationLabel": "Ocupación"
+    },
+    "avatar": {
+      "uploadError": "Error al subir la imagen."
+    },
+    "emergency_data": {
+      "title": "Datos de Emergencia",
+      "updateSuccess": "¡Datos de emergencia actualizados con éxito!",
+      "updateError": "No se pudo guardar los datos.",
+      "form": {
+        "bloodTypeLabel": "Grupo Sanguíneo (ej. A+)",
+        "healthSystemLabel": "Sistema de Salud / Nº Póliza",
+        "saveButton": "Guardar Datos"
+      },
+      "display": {
+        "bloodTypeLabel": "Grupo Sanguíneo:",
+        "healthSystemLabel": "Sistema de Salud:",
+        "notSpecified": "No especificado"
+      }
+    },
+    "address": {
+      "title": "Mi Dirección",
+      "updateSuccess": "¡Dirección actualizada con éxito!",
+      "addSuccess": "¡Dirección guardada con éxito!",
+      "updateError": "No se pudo guardar la dirección.",
+      "noAddress": "No has añadido una dirección todavía. Haz clic en el botón de editar para añadir una.",
+      "form": {
+        "streetLabel": "Calle y Número",
+        "cityLabel": "Ciudad",
+        "stateLabel": "Estado / Provincia",
+        "postalCodeLabel": "Código Postal",
+        "countryLabel": "País",
+        "saveButton": "Guardar Dirección"
+      },
+      "deleteConfirmTitle": "¿Eliminar Dirección?",
+      "deleteConfirmText": "¿Estás seguro de que quieres eliminar esta dirección? Esta acción no se puede deshacer.",
+      "deleteSuccess": "¡Dirección eliminada con éxito!",
+      "deleteError": "No se pudo eliminar la dirección."
+    },
+    "change_password": {
+      "title": "Cambiar Contraseña",
+      "successMessage": "¡Contraseña cambiada con éxito!",
+      "form": {
+        "currentPasswordLabel": "Contraseña Actual",
+        "newPasswordLabel": "Nueva Contraseña",
+        "repeatNewPasswordLabel": "Repetir Nueva Contraseña",
+        "submitButton": "Cambiar Contraseña",
+        "submittingButton": "Cambiando..."
+      }
+    },
+    "delete_account": {
+      "title": "Zona de Peligro",
+      "warningText": "Esta acción es irreversible. Al eliminar tu cuenta, todos tus datos médicos, perfil y contactos serán eliminados permanentemente. No podrás recuperar tu cuenta.",
+      "deleteButton": "Eliminar Mi Cuenta",
+      "deletingButton": "Eliminando...",
+      "dialogTitle": "¿Estás absolutamente seguro?",
+      "dialogContent": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y todos los datos asociados. ¿Deseas continuar?",
+      "dialogConfirmButton": "Sí, eliminar mi cuenta"
+    }
+  },
+  "dashboard_allergies": {
+    "title": "Mis Alergias",
+    "addButton": "Añadir Alergia",
+    "form": {
+      "title": "Añadir Nueva Alergia",
+      "searchLabel": "Buscar Alérgeno (ej. Penicilina)",
+      "searchHelperText": "Empieza a escribir para buscar en la base de datos médica.",
+      "reactionLabel": "Tipo de Reacción (Opcional)",
+      "severityLabel": "Severidad (Opcional)",
+      "submitButton": "Añadir Alergia"
+    },
+    "list": {
+      "title": "Alergias Registradas",
+      "noAllergies": "No tienes alergias registradas.",
+      "reactionLabel": "Reacción",
+      "severityLabel": "Severidad",
+      "notAvailable": "N/D"
+    },
+    "feedback": {
+      "addSuccess": "¡Alergia añadida con éxito!",
+      "addError": "No se pudo añadir la alergia.",
+      "updateSuccess": "¡Alergia actualizada con éxito!",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta alergia?",
+      "deleteSuccess": "Alergia eliminada.",
+      "deleteError": "No se pudo eliminar la alergia.",
+      "editNotAvailable": "La edición de una alergia existente se realizará en una futura versión."
+    }
+  },
+  "dashboard_diseases": {
+    "title": "Mis Condiciones Médicas",
+    "addButton": "Añadir Condición",
+    "form": {
+      "title": "Añadir Nueva Condición",
+      "searchLabel": "Buscar Enfermedad (ej. Hipertensión)",
+      "searchHelperText": "Empieza a escribir para buscar en la base de datos médica.",
+      "diagnosisDateLabel": "Fecha de Diagnóstico",
+      "severityLabel": "Severidad (Opcional)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Añadir Condición"
+    },
+    "list": {
+      "title": "Condiciones Registradas",
+      "noConditions": "No tienes condiciones médicas registradas.",
+      "diagnosedLabel": "Diagnosticado",
+      "severityLabel": "Severidad",
+      "notAvailable": "N/D"
+    },
+    "feedback": {
+      "addSuccess": "¡Condición añadida con éxito!",
+      "addError": "No se pudo añadir la condición.",
+      "updateSuccess": "¡Condición actualizada con éxito!",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta condición?",
+      "deleteSuccess": "Condición eliminada.",
+      "deleteError": "No se pudo eliminar la condición.",
+      "editNotAvailable": "La edición de una condición existente se realizará en una futura versión."
+    }
+  },
+  "dashboard_vitals": {
+    "title": "Mis Signos Vitales",
+    "addButton": "Añadir Registro",
+    "form": {
+      "title": "Añadir Nuevo Registro",
+      "typeLabel": "Tipo de Signo Vital",
+      "primaryValueLabel": "Valor Principal",
+      "secondaryValueLabel": "Valor Secundario (ej. Diastólica)",
+      "unitLabel": "Unidad (ej. mmHg, kg, °C)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Guardar Registro",
+      "submittingButton": "Añadiendo..."
+    },
+    "list": {
+      "noVitals": "No tienes signos vitales registrados.",
+      "tableDate": "Fecha",
+      "tableValue": "Valor",
+      "tableNotes": "Notas",
+      "tableActions": "Acciones"
+    },
+    "feedback": {
+      "addSuccess": "¡Signo vital añadido con éxito!",
+      "addError": "No se pudo añadir el signo vital.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este registro?",
+      "deleteSuccess": "Registro eliminado.",
+      "deleteError": "No se pudo eliminar el registro."
+    }
+  },
+  "dashboard_medications": {
+    "title": "Mis Medicamentos",
+    "form": {
+      "title": "Añadir Nuevo Plan de Medicación",
+      "medicationNameLabel": "Nombre del Medicamento",
+      "dosageLabel": "Dosis (ej. 1 pastilla, 10mg)",
+      "frequencyLabel": "Frecuencia (ej. Diario, Cada 8 horas)",
+      "startDateLabel": "Fecha de Inicio",
+      "endDateLabel": "Fecha de Fin (Opcional)",
+      "submitButton": "Añadir Plan",
+      "submittingButton": "Añadiendo..."
+    },
+    "list": {
+      "title": "Planes Registrados",
+      "noSchedules": "No tienes planes de medicação registrados.",
+      "frequencyLabel": "Frequência",
+      "startsLabel": "Inicia em"
+    },
+    "feedback": {
+      "addSuccess": "¡Plan de medicación añadido con éxito!",
+      "addError": "No se pudo añadir el plan.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este plan de medicación?",
+      "deleteSuccess": "Plan de medicación eliminado.",
+      "deleteError": "No se pudo eliminar el plan."
+    }
+  },
+  "dashboard_history": {
+    "title": "Historial Médico",
+    "form": {
+      "title": "Añadir Nuevo Evento",
+      "titleLabel": "Título del Evento (ej. Cirugía de rodilla)",
+      "typeLabel": "Tipo de Evento",
+      "dateLabel": "Fecha del Evento",
+      "descriptionLabel": "Descripción (Opcional)",
+      "attachButton": "Adjuntar Documentos",
+      "submitButton": "Añadir Evento",
+      "submittingButton": "Añadiendo..."
+    },
+    "list": {
+      "title": "Eventos Registrados",
+      "noEvents": "No tienes eventos en tu historial médico.",
+      "dateLabel": "Fecha:",
+      "documentsLabel": "Documentos:"
+    },
+    "feedback": {
+      "fetchTypesError": "No se pudieron cargar los tipos de evento.",
+      "addSuccess": "¡Evento médico añadido con éxito!",
+      "addError": "No se pudo añadir el evento.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este evento?",
+      "deleteSuccess": "Evento eliminado.",
+      "deleteError": "No se pudo eliminar el evento."
+    }
+  },
+  "dashboard_addictions": {
+    "title": "Mis Adicciones",
+    "addButton": "Añadir Adicción",
+    "form": {
+      "title": "Añadir Nueva Adicción",
+      "nameLabel": "Nombre de la Adicción (ej. Nicotina)",
+      "startDateLabel": "Fecha de Inicio",
+      "statusLabel": "Estado (ej. Activo, En Remisión)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Añadir Adicción"
+    },
+    "list": {
+      "title": "Adicciones Registradas",
+      "noAddictions": "No tienes adicciones registradas.",
+      "startedLabel": "Inició",
+      "statusLabel": "Estado"
+    },
+    "feedback": {
+      "addSuccess": "¡Adicción añadida con éxito!",
+      "addError": "No se pudo añadir la adicción.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta adicción?",
+      "deleteSuccess": "Adicción eliminada.",
+      "deleteError": "No se pudo eliminar la adicción."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "Mis Enfermedades Infecciosas",
+    "addButton": "Añadir Enfermedad",
+    "form": {
+      "title": "Añadir Nueva Enfermedad Infecciosa",
+      "nameLabel": "Nombre de la Enfermedad (ej. COVID-19)",
+      "diagnosisDateLabel": "Fecha de Diagnóstico",
+      "statusLabel": "Estado (ej. Activo, Curado)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Añadir Enfermedad"
+    },
+    "list": {
+      "title": "Enfermedades Registradas",
+      "noDiseases": "No tienes enfermedades infecciosas registradas.",
+      "diagnosedLabel": "Diagnosticado",
+      "statusLabel": "Estado"
+    },
+    "feedback": {
+      "addSuccess": "¡Enfermedad infecciosa añadida con éxito!",
+      "addError": "No se pudo añadir la enfermedad infecciosa.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta enfermedad?",
+      "deleteSuccess": "Enfermedad infecciosa eliminada.",
+      "deleteError": "No se pudo eliminar la enfermedad infecciosa."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Botón de Pánico",
+    "dialogTitle": "¿Activar Alerta de Pánico?",
+    "dialogContent": "Esto notificará inmediatamente a todos tus contactos de emergencia. ¿Estás seguro de que quieres proceder?",
+    "confirmButton": "Activar",
+    "activatingButton": "Activando...",
+    "successMessage": "¡Alerta de pánico activada! Tus contactos de emergencia han sido notificados.",
+    "errorMessage": "No se pudo activar la alerta de pánico. Por favor, inténtalo de nuevo."
+  },
+  "dashboard_admin": {
+    "title": "Administración de Usuarios",
+    "searchPlaceholder": "Buscar por nombre o email...",
+    "table": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "status": "Estado",
+      "role": "Rol",
+      "actions": "Acciones"
+    },
+    "statusActive": "Activo",
+    "statusInactive": "Inactivo",
+    "roleAdmin": "Admin",
+    "roleUser": "Usuario",
+    "noUsers": "No se encontraron usuarios."
+  },
+  "contacts": {
+    "title": "Contactos de Emergencia",
+    "addTitle": "Añadir Nuevo Contacto",
+    "editTitle": "Editar Contacto",
+    "myContactsTitle": "Mis Contactos",
+    "noContacts": "No tienes contactos de emergencia añadidos.",
+    "isEmergencyContact": "Contacto de Emergencia",
+    "isGeneralContact": "Contacto General",
+    "form": {
+      "nameLabel": "Nombre Completo",
+      "emailLabel": "Correo Electrónico",
+      "phoneLabel": "Teléfono",
+      "relationshipLabel": "Relación (Ej: Padre, Médico)",
+      "isEmergencyContactLabel": "Marcar como Contacto de Emergencia",
+      "addButton": "Añadir Contacto"
+    },
+    "feedback": {
+      "updateSuccess": "¡Contacto actualizado con éxito!",
+      "addSuccess": "¡Contacto añadido con éxito!",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este contacto?",
+      "deleteSuccess": "Contacto eliminado."
+    }
   }
 }

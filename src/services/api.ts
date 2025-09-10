@@ -1,16 +1,28 @@
+'use client';
+
+/**
+ * @file This file initializes and configures the central Axios instance for all API communications.
+ * It sets up the base URL, default headers, and crucial interceptors for logging and transforming API responses.
+ */
+
 import axios from 'axios';
 
-// Lee la URL PÚBLICA del servidor desde las variables de entorno.
+// Read the public API base URL from environment variables.
 const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+// A critical runtime check to ensure the environment is configured correctly.
 if (!serverUrl) {
   console.error(
     'CRITICAL ERROR: The NEXT_PUBLIC_API_BASE_URL environment variable is not defined. Please check your .env.local file.'
   );
 }
 
+// Construct the full base URL for the API, including the version prefix.
 const fullBaseURL = `${serverUrl}/api/v1`;
 
+/**
+ * The global Axios instance used for all API requests.
+ */
 const api = axios.create({
   baseURL: fullBaseURL,
   headers: {
@@ -18,50 +30,66 @@ const api = axios.create({
   },
 });
 
-// --- Interceptor de Peticiones (Sin cambios) ---
+// --- Request Interceptor ---
+// This interceptor runs before each request is sent.
 api.interceptors.request.use(
   (config) => {
+    // For debugging purposes, log the outgoing request details.
     const finalUrl = axios.getUri(config);
     console.log(`[API Request] -> ${config.method?.toUpperCase()} ${finalUrl}`);
     return config;
   },
   (error) => {
+    // Log any errors that occur during the request setup phase.
     console.error('[API Request Error]', error);
     return Promise.reject(error);
   }
 );
 
-// --- Función Centralizada y Definitiva para Resolver URLs de Recursos ---
+/**
+ * A centralized utility to resolve the correct public URL for an API asset.
+ * This is crucial for development environments where the backend (e.g., on port 8000)
+ * is different from the public-facing frontend URL.
+ * It replaces the internal backend port with the public one.
+ * @param {string | null | undefined} path - The asset path or URL from the API response.
+ * @returns {string | null | undefined} The resolved, publicly accessible URL.
+ */
 export const resolveApiAssetUrl = (path: string | null | undefined): string | null | undefined => {
   if (!path || !serverUrl) {
     return path;
   }
 
-  const internalPort = ':8000';
+  const internalPort = ':8000'; // The internal port of the backend API.
   let publicPort = '';
   try {
     const publicUrl = new URL(serverUrl);
     publicPort = publicUrl.port ? `:${publicUrl.port}` : '';
   } catch (e) {
-    // Si la URL base no es válida, no podemos hacer mucho.
+    // If the base URL is invalid, we cannot proceed with the correction.
     return path;
   }
 
-  // Caso 1: Es una URL completa pero con el puerto interno del backend (ej: http://localhost:8000/...)
+  // Case 1: It's a full URL but contains the internal backend port.
   if (path.startsWith('http') && path.includes(internalPort)) {
     return path.replace(internalPort, publicPort);
   }
 
-  // Caso 2: Es una ruta relativa (ej: /storage/...)
+  // Case 2: It's a relative path (e.g., /storage/...).
   if (path.startsWith('/')) {
     return `${serverUrl}${path}`;
   }
 
-  // Si no es ninguno de los casos anteriores, devolver la ruta tal cual.
+  // If it's already a valid, full URL without the internal port, return it as is.
   return path;
 };
 
-// --- Interceptor de Respuestas con Corrección de URLs ---
+// --- Response Interceptor ---
+/**
+ * Recursively traverses an object or array and applies `resolveApiAssetUrl`
+ * to any keys that are known to contain asset URLs.
+ * @param {*} data - The data to traverse (can be an object, array, or primitive).
+ * @returns {*} The data with corrected asset URLs.
+ */
 const recursiveUrlCorrection = (data: any): any => {
   if (!data) return data;
 
@@ -70,12 +98,14 @@ const recursiveUrlCorrection = (data: any): any => {
   }
 
   if (typeof data === 'object') {
+    // A list of keys that are known to contain asset URLs that need correction.
+    const urlKeys = ['avatar_url', 'full_avatar_url', 'url', 'file_path', 'flag'];
+    
     return Object.entries(data).reduce((acc, [key, value]) => {
-      const urlKeys = ['avatar_url', 'full_avatar_url', 'url', 'file_path', 'flag'];
-      
       if (urlKeys.includes(key) && typeof value === 'string') {
         acc[key] = resolveApiAssetUrl(value);
       } else {
+        // If the value is an object or array, recurse into it.
         acc[key] = recursiveUrlCorrection(value);
       }
       return acc;
@@ -85,20 +115,23 @@ const recursiveUrlCorrection = (data: any): any => {
   return data;
 };
 
+// This interceptor runs on every successful response from the API.
 api.interceptors.response.use(
   (response) => {
+    // If the response contains data, apply the recursive URL correction.
     if (response.data) {
       response.data = recursiveUrlCorrection(response.data);
     }
     return response;
   },
   (error) => {
+    // Log any errors that occur in the API response for easier debugging.
     console.error('[API Response Error]', error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
 
 console.log(`[API] Axios client initialized for baseURL: ${fullBaseURL}`);
-console.log('[API] Final response interceptor for asset URL resolution is active.');
+console.log('[API] Response interceptor for asset URL resolution is active.');
 
 export default api;

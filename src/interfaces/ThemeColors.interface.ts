@@ -1,32 +1,34 @@
 /**
- * Define la estructura para la paleta de colores de un tema.
- * Esto asegura la consistencia entre los temas claro y oscuro.
- * Las propiedades están agrupadas lógicamente para facilitar su mantenimiento.
+ * @file This file defines the structure for a theme's color palette.
+ * It ensures consistency across all supported themes (e.g., light, dark, seasonal)
+ * by providing a standard set of color properties that each theme must implement.
  */
+
 export interface ThemeColors {
-  // --- Colores Base ---
-  primary: string; // Color principal para botones, enlaces y elementos activos.
-  primaryText: string; // Texto sobre el color primario (generalmente blanco o negro).
-  secondary: string; // Color secundario para elementos menos prominentes.
-  background: string; // Color de fondo principal de las pantallas.
-  card: string; // Color de fondo para tarjetas y superficies elevadas.
-  text: string; // Color de texto principal.
-  secondaryText: string; // Color para texto secundario, subtítulos y descripciones.
-  onSurfaceVariant: string; // Texto de énfasis medio sobre superficies (ej. etiquetas de forms).
-  border: string; // Color para bordes y separadores.
+  // --- Base Colors ---
+  primary: string; // Main color for interactive elements like buttons, links, and active items.
+  primaryText: string; // Text color used on top of the primary color (typically white or black).
+  secondary: string; // Secondary color for less prominent elements.
+  background: string; // Main background color for screens.
+  card: string; // Background color for cards and elevated surfaces.
+  text: string; // Main text color.
+  secondaryText: string; // Color for secondary text, subtitles, and descriptions.
+  onSurfaceVariant: string; // Medium-emphasis text on surfaces (e.g., form labels).
+  border: string; // Color for borders and dividers.
 
-  // --- Colores de Estado ---
-  success: string; // Indica éxito (ej. notificaciones, validaciones).
-  alert: string; // Indica peligro o error (ej. alertas, campos inválidos).
-  alertSoft: string; // Un fondo suave para alertas, para no ser tan estridente.
-  disabled: string; // Color para elementos deshabilitados (botones, inputs).
+  // --- State Colors ---
+  success: string; // Indicates success (e.g., notifications, validation).
+  alert: string; // Indicates danger or error (e.g., alerts, invalid fields).
+  alertSoft: string; // A soft background for alerts to be less jarring.
+  disabled: string; // Color for disabled elements (buttons, inputs).
 
-  // --- Colores de UI Específicos ---
-  inputBackground: string; // Fondo específico para campos de texto.
-  placeholder: string; // Color para el texto de placeholder en los inputs.
-  neutral: string; // Color neutro para fondos de badges o elementos informativos.
-  tabIconDefault: string; // Color para íconos de pestañas no seleccionadas.
-  tabIconSelected: string; // Color para el ícono de la pestaña activa.
-   //------------------- colores de fgraficos -------------------
-  surface: string
+  // --- Specific UI Colors ---
+  inputBackground: string; // Specific background for text input fields.
+  placeholder: string; // Color for placeholder text in inputs.
+  neutral: string; // Neutral color for badges or informational elements.
+  tabIconDefault: string; // Color for unselected tab icons.
+  tabIconSelected: string; // Color for the active tab icon.
+
+  // --- Chart & Surface Colors ---
+  surface: string; // A surface color, often used in charts or other specific components.
 }

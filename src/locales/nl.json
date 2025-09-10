@@ -1,16 +1,80 @@
 {
   "locale_code": "nl",
+  "common": {
+    "saving": "Opslaan...",
+    "saveChanges": "Wijzigingen opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen"
+  },
+  "validation": {
+    "nameRequired": "Naam is verplicht",
+    "emailInvalid": "Moet een geldig e-mailadres zijn",
+    "phoneRequired": "Telefoonnummer is verplicht",
+    "relationshipRequired": "Relatie is verplicht",
+    "streetRequired": "Straat is verplicht",
+    "cityRequired": "Stad is verplicht",
+    "stateRequired": "Staat of provincie is verplicht",
+    "postalCodeRequired": "Postcode is verplicht",
+    "countryRequired": "Land is verplicht",
+    "currentPasswordRequired": "Huidig wachtwoord is verplicht",
+    "newPasswordMinLength": "Nieuw wachtwoord moet minimaal 6 tekens lang zijn",
+    "repeatNewPasswordRequired": "U moet het nieuwe wachtwoord herhalen",
+    "passwordsDoNotMatch": "De nieuwe wachtwoorden komen niet overeen",
+    "allergenRequired": "U moet een allergie uit de lijst selecteren.",
+    "diseaseRequired": "U moet een ziekte uit de lijst selecteren.",
+    "diagnosisDateRequired": "Diagnosedatum is verplicht.",
+    "vitalTypeRequired": "Type is verplicht.",
+    "medicationNameRequired": "Naam van medicijn is verplicht",
+    "dosageRequired": "Dosis is verplicht",
+    "frequencyRequired": "Frequentie is verplicht",
+    "startDateRequired": "Startdatum is verplicht",
+    "titleRequired": "Titel is verplicht",
+    "eventTypeRequired": "Type evenement is verplicht",
+    "eventDateRequired": "Datum is verplicht",
+    "loginEmailInvalid": "Voer een geldig e-mailadres in",
+    "loginPasswordMinLength": "Wachtwoord moet minimaal 6 tekens bevatten",
+    "registerNameMinLength": "Naam moet minimaal 2 tekens lang zijn",
+    "registerPasswordMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
+    "registerPasswordRepeatMinLength": "Wachtwoord moet minimaal 6 tekens lang zijn",
+    "registerPasswordsDoNotMatch": "Wachtwoorden komen niet overeen",
+    "addictionNameRequired": "Naam van de verslaving is verplicht.",
+    "addictionStartDateRequired": "Startdatum is verplicht.",
+    "infectiousDiseaseNameRequired": "Naam van de ziekte is verplicht.",
+    "infectiousDiseaseDiagnosisDateRequired": "Diagnosedatum is verplicht."
+  },
   "navigation": {
     "aboutUs": "Over Ons",
     "services": "Diensten",
     "dashboard_summary": "Overzicht",
+    "dashboard_timeline": "Tijdlijn",
     "dashboard_qr": "Mijn QR Code",
     "dashboard_profile": "Mijn Profiel",
     "dashboard_allergies": "Mijn Allergieën",
     "dashboard_diseases": "Medische Condities",
+    "dashboard_addictions": "Verslavingen",
+    "dashboard_infectious_diseases": "Infectieziekten",
+    "dashboard_psychiatric": "Psychiatrische Aandoeningen",
+    "dashboard_menstrual_cycle": "Menstruele Cyclus",
+    "dashboard_pregnancy": "Zwangerschaps-tracking",
     "dashboard_vitals": "Vitale Functies",
     "dashboard_medications": "Medicijnen",
-    "dashboard_history": "Medische Geschiedenis"
+    "dashboard_history": "Medische Geschiedenis",
+    "logoAlt": "EmergQR Logo"
+  },
+  "themes": {
+    "light": "Licht",
+    "dark": "Donker",
+    "spring": "Lente",
+    "summer": "Zomer",
+    "autumn": "Herfst",
+    "winter": "Winter"
+  },
+  "languages": {
+    "es": "Spaans",
+    "en": "Engels",
+    "fr": "Frans",
+    "pt": "Portugees",
+    "nl": "Nederlands"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -48,8 +112,382 @@
   "login": {
     "title": "Inloggen"
   },
+  "auth_login": {
+    "title": "Inloggen",
+    "emailLabel": "E-mailadres",
+    "passwordLabel": "Wachtwoord",
+    "submitButton": "Inloggen",
+    "submittingButton": "Inloggen...",
+    "forgotPasswordLink": "Wachtwoord vergeten?",
+    "noAccountLink": "Heb je geen account? Registreer je",
+    "defaultError": "Onjuiste gegevens. Probeer het opnieuw."
+  },
+  "auth_register": {
+    "title": "Account aanmaken",
+    "nameLabel": "Volledige Naam",
+    "emailLabel": "E-mailadres",
+    "passwordLabel": "Wachtwoord",
+    "passwordRepeatLabel": "Herhaal Wachtwoord",
+    "submitButton": "Account Aanmaken",
+    "submittingButton": "Account aanmaken...",
+    "hasAccountLink": "Heb je al een account? Inloggen",
+    "defaultError": "Kon de registratie niet voltooien. Probeer het opnieuw."
+  },
+  "auth_forgot_password": {
+    "title": "Wachtwoord Herstellen",
+    "subtitle": "Voer uw e-mailadres in en we sturen u een link om uw account te herstellen.",
+    "emailLabel": "E-mailadres",
+    "submitButton": "Herstellink Verzenden",
+    "submittingButton": "Verzenden...",
+    "backToLoginLink": "Terug naar Inloggen",
+    "successMessage": "Als er een account met dat e-mailadres bestaat, zijn er instructies voor het opnieuw instellen van uw wachtwoord verzonden."
+  },
+  "public_profile": {
+    "title": "Noodprofiel",
+    "fetchError": "Kon het profiel niet vinden.",
+    "notAvailable": "Profiel niet beschikbaar.",
+    "nameLabel": "Naam",
+    "ageLabel": "Leeftijd",
+    "bloodTypeLabel": "Bloedgroep",
+    "healthInsuranceLabel": "Zorgverzekering",
+    "allergiesTitle": "Allergieën",
+    "severityLabel": "Ernst",
+    "noAllergies": "Geen geregistreerd.",
+    "conditionsTitle": "Medische Condities",
+    "diagnosedLabel": "Gediagnosticeerd",
+    "noConditions": "Geen geregistreerd.",
+    "contactsTitle": "Noodcontacten",
+    "noContacts": "Geen geregistreerd."
+  },
   "dashboard": {
     "loggedInAs": "Hallo, {{name}}",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "defaultUser": "Gebruiker"
+  },
+  "dashboard_summary": {
+    "greeting": "Hallo, {{name}}!",
+    "subtitle": "Hier is een overzicht van uw gezondheidsprofiel.",
+    "dateFilterTitle": "Filter op Datum",
+    "dateFilterFrom": "Van",
+    "dateFilterTo": "Tot",
+    "vitalsChartTitle": "Vitale Registraties",
+    "chartNoData": "Geen gegevens in het geselecteerde bereik.",
+    "medsChartTitle": "Actieve Medicijnen per Dag",
+    "widgetMedsTitle": "Actieve Medicijnen",
+    "widgetAllergiesTitle": "Allergieën",
+    "widgetDiseasesTitle": "Medische Condities"
+  },
+  "dashboard_qr": {
+    "title": "Mijn Nood-QR-Code",
+    "subtitle": "Toon deze code aan het noodpersoneel om direct toegang te krijgen tot uw medische informatie.",
+    "downloadFilename": "EmergQR-Code.png",
+    "downloadButton": "Download QR",
+    "printButton": "Afdrukken"
+  },
+  "dashboard_profile": {
+    "title": "Mijn Profiel",
+    "updateSuccess": "Profiel succesvol bijgewerkt!",
+    "updateError": "Kon profiel niet bijwerken.",
+    "form": {
+      "nameLabel": "Volledige Naam",
+      "emailLabel": "E-mail",
+      "phoneLabel": "Telefoon",
+      "birthDateLabel": "Geboortedatum",
+      "sexLabel": "Geslacht",
+      "occupationLabel": "Beroep"
+    },
+    "avatar": {
+      "uploadError": "Fout bij het uploaden van de afbeelding."
+    },
+    "emergency_data": {
+      "title": "Noodgegevens",
+      "updateSuccess": "Noodgegevens succesvol bijgewerkt!",
+      "updateError": "Kon gegevens niet opslaan.",
+      "form": {
+        "bloodTypeLabel": "Bloedgroep (bijv. A+)",
+        "healthSystemLabel": "Gezondheidssysteem / Polisnr.",
+        "saveButton": "Gegevens Opslaan"
+      },
+      "display": {
+        "bloodTypeLabel": "Bloedgroep:",
+        "healthSystemLabel": "Gezondheidssysteem:",
+        "notSpecified": "Niet gespecificeerd"
+      }
+    },
+    "address": {
+      "title": "Mijn Adres",
+      "updateSuccess": "Adres succesvol bijgewerkt!",
+      "addSuccess": "Adres succesvol opgeslagen!",
+      "updateError": "Kon adres niet opslaan.",
+      "noAddress": "U heeft nog geen adres toegevoegd. Klik op de bewerkknop om er een toe te voegen.",
+      "form": {
+        "streetLabel": "Straat en Huisnummer",
+        "cityLabel": "Stad",
+        "stateLabel": "Staat / Provincie",
+        "postalCodeLabel": "Postcode",
+        "countryLabel": "Land",
+        "saveButton": "Adres Opslaan"
+      },
+      "deleteConfirmTitle": "Adres Verwijderen?",
+      "deleteConfirmText": "Weet u zeker dat u dit adres wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteSuccess": "Adres succesvol verwijderd!",
+      "deleteError": "Kon adres niet verwijderen."
+    },
+    "change_password": {
+      "title": "Wachtwoord Wijzigen",
+      "successMessage": "Wachtwoord succesvol gewijzigd!",
+      "form": {
+        "currentPasswordLabel": "Huidig Wachtwoord",
+        "newPasswordLabel": "Nieuw Wachtwoord",
+        "repeatNewPasswordLabel": "Herhaal Nieuw Wachtwoord",
+        "submitButton": "Wachtwoord Wijzigen",
+        "submittingButton": "Bezig met wijzigen..."
+      }
+    },
+    "delete_account": {
+      "title": "Gevarenzone",
+      "warningText": "Deze actie is onomkeerbaar. Door uw account te verwijderen, worden al uw medische gegevens, profiel en contacten permanent verwijderd. U kunt uw account niet herstellen.",
+      "deleteButton": "Mijn Account Verwijderen",
+      "deletingButton": "Verwijderen...",
+      "dialogTitle": "Weet u het absoluut zeker?",
+      "dialogContent": "Deze actie kan niet ongedaan worden gemaakt. Dit zal uw account en alle bijbehorende gegevens permanent verwijderen. Wilt u doorgaan?",
+      "dialogConfirmButton": "Ja, verwijder mijn account"
+    }
+  },
+  "dashboard_allergies": {
+    "title": "Mijn Allergieën",
+    "addButton": "Allergie Toevoegen",
+    "form": {
+      "title": "Nieuwe Allergie Toevoegen",
+      "searchLabel": "Zoek Allergeen (bijv. Penicilline)",
+      "searchHelperText": "Begin met typen om de medische database te doorzoeken.",
+      "reactionLabel": "Reactietype (Optioneel)",
+      "severityLabel": "Ernst (Optioneel)",
+      "submitButton": "Allergie Toevoegen"
+    },
+    "list": {
+      "title": "Geregistreerde Allergieën",
+      "noAllergies": "U heeft geen geregistreerde allergieën.",
+      "reactionLabel": "Reactie",
+      "severityLabel": "Ernst",
+      "notAvailable": "N.v.t."
+    },
+    "feedback": {
+      "addSuccess": "Allergie succesvol toegevoegd!",
+      "addError": "Kon allergie niet toevoegen.",
+      "updateSuccess": "Allergie succesvol bijgewerkt!",
+      "deleteConfirm": "Weet u zeker dat u deze allergie wilt verwijderen?",
+      "deleteSuccess": "Allergie verwijderd.",
+      "deleteError": "Kon allergie niet verwijderen.",
+      "editNotAvailable": "Het bewerken van een bestaande allergie zal in een toekomstige versie beschikbaar zijn."
+    }
+  },
+  "dashboard_diseases": {
+    "title": "Mijn Medische Condities",
+    "addButton": "Conditie Toevoegen",
+    "form": {
+      "title": "Nieuwe Conditie Toevoegen",
+      "searchLabel": "Zoek Ziekte (bijv. Hypertensie)",
+      "searchHelperText": "Begin met typen om de medische database te doorzoeken.",
+      "diagnosisDateLabel": "Diagnosedatum",
+      "severityLabel": "Ernst (Optioneel)",
+      "notesLabel": "Notities (Optioneel)",
+      "submitButton": "Conditie Toevoegen"
+    },
+    "list": {
+      "title": "Geregistreerde Condities",
+      "noConditions": "U heeft geen geregistreerde medische condities.",
+      "diagnosedLabel": "Gediagnosticeerd",
+      "severityLabel": "Ernst",
+      "notAvailable": "N.v.t."
+    },
+    "feedback": {
+      "addSuccess": "Conditie succesvol toegevoegd!",
+      "addError": "Kon conditie niet toevoegen.",
+      "updateSuccess": "Conditie succesvol bijgewerkt!",
+      "deleteConfirm": "Weet u zeker dat u deze conditie wilt verwijderen?",
+      "deleteSuccess": "Conditie verwijderd.",
+      "deleteError": "Kon conditie niet verwijderen.",
+      "editNotAvailable": "Het bewerken van een bestaande conditie zal in een toekomstige versie beschikbaar zijn."
+    }
+  },
+  "dashboard_vitals": {
+    "title": "Mijn Vitale Functies",
+    "addButton": "Meting Toevoegen",
+    "form": {
+      "title": "Nieuwe Meting Toevoegen",
+      "typeLabel": "Type Vitale Functie",
+      "primaryValueLabel": "Primaire Waarde",
+      "secondaryValueLabel": "Secundaire Waarde (bijv. Diastolisch)",
+      "unitLabel": "Eenheid (bijv. mmHg, kg, °C)",
+      "notesLabel": "Notities (Optioneel)",
+      "submitButton": "Meting Opslaan",
+      "submittingButton": "Toevoegen..."
+    },
+    "list": {
+      "noVitals": "U heeft geen vitale functies geregistreerd.",
+      "tableDate": "Datum",
+      "tableValue": "Waarde",
+      "tableNotes": "Notities",
+      "tableActions": "Acties"
+    },
+    "feedback": {
+      "addSuccess": "Vitale functie succesvol toegevoegd!",
+      "addError": "Kon vitale functie niet toevoegen.",
+      "deleteConfirm": "Weet u zeker dat u deze meting wilt verwijderen?",
+      "deleteSuccess": "Meting verwijderd.",
+      "deleteError": "Kon meting niet verwijderen."
+    }
+  },
+  "dashboard_medications": {
+    "title": "Mijn Medicijnen",
+    "form": {
+      "title": "Nieuw Medicatieplan Toevoegen",
+      "medicationNameLabel": "Naam van Medicijn",
+      "dosageLabel": "Dosis (bijv. 1 pil, 10mg)",
+      "frequencyLabel": "Frequentie (bijv. Dagelijks, Elke 8 uur)",
+      "startDateLabel": "Startdatum",
+      "endDateLabel": "Einddatum (Optioneel)",
+      "submitButton": "Plan Toevoegen",
+      "submittingButton": "Toevoegen..."
+    },
+    "list": {
+      "title": "Geregistreerde Plannen",
+      "noSchedules": "U heeft geen medicatieplannen geregistreerd.",
+      "frequencyLabel": "Frequentie",
+      "startsLabel": "Start op"
+    },
+    "feedback": {
+      "addSuccess": "Medicatieplan succesvol toegevoegd!",
+      "addError": "Kon plan niet toevoegen.",
+      "deleteConfirm": "Weet u zeker dat u dit medicatieplan wilt verwijderen?",
+      "deleteSuccess": "Medicatieplan verwijderd.",
+      "deleteError": "Kon plan niet verwijderen."
+    }
+  },
+  "dashboard_history": {
+    "title": "Medische Geschiedenis",
+    "form": {
+      "title": "Nieuw Evenement Toevoegen",
+      "titleLabel": "Titel van Evenement (bijv. Knie-operatie)",
+      "typeLabel": "Type Evenement",
+      "dateLabel": "Datum van Evenement",
+      "descriptionLabel": "Beschrijving (Optioneel)",
+      "attachButton": "Documenten Bijvoegen",
+      "submitButton": "Evenement Toevoegen",
+      "submittingButton": "Toevoegen..."
+    },
+    "list": {
+      "title": "Geregistreerde Evenementen",
+      "noEvents": "U heeft geen evenementen in uw medische geschiedenis.",
+      "dateLabel": "Datum:",
+      "documentsLabel": "Documenten:"
+    },
+    "feedback": {
+      "fetchTypesError": "Kon evenementtypes niet laden.",
+      "addSuccess": "Medisch evenement succesvol toegevoegd!",
+      "addError": "Kon evenement niet toevoegen.",
+      "deleteConfirm": "Weet u zeker dat u dit evenement wilt verwijderen?",
+      "deleteSuccess": "Evenement verwijderd.",
+      "deleteError": "Kon evenement niet verwijderen."
+    }
+  },
+  "dashboard_addictions": {
+    "title": "Mijn Verslavingen",
+    "addButton": "Verslaving Toevoegen",
+    "form": {
+      "title": "Nieuwe Verslaving Toevoegen",
+      "nameLabel": "Naam van Verslaving (bijv. Nicotine)",
+      "startDateLabel": "Startdatum",
+      "statusLabel": "Status (bijv. Actief, In Remissie)",
+      "notesLabel": "Notities (Optioneel)",
+      "submitButton": "Verslaving Toevoegen"
+    },
+    "list": {
+      "title": "Geregistreerde Verslavingen",
+      "noAddictions": "U heeft geen geregistreerde verslavingen.",
+      "startedLabel": "Begonnen op",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Verslaving succesvol toegevoegd!",
+      "addError": "Kon verslaving niet toevoegen.",
+      "deleteConfirm": "Weet u zeker dat u deze verslaving wilt verwijderen?",
+      "deleteSuccess": "Verslaving verwijderd.",
+      "deleteError": "Kon verslaving niet verwijderen."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "Mijn Infectieziekten",
+    "addButton": "Ziekte Toevoegen",
+    "form": {
+      "title": "Nieuwe Infectieziekte Toevoegen",
+      "nameLabel": "Naam van Ziekte (bijv. COVID-19)",
+      "diagnosisDateLabel": "Diagnosedatum",
+      "statusLabel": "Status (bijv. Actief, Genezen)",
+      "notesLabel": "Notities (Optioneel)",
+      "submitButton": "Ziekte Toevoegen"
+    },
+    "list": {
+      "title": "Geregistreerde Ziekten",
+      "noDiseases": "U heeft geen geregistreerde infectieziekten.",
+      "diagnosedLabel": "Gediagnosticeerd op",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Infectieziekte succesvol toegevoegd!",
+      "addError": "Kon infectieziekte niet toevoegen.",
+      "deleteConfirm": "Weet u zeker dat u deze ziekte wilt verwijderen?",
+      "deleteSuccess": "Infectieziekte verwijderd.",
+      "deleteError": "Kon infectieziekte niet verwijderen."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Paniekknop",
+    "dialogTitle": "Paniekalarm Activeren?",
+    "dialogContent": "Dit zal onmiddellijk al uw noodcontacten op de hoogte stellen. Weet u zeker dat u wilt doorgaan?",
+    "confirmButton": "Activeren",
+    "activatingButton": "Activeren...",
+    "successMessage": "Paniekalarm geactiveerd! Uw noodcontacten zijn op de hoogte gebracht.",
+    "errorMessage": "Kon het paniekalarm niet activeren. Probeer het opnieuw."
+  },
+  "dashboard_admin": {
+    "title": "Gebruikersbeheer",
+    "searchPlaceholder": "Zoeken op naam of e-mail...",
+    "table": {
+      "name": "Naam",
+      "email": "E-mail",
+      "status": "Status",
+      "role": "Rol",
+      "actions": "Acties"
+    },
+    "statusActive": "Actief",
+    "statusInactive": "Inactief",
+    "roleAdmin": "Beheerder",
+    "roleUser": "Gebruiker",
+    "noUsers": "Geen gebruikers gevonden."
+  },
+  "contacts": {
+    "title": "Noodcontacten",
+    "addTitle": "Nieuw Contact Toevoegen",
+    "editTitle": "Contact Bewerken",
+    "myContactsTitle": "Mijn Contacten",
+    "noContacts": "U heeft geen noodcontacten toegevoegd.",
+    "isEmergencyContact": "Noodcontact",
+    "isGeneralContact": "Algemeen Contact",
+    "form": {
+      "nameLabel": "Volledige Naam",
+      "emailLabel": "E-mail",
+      "phoneLabel": "Telefoon",
+      "relationshipLabel": "Relatie (bijv. Vader, Arts)",
+      "isEmergencyContactLabel": "Markeren als Noodcontact",
+      "addButton": "Contact Toevoegen"
+    },
+    "feedback": {
+      "updateSuccess": "Contact succesvol bijgewerkt!",
+      "addSuccess": "Contact succesvol toegevoegd!",
+      "deleteConfirm": "Weet u zeker dat u dit contact wilt verwijderen?",
+      "deleteSuccess": "Contact verwijderd."
+    }
   }
 }

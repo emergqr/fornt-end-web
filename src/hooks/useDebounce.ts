@@ -1,34 +1,39 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Hook personalizado para "rebotar" (debounce) un valor.
- * Retrasa la actualización de un valor hasta que ha pasado un tiempo específico
- * sin que ese valor haya cambiado. Es muy útil para evitar llamadas a la API
- * en cada pulsación de tecla en un campo de búsqueda.
+ * @file This file defines the `useDebounce` custom hook, which is used to delay
+ * processing a rapidly changing value until the user has stopped providing input.
+ */
+
+/**
+ * A custom hook to debounce a value.
+ * It delays updating the returned value until a specified amount of time has passed
+ * without the original value changing. This is highly useful for performance optimization,
+ * such as preventing API calls on every keystroke in a search input.
  *
- * @param value El valor que se quiere rebotar (ej. el texto de un input).
- * @param delay El tiempo de espera en milisegundos (ej. 500).
- * @returns El valor rebotado, que solo se actualizará una vez que el valor original
- * no haya cambiado durante el tiempo de `delay`.
+ * @template T The type of the value to be debounced.
+ * @param {T} value The value to debounce (e.g., text from an input field).
+ * @param {number} delay The debounce delay in milliseconds (e.g., 500).
+ * @returns {T} The debounced value, which only updates after the original `value` 
+ * has not changed for the specified `delay`.
  */
 export function useDebounce<T>(value: T, delay: number): T {
-  // Estado para almacenar el valor rebotado
+  // State to store the debounced value.
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
-    // Se crea un temporizador que actualizará el valor rebotado
-    // después del tiempo de `delay` especificado.
+    // Set up a timer that will update the debounced value after the specified delay.
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
 
-    // Función de limpieza: se ejecuta si el valor cambia antes de que
-    // el temporizador se complete. Esto cancela el temporizador anterior
-    // y lo reinicia, evitando actualizaciones innecesarias.
+    // Cleanup function: This is executed if the `value` or `delay` changes before
+    // the timer completes. It cancels the previous timer, preventing premature updates
+    // and effectively restarting the debounce period.
     return () => {
       clearTimeout(handler);
     };
-  }, [value, delay]); // Solo se vuelve a ejecutar si el valor o el delay cambian
+  }, [value, delay]); // This effect re-runs only if the value or delay changes.
 
   return debouncedValue;
 }

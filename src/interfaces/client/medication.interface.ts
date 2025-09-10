@@ -1,46 +1,50 @@
+'use client';
+
 /**
- * @file Contiene las interfaces para la gestión de planes de medicación.
- * @basedon Módulo 5 del Plan de Implementación.
+ * @file This file defines the interfaces for the Medication Schedule entity.
+ * It includes types for reading, creating, and updating medication plans,
+ * corresponding to the schemas in the openapi.json specification.
+ * NOTE: The property names are in snake_case to match the API.
  */
 
 /**
- * Representa un recordatorio individual para una medicación.
+ * Defines the available frequency types for a medication schedule.
+ * This corresponds to the 'FrequencyType' enum in the API.
  */
-export interface Reminder {
-  uuid: string;
-  time: string; // Formato HH:mm, ej: "08:00"
-  enabled: boolean;
-}
+export type FrequencyType = | 'Diario' | 'Cada X horas' | 'Semanal' | 'Mensual' | 'Según necesidad' | 'Todas las noches';
 
 /**
- * Representa un plan de medicación tal como se lee desde la API.
+ * Represents a medication schedule as it is read from the API.
+ * Corresponds to the 'MedicationScheduleRead' schema.
  */
 export interface MedicationScheduleRead {
   uuid: string;
-  medicationName: string;
-  dosage: string; // ej: "1 pastilla", "10mg"
-  frequency: 'daily' | 'weekly' | 'custom';
-  startDate: string; // Fecha en formato ISO 8601
-  endDate?: string | null; // Fecha en formato ISO 8601
-  reminders: Reminder[];
-  notes?: string | null;
+  medication_name: string;
+  dosage: string; // e.g., "1 pill", "10mg"
+  frequency_type: FrequencyType;
+  time_of_day: string | null; // e.g., "08:00"
+  start_date: string; // ISO 8601 date string (YYYY-MM-DD)
+  end_date?: string | null; // ISO 8601 date string (YYYY-MM-DD)
+  is_active: boolean;
 }
 
 /**
- * Define la estructura de datos para crear un nuevo plan de medicación.
+ * Defines the data structure required to create a new medication schedule.
+ * Corresponds to the 'MedicationScheduleCreate' schema.
  */
 export interface MedicationScheduleCreate {
-  medicationName: string;
+  medication_name: string;
   dosage: string;
-  frequency: 'daily' | 'weekly' | 'custom';
-  timeSlots: string[]; // ej: ["08:00", "20:00"]
-  startDate: string;
-  endDate?: string | null;
-  notes?: string | null;
+  frequency_type: FrequencyType;
+  time_of_day?: string | null;
+  start_date: string;
+  end_date?: string | null;
+  is_active?: boolean;
 }
 
 /**
- * Define la estructura para actualizar un plan de medicación existente.
- * Todos los campos son opcionales.
+ * Defines the data structure for updating an existing medication schedule.
+ * NOTE: As of the current API spec, there is no dedicated update endpoint.
+ * This type is defined for future-proofing and consistency.
  */
 export type MedicationScheduleUpdate = Partial<MedicationScheduleCreate>;

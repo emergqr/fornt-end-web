@@ -7,24 +7,41 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
 /**
- * A client-side component that checks for authentication and protects a route.
- * If the user is not authenticated, it redirects them to the login page.
- * It shows a loading spinner while checking the authentication status.
+ * @file This file defines the ProtectedRoute component, which acts as a client-side guard 
+ * for routes that require user authentication.
+ */
+
+/**
+ * A client-side component that ensures a user is authenticated before rendering its children.
+ * - While checking the authentication status, it displays a full-page loading spinner.
+ * - If the user is not authenticated, it redirects them to the '/auth/login' page.
+ * - If the user is authenticated, it renders the child components.
+ * 
+ * This approach prevents content flashing and ensures a smooth user experience.
+ * 
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The content to be rendered if the user is authenticated.
+ * @returns {React.ReactElement | null} The child components, a loading spinner, or null during redirection.
  */
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  // Next.js hook for programmatic navigation.
   const router = useRouter();
-  // Asumimos que el store tiene un estado `isAuthenticated` y un estado `isChecking` 
-  // para saber si todavía está validando el token inicial.
+  
+  // Zustand store hook to get authentication state.
+  // `isChecking` is true while the store is validating the initial token.
+  // `isAuthenticated` is true if the user has a valid session.
   const { isAuthenticated, isChecking } = useAuthStore();
 
   useEffect(() => {
-    // Si no está comprobando y el usuario no está autenticado, redirigir.
+    // This effect triggers whenever the authentication status changes.
+    // If the initial check is complete and the user is not authenticated, redirect to login.
     if (!isChecking && !isAuthenticated) {
       router.replace('/auth/login');
     }
   }, [isAuthenticated, isChecking, router]);
 
-  // Mientras se comprueba el estado de autenticación, mostrar un spinner
+  // While the authentication state is being determined, render a loading indicator.
+  // This prevents a flash of the login page or protected content.
   if (isChecking) {
     return (
       <Box
@@ -40,12 +57,13 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     );
   }
 
-  // Si está autenticado, mostrar el contenido de la página protegida
+  // If the check is complete and the user is authenticated, render the protected content.
   if (isAuthenticated) {
     return <>{children}</>;
   }
 
-  // Si no está autenticado y ya no está cargando, no renderiza nada 
-  // porque el useEffect ya habrá iniciado la redirección.
+  // If the check is complete and the user is not authenticated, render nothing.
+  // The `useEffect` hook has already initiated the redirection, so this prevents
+  // any content from flashing before the redirect is complete.
   return null;
 }

@@ -1,22 +1,30 @@
+'use client';
+
+/**
+ * @file This file provides a service layer for interacting with external medical terminology APIs.
+ * It abstracts the calls to our backend, which in turn queries services like SNOMED, ICD-11, etc.
+ */
+
 import api from '../api';
 
 /**
- * Representa un único resultado de la búsqueda de terminología médica.
- * La estructura es genérica porque puede variar entre servicios (SNOMED, ICD-11, etc.).
+ * Represents a single result from a medical terminology search.
+ * The structure is kept generic as it can vary between different external services.
  */
 export interface MedicalCodeSearchResult {
-  code: string;
-  name: string;
-  // Pueden existir otros campos, pero estos son los esenciales.
+  code: string; // The unique code for the medical term (e.g., '59621000').
+  name: string; // The human-readable name of the term (e.g., 'Essential hypertension').
+  // The API might return other fields, but these are the essential ones.
   [key: string]: any;
 }
 
 /**
- * Realiza una búsqueda de terminología médica en un servicio externo a través de nuestra API.
+ * Performs a medical terminology search in an external service via our backend API.
+ * Corresponds to the GET /medical-codes/search/{serviceName} endpoint.
  *
- * @param serviceName - El servicio a consultar (ej. 'snomed', 'icd11').
- * @param term - El término de búsqueda.
- * @returns Una promesa que se resuelve en un array de resultados de búsqueda.
+ * @param {string} serviceName - The external service to query (e.g., 'snomed', 'icd11').
+ * @param {string} term - The search term (e.g., 'diabetes').
+ * @returns {Promise<MedicalCodeSearchResult[]>} A promise that resolves with an array of search results.
  */
 const search = async (
   serviceName: string,
@@ -25,12 +33,15 @@ const search = async (
   const response = await api.get<MedicalCodeSearchResult[]>(
     `/medical-codes/search/${serviceName}`,
     {
-      params: { term },
+      params: { term }, // The search term is passed as a query parameter.
     }
   );
   return response.data;
 };
 
+/**
+ * An object that groups all medical code service functions for easy import and usage.
+ */
 export const medicalCodeService = {
   search,
 };

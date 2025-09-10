@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "jest",
     "docs:generate": "typedoc --out docs/tech src"
+
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

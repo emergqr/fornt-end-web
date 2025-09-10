@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -18,13 +19,14 @@ import { useEmergencyDataStore } from '@/store/emergencyData/emergencyData.store
 import { EmergencyDataUpdate } from '@/interfaces/client/emergency-data.interface';
 
 const emergencyDataSchema = z.object({
-  blood_type: z.string().optional(),
+  blood: z.string().optional(), // Corregido de blood_type a blood
   social_security_health_system: z.string().optional(),
 });
 
 type EmergencyDataFormInputs = z.infer<typeof emergencyDataSchema>;
 
 export default function EmergencyDataCard() {
+  const { t } = useTranslation();
   const {
     data,
     loading,
@@ -44,7 +46,7 @@ export default function EmergencyDataCard() {
   } = useForm<EmergencyDataFormInputs>({
     resolver: zodResolver(emergencyDataSchema),
     defaultValues: {
-      blood_type: '',
+      blood: '', // Corregido de blood_type a blood
       social_security_health_system: '',
     },
   });
@@ -63,10 +65,10 @@ export default function EmergencyDataCard() {
     setFeedback(null);
     try {
       await updateEmergencyData(formData as EmergencyDataUpdate);
-      setFeedback({ type: 'success', message: '¡Datos de emergencia actualizados con éxito!' });
+      setFeedback({ type: 'success', message: t('dashboard_profile.emergency_data.updateSuccess') });
       setIsEditing(false);
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'No se pudo guardar los datos.' });
+      setFeedback({ type: 'error', message: err.message || t('dashboard_profile.emergency_data.updateError') });
     }
   };
 
@@ -78,7 +80,7 @@ export default function EmergencyDataCard() {
     <Paper sx={{ p: 3, mt: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Datos de Emergencia
+          {t('dashboard_profile.emergency_data.title')}
         </Typography>
         {!isEditing && (
           <IconButton onClick={() => setIsEditing(true)}>
@@ -92,17 +94,17 @@ export default function EmergencyDataCard() {
       {isEditing ? (
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
           {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
-          <Controller name="blood_type" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label="Grupo Sanguíneo (ej. A+)" fullWidth margin="normal" error={!!errors.blood_type} helperText={errors.blood_type?.message} />} />
-          <Controller name="social_security_health_system" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label="Sistema de Salud / Nº Póliza" fullWidth margin="normal" error={!!errors.social_security_health_system} helperText={errors.social_security_health_system?.message} />} />
+          <Controller name="blood" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_profile.emergency_data.form.bloodTypeLabel')} fullWidth margin="normal" error={!!errors.blood} helperText={errors.blood?.message} />} />
+          <Controller name="social_security_health_system" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_profile.emergency_data.form.healthSystemLabel')} fullWidth margin="normal" error={!!errors.social_security_health_system} helperText={errors.social_security_health_system?.message} />} />
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button variant="outlined" onClick={() => setIsEditing(false)}>Cancelar</Button>
-            <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? 'Guardando...' : 'Guardar Datos'}</Button>
+            <Button variant="outlined" onClick={() => setIsEditing(false)}>{t('common.cancel')}</Button>
+            <Button type="submit" variant="contained" disabled={isSubmitting}>{isSubmitting ? t('common.saving') : t('dashboard_profile.emergency_data.form.saveButton')}</Button>
           </Box>
         </Box>
       ) : (
         <Box sx={{ mt: 2 }}>
-          <Typography><strong>Grupo Sanguíneo:</strong> {data?.blood_type || 'No especificado'}</Typography>
-          <Typography><strong>Sistema de Salud:</strong> {data?.social_security_health_system || 'No especificado'}</Typography>
+          <Typography><strong>{t('dashboard_profile.emergency_data.display.bloodTypeLabel')}</strong> {data?.blood || t('dashboard_profile.emergency_data.display.notSpecified')}</Typography>
+          <Typography><strong>{t('dashboard_profile.emergency_data.display.healthSystemLabel')}</strong> {data?.social_security_health_system || t('dashboard_profile.emergency_data.display.notSpecified')}</Typography>
         </Box>
       )}
     </Paper>

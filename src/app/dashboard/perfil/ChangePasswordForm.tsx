@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -14,19 +15,22 @@ import Paper from '@mui/material/Paper';
 import { authService } from '@/services/auth/authService';
 import { getApiErrorMessage } from '@/services/apiErrors';
 
-const passwordSchema = z.object({
-  old_password: z.string().min(6, "La contraseña actual es requerida"),
-  new_password: z.string().min(6, "La nueva contraseña debe tener al menos 6 caracteres"),
-  new_passwordRepeat: z.string().min(6, "Debes repetir la nueva contraseña"),
+const getPasswordSchema = (t: (key: string) => string) => z.object({
+  old_password: z.string().min(6, t('validation.currentPasswordRequired')),
+  new_password: z.string().min(6, t('validation.newPasswordMinLength')),
+  new_passwordRepeat: z.string().min(6, t('validation.repeatNewPasswordRequired')),
 }).refine((data) => data.new_password === data.new_passwordRepeat, {
-  message: "Las nuevas contraseñas no coinciden",
+  message: t('validation.passwordsDoNotMatch'),
   path: ["new_passwordRepeat"],
 });
 
-type PasswordFormInputs = z.infer<typeof passwordSchema>;
+type PasswordFormInputs = z.infer<ReturnType<typeof getPasswordSchema>>;
 
 export default function ChangePasswordForm() {
+  const { t } = useTranslation();
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const passwordSchema = getPasswordSchema(t);
 
   const {
     control,
@@ -46,7 +50,7 @@ export default function ChangePasswordForm() {
     setFeedback(null);
     try {
       await authService.changePassword(data);
-      setFeedback({ type: 'success', message: '¡Contraseña cambiada con éxito!' });
+      setFeedback({ type: 'success', message: t('dashboard_profile.change_password.successMessage') });
       reset();
     } catch (error) {
       const message = getApiErrorMessage(error);
@@ -57,7 +61,7 @@ export default function ChangePasswordForm() {
   return (
     <Paper sx={{ p: 3, mt: 4 }}>
       <Typography variant="h5" component="h2" gutterBottom>
-        Cambiar Contraseña
+        {t('dashboard_profile.change_password.title')}
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
         {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
@@ -67,7 +71,7 @@ export default function ChangePasswordForm() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Contraseña Actual"
+              label={t('dashboard_profile.change_password.form.currentPasswordLabel')}
               type="password"
               fullWidth
               margin="normal"
@@ -83,7 +87,7 @@ export default function ChangePasswordForm() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Nueva Contraseña"
+              label={t('dashboard_profile.change_password.form.newPasswordLabel')}
               type="password"
               fullWidth
               margin="normal"
@@ -99,7 +103,7 @@ export default function ChangePasswordForm() {
           render={({ field }) => (
             <TextField
               {...field}
-              label="Repetir Nueva Contraseña"
+              label={t('dashboard_profile.change_password.form.repeatNewPasswordLabel')}
               type="password"
               fullWidth
               margin="normal"
@@ -111,7 +115,7 @@ export default function ChangePasswordForm() {
         />
         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button type="submit" variant="contained" disabled={isSubmitting}>
-            {isSubmitting ? 'Cambiando...' : 'Cambiar Contraseña'}
+            {isSubmitting ? t('dashboard_profile.change_password.form.submittingButton') : t('dashboard_profile.change_password.form.submitButton')}
           </Button>
         </Box>
       </Box>
