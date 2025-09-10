@@ -1,40 +1,29 @@
-'use client';
-
 /**
- * @file This file defines the interfaces for the Menstrual Cycle Tracking module.
- * It includes types for reading, creating, and updating cycle records.
- * This serves as a contract for future backend implementation.
+ * @file Defines the interfaces for the Menstrual Cycle module.
+ * Corresponds to the schemas in openapi.json.
  */
 
-/**
- * Represents a single menstrual cycle record as it would be read from the API.
- */
-export interface MenstrualCycleRead {
-  /** The unique identifier for the cycle record (UUID). */
+export interface MenstrualLogRead {
   uuid: string;
-  /** The start date of the period in 'YYYY-MM-DD' format. */
-  start_date: string;
-  /** The end date of the period in 'YYYY-MM-DD' format. */
-  end_date: string;
-  /** The calculated duration of the cycle in days. */
-  cycle_length: number;
-  /** The duration of the period in days. */
-  period_length: number;
-  /** Any additional notes about symptoms, mood, etc. */
+  start_date: string; // YYYY-MM-DD
+  end_date?: string | null; // YYYY-MM-DD
+  symptoms?: string[] | null;
+  flow_level?: string | null;
   notes?: string | null;
 }
 
-/**
- * Defines the data structure required to create a new menstrual cycle record.
- */
-export interface MenstrualCycleCreate {
-  start_date: string;
-  end_date: string;
+export interface MenstrualLogCreate {
+  start_date: string; // YYYY-MM-DD
+  end_date?: string | null; // YYYY-MM-DD
+  symptoms?: string[] | null;
+  flow_level?: string | null;
   notes?: string | null;
 }
 
-/**
- * Defines the data structure for updating an existing menstrual cycle record.
- * All fields are optional to allow for partial updates.
- */
-export type MenstrualCycleUpdate = Partial<MenstrualCycleCreate>;
+export interface MenstrualLogUpdate {
+  start_date?: string; // YYYY-MM-DD
+  end_date?: string | null; // YYYY-MM-DD
+  symptoms?: string[] | null;
+  flow_level?: string | null;
+  notes?: string | null;
+}

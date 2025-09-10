@@ -59,15 +59,14 @@ import { useThemeStore, ThemeMode } from '@/store/theme/theme.store';
 import { useAuthStore } from '@/store/auth/auth.store';
 import { usePanicStore } from '@/store/panic/panic.store';
 import { useSnackbar } from '@/hooks/useSnackbar';
+import { Client } from '@/interfaces/client/client.interface';
 
 const drawerWidth = 240;
 
-function DashboardNav() {
+function DashboardNav({ user }: { user: Client | null }) {
   const pathname = usePathname();
   const { t } = useTranslation();
 
-  // NOTE: Phase 4 features are temporarily disabled in the UI until their
-  // corresponding backend endpoints are implemented.
   const navItems = [
     { key: 'dashboard_summary', path: '/dashboard', icon: <DashboardIcon sx={{ color: '#1976d2' }} /> },
     { key: 'dashboard_timeline', path: '/dashboard/timeline', icon: <TimelineIcon sx={{ color: '#ff9800' }} /> },
@@ -78,13 +77,18 @@ function DashboardNav() {
     { key: 'dashboard_vitals', path: '/dashboard/vital-signs', icon: <MonitorHeartIcon sx={{ color: '#c2185b' }} /> },
     { key: 'dashboard_medications', path: '/dashboard/medications', icon: <VaccinesIcon sx={{ color: '#512da8' }} /> },
     { key: 'dashboard_history', path: '/dashboard/medical-history', icon: <ArticleIcon sx={{ color: '#757575' }} /> },
-    // --- Phase 4 Modules (Frontend Skeleton Only) ---
-    { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} />, disabled: true },
-    { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} />, disabled: true },
-    { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} />, disabled: true },
-    { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} />, disabled: true },
-    { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} />, disabled: true },
+    // --- Phase 4 Modules ---
+    { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} /> },
+    { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} /> },
+    { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} /> },
+    { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} />, gender: 'female' },
+    { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} />, gender: 'female' },
   ];
+
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.gender) return true; // Always show items without a gender property
+    return user?.sex?.toLowerCase() === item.gender;
+  });
 
   return (
     <Drawer
@@ -97,10 +101,10 @@ function DashboardNav() {
     >
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          {navItems.map((item) => (
+          {filteredNavItems.map((item) => (
             <ListItem key={item.key} disablePadding>
               <Link href={item.path} passHref style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-                <ListItemButton selected={pathname === item.path} disabled={item.disabled}>
+                <ListItemButton selected={pathname === item.path} disabled={(item as any).disabled}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={t(`navigation.${item.key}`)} />
                 </ListItemButton>
@@ -235,7 +239,7 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
       </AppBar>
       
       <Box sx={{ display: 'flex' }}>
-        {isAuthenticated && <DashboardNav />}
+        {isAuthenticated && <DashboardNav user={user} />}
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {children}

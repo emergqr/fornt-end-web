@@ -1,72 +1,61 @@
-'use client';
-
 /**
- * @file This file provides a mock service layer for the Menstrual Cycle Tracking module.
- * NOTE: This is a placeholder service. The functions are defined but will not work
- * until the corresponding backend endpoints are implemented.
+ * @file This file provides a service layer for interacting with the menstrual cycle-related API endpoints.
  */
 
+import api from '@/services/api';
 import {
-  MenstrualCycleRead,
-  MenstrualCycleCreate,
-  MenstrualCycleUpdate,
+  MenstrualLogRead,
+  MenstrualLogCreate,
+  MenstrualLogUpdate,
 } from '@/interfaces/client/menstrual-cycle.interface';
 
-// The base URL for all menstrual cycle-related API requests.
-const BASE_URL = '/menstrual-cycles';
+const BASE_URL = '/menstrual-cycle/menstrual-cycle/logs';
 
 /**
- * Simulates fetching the list of menstrual cycle records for the authenticated user.
- * @returns {Promise<MenstrualCycleRead[]>} A promise that resolves with an empty array.
+ * Fetches the list of menstrual logs for the authenticated user.
+ * @returns {Promise<MenstrualLogRead[]>} A promise that resolves with an array of the user's menstrual logs.
  */
-const getMyCycles = async (): Promise<MenstrualCycleRead[]> => {
-  console.warn('getMyCycles service is a placeholder and not implemented.');
-  return Promise.resolve([]); // Return empty array for now
+const getMyMenstrualLogs = async (): Promise<MenstrualLogRead[]> => {
+  const response = await api.get<MenstrualLogRead[]>(`${BASE_URL}/`);
+  return response.data;
 };
 
 /**
- * Simulates creating a new menstrual cycle record.
- * @param {MenstrualCycleCreate} data - The data for the new record.
- * @returns {Promise<MenstrualCycleRead>} A promise that resolves with the mock created record.
+ * Creates a new menstrual log for the authenticated user.
+ * @param {MenstrualLogCreate} data - The data for the new menstrual log.
+ * @returns {Promise<MenstrualLogRead>} A promise that resolves with the newly created menstrual log data.
  */
-const createCycle = async (data: MenstrualCycleCreate): Promise<MenstrualCycleRead> => {
-  console.warn('createCycle service is a placeholder and not implemented.');
-  // Return a mock response for now
-  return Promise.resolve({ 
-    uuid: `mock-uuid-${Date.now()}`,
-    cycle_length: 28, // Mock calculated value
-    period_length: 5, // Mock calculated value
-    ...data 
-  } as MenstrualCycleRead);
+const createMenstrualLog = async (data: MenstrualLogCreate): Promise<MenstrualLogRead> => {
+  const response = await api.post<MenstrualLogRead>(`${BASE_URL}/`, data);
+  return response.data;
 };
 
 /**
- * Simulates updating an existing menstrual cycle record.
- * @param {string} uuid - The UUID of the record to update.
- * @param {MenstrualCycleUpdate} data - The data to update.
- * @returns {Promise<MenstrualCycleRead>} A promise that resolves with the mock updated record.
+ * Updates an existing menstrual log by its UUID.
+ * @param {string} uuid - The unique identifier of the log to update.
+ * @param {MenstrualLogUpdate} data - An object containing the log fields to update.
+ * @returns {Promise<MenstrualLogRead>} A promise that resolves with the updated log data.
  */
-const updateCycle = async (uuid: string, data: MenstrualCycleUpdate): Promise<MenstrualCycleRead> => {
-  console.warn(`updateCycle for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve({ uuid, start_date: '', end_date: '', cycle_length: 28, period_length: 5, ...data } as MenstrualCycleRead);
+const updateMenstrualLog = async (
+  uuid: string,
+  data: MenstrualLogUpdate
+): Promise<MenstrualLogRead> => {
+  const response = await api.put<MenstrualLogRead>(`${BASE_URL}/${uuid}`, data);
+  return response.data;
 };
 
 /**
- * Simulates deleting a menstrual cycle record.
- * @param {string} uuid - The UUID of the record to delete.
- * @returns {Promise<void>}
+ * Deletes a menstrual log by its UUID.
+ * @param {string} uuid - The unique identifier of the log to delete.
+ * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
-const deleteCycle = async (uuid: string): Promise<void> => {
-  console.warn(`deleteCycle for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve();
+const deleteMenstrualLog = async (uuid: string): Promise<void> => {
+  await api.delete(`${BASE_URL}/${uuid}`);
 };
 
-/**
- * An object that groups all menstrual cycle-related service functions.
- */
 export const menstrualCycleService = {
-  getMyCycles,
-  createCycle,
-  updateCycle,
-  deleteCycle,
+  getMyMenstrualLogs,
+  createMenstrualLog,
+  updateMenstrualLog,
+  deleteMenstrualLog,
 };

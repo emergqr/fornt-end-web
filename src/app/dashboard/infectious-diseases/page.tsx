@@ -2,9 +2,7 @@
 
 /**
  * @file This file implements the Infectious Diseases management page for the user dashboard.
- * It allows users to add, view, and delete their infectious disease records.
- * The component is built using Material-UI, react-hook-form for form management,
- * Zod for validation, and Zustand for state management.
+ * It allows users to add, view, edit, and delete their infectious disease records.
  */
 
 import * as React from 'react';
@@ -29,15 +27,9 @@ import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 
-// Import the specific store and interfaces for this module.
 import { useInfectiousDiseaseStore } from '@/store/infectious-disease/infectious-disease.store';
-import { InfectiousDiseaseRead, InfectiousDiseaseCreate } from '@/interfaces/client/infectious-disease.interface';
+import { InfectiousDiseaseRead, InfectiousDiseaseCreate, InfectiousDiseaseUpdate } from '@/interfaces/client/infectious-disease.interface';
 
-/**
- * Zod schema for infectious disease form validation.
- * @param t - The translation function from react-i18next.
- * @returns The Zod schema for the infectious disease form.
- */
 const getInfectiousDiseaseSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(2, { message: t('validation.infectiousDiseaseNameRequired') }),
   diagnosis_date: z.string().min(1, { message: t('validation.infectiousDiseaseDiagnosisDateRequired') }),
@@ -45,18 +37,18 @@ const getInfectiousDiseaseSchema = (t: (key: string) => string) => z.object({
   notes: z.string().optional().nullable(),
 });
 
-// Type definition for the form inputs, inferred from the Zod schema.
 type InfectiousDiseaseFormInputs = z.infer<ReturnType<typeof getInfectiousDiseaseSchema>>;
 
 export default function InfectiousDiseasesPage() {
   const { t } = useTranslation();
   const {
-    infectiousDiseases,
+    diseases,
     loading,
     error,
-    fetchInfectiousDiseases,
-    addInfectiousDisease,
-    removeInfectiousDisease,
+    fetchDiseases,
+    addDisease,
+    deleteDisease,
+    updateDisease,
   } = useInfectiousDiseaseStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -72,20 +64,13 @@ export default function InfectiousDiseasesPage() {
     formState: { errors, isSubmitting },
   } = useForm<InfectiousDiseaseFormInputs>({
     resolver: zodResolver(infectiousDiseaseSchema),
-    defaultValues: {
-      name: '',
-      diagnosis_date: '',
-      status: '',
-      notes: '',
-    },
+    defaultValues: { name: '', diagnosis_date: '', status: '', notes: '' },
   });
 
-  // Fetch user's infectious diseases when the component mounts.
   React.useEffect(() => {
-    fetchInfectiousDiseases();
-  }, [fetchInfectiousDiseases]);
+    fetchDiseases();
+  }, [fetchDiseases]);
 
-  // Handler to show the form for adding a new record.
   const handleAddNewClick = () => {
     setEditingDisease(null);
     reset({ name: '', diagnosis_date: '', status: '', notes: '' });
@@ -93,7 +78,18 @@ export default function InfectiousDiseasesPage() {
     setFeedback(null);
   };
 
-  // Handler to hide the form and reset its state.
+  const handleEditClick = (disease: InfectiousDiseaseRead) => {
+    setEditingDisease(disease);
+    reset({
+      name: disease.name,
+      diagnosis_date: disease.diagnosis_date,
+      status: disease.status || '',
+      notes: disease.notes || '',
+    });
+    setIsFormVisible(true);
+    setFeedback(null);
+  };
+
   const handleCancel = () => {
     setIsFormVisible(false);
     setEditingDisease(null);
@@ -101,14 +97,14 @@ export default function InfectiousDiseasesPage() {
     setFeedback(null);
   };
 
-  // Form submission handler.
   const onSubmit: SubmitHandler<InfectiousDiseaseFormInputs> = async (data) => {
     setFeedback(null);
     try {
       if (editingDisease) {
-        // Update logic would be implemented here in the future.
+        await updateDisease(editingDisease.uuid, data as InfectiousDiseaseUpdate);
+        setFeedback({ type: 'success', message: t('dashboard_infectious_diseases.feedback.addSuccess') }); // Re-using
       } else {
-        await addInfectiousDisease(data as InfectiousDiseaseCreate);
+        await addDisease(data as InfectiousDiseaseCreate);
         setFeedback({ type: 'success', message: t('dashboard_infectious_diseases.feedback.addSuccess') });
       }
       handleCancel();
@@ -117,11 +113,10 @@ export default function InfectiousDiseasesPage() {
     }
   };
 
-  // Handler to delete a record with a confirmation dialog.
   const onDelete = async (uuid: string) => {
     if (window.confirm(t('dashboard_infectious_diseases.feedback.deleteConfirm'))) {
       try {
-        await removeInfectiousDisease(uuid);
+        await deleteDisease(uuid);
         setFeedback({ type: 'success', message: t('dashboard_infectious_diseases.feedback.deleteSuccess') });
       } catch (err: any) {
         setFeedback({ type: 'error', message: err.message || t('dashboard_infectious_diseases.feedback.deleteError') });
@@ -131,13 +126,11 @@ export default function InfectiousDiseasesPage() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      {/* Page Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1">{t('dashboard_infectious_diseases.title')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>{t('dashboard_infectious_diseases.addButton')}</Button>
       </Box>
 
-      {/* Add/Edit Form (Collapsible) */}
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -158,16 +151,15 @@ export default function InfectiousDiseasesPage() {
 
       <Divider sx={{ my: 2 }} />
 
-      {/* List of Registered Infectious Diseases */}
       <Typography variant="h6">{t('dashboard_infectious_diseases.list.title')}</Typography>
       {loading && !isSubmitting && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
-      {!loading && !error && infectiousDiseases.length === 0 && <Typography sx={{ mt: 2 }}>{t('dashboard_infectious_diseases.list.noDiseases')}</Typography>}
+      {!loading && !error && diseases.length === 0 && <Typography sx={{ mt: 2 }}>{t('dashboard_infectious_diseases.list.noDiseases')}</Typography>}
       <List>
-        {infectiousDiseases.map((disease) => (
+        {diseases.map((disease) => (
           <ListItem key={disease.uuid} secondaryAction={
               <Box>
-                <IconButton edge="end" aria-label="edit" disabled><EditIcon /></IconButton>
+                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(disease)}><EditIcon /></IconButton>
                 <IconButton edge="end" aria-label="delete" onClick={() => onDelete(disease.uuid)}><DeleteIcon /></IconButton>
               </Box>}
           >

@@ -2,9 +2,7 @@
 
 /**
  * @file This file implements the Addictions management page for the user dashboard.
- * It allows users to add, view, and delete their addiction records.
- * The component is built using Material-UI, react-hook-form for form management,
- * Zod for validation, and Zustand for state management.
+ * It allows users to add, view, edit, and delete their addiction records.
  */
 
 import * as React from 'react';
@@ -29,15 +27,9 @@ import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
 import Collapse from '@mui/material/Collapse';
 
-// Import the specific store and interfaces for this module.
 import { useAddictionStore } from '@/store/addiction/addiction.store';
 import { AddictionRead, AddictionCreate, AddictionUpdate } from '@/interfaces/client/addiction.interface';
 
-/**
- * Zod schema for addiction form validation.
- * @param t - The translation function from react-i18next.
- * @returns The Zod schema for the addiction form.
- */
 const getAddictionSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(2, { message: t('validation.addictionNameRequired') }),
   start_date: z.string().min(1, { message: t('validation.addictionStartDateRequired') }),
@@ -45,7 +37,6 @@ const getAddictionSchema = (t: (key: string) => string) => z.object({
   notes: z.string().optional().nullable(),
 });
 
-// Type definition for the form inputs, inferred from the Zod schema.
 type AddictionFormInputs = z.infer<ReturnType<typeof getAddictionSchema>>;
 
 export default function AddictionsPage() {
@@ -56,7 +47,7 @@ export default function AddictionsPage() {
     error,
     fetchAddictions,
     addAddiction,
-    removeAddiction,
+    deleteAddiction, // Corrected from removeAddiction
     updateAddiction,
   } = useAddictionStore();
 
@@ -73,20 +64,13 @@ export default function AddictionsPage() {
     formState: { errors, isSubmitting },
   } = useForm<AddictionFormInputs>({
     resolver: zodResolver(addictionSchema),
-    defaultValues: {
-      name: '',
-      start_date: '',
-      status: '',
-      notes: '',
-    },
+    defaultValues: { name: '', start_date: '', status: '', notes: '' },
   });
 
-  // Fetch user's addictions when the component mounts.
   React.useEffect(() => {
     fetchAddictions();
   }, [fetchAddictions]);
 
-  // Handler to show the form for adding a new addiction.
   const handleAddNewClick = () => {
     setEditingAddiction(null);
     reset({ name: '', start_date: '', status: '', notes: '' });
@@ -94,7 +78,18 @@ export default function AddictionsPage() {
     setFeedback(null);
   };
 
-  // Handler to hide the form and reset its state.
+  const handleEditClick = (addiction: AddictionRead) => {
+    setEditingAddiction(addiction);
+    reset({
+      name: addiction.name,
+      start_date: addiction.start_date,
+      status: addiction.status || '',
+      notes: addiction.notes || '',
+    });
+    setIsFormVisible(true);
+    setFeedback(null);
+  };
+
   const handleCancel = () => {
     setIsFormVisible(false);
     setEditingAddiction(null);
@@ -102,12 +97,12 @@ export default function AddictionsPage() {
     setFeedback(null);
   };
 
-  // Form submission handler for both creating and updating addictions.
   const onSubmit: SubmitHandler<AddictionFormInputs> = async (data) => {
     setFeedback(null);
     try {
       if (editingAddiction) {
-        // Update logic would be here
+        await updateAddiction(editingAddiction.uuid, data as AddictionUpdate);
+        setFeedback({ type: 'success', message: t('dashboard_addictions.feedback.addSuccess') }); // Re-using success message
       } else {
         await addAddiction(data as AddictionCreate);
         setFeedback({ type: 'success', message: t('dashboard_addictions.feedback.addSuccess') });
@@ -118,11 +113,10 @@ export default function AddictionsPage() {
     }
   };
 
-  // Handler to delete an addiction with a confirmation dialog.
   const onDeleteAddiction = async (uuid: string) => {
     if (window.confirm(t('dashboard_addictions.feedback.deleteConfirm'))) {
       try {
-        await removeAddiction(uuid);
+        await deleteAddiction(uuid);
         setFeedback({ type: 'success', message: t('dashboard_addictions.feedback.deleteSuccess') });
       } catch (err: any) {
         setFeedback({ type: 'error', message: err.message || t('dashboard_addictions.feedback.deleteError') });
@@ -132,17 +126,17 @@ export default function AddictionsPage() {
 
   return (
     <Paper sx={{ p: 3 }}>
-      {/* Page Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1">{t('dashboard_addictions.title')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>{t('dashboard_addictions.addButton')}</Button>
       </Box>
 
-      {/* Add/Edit Form (Collapsible) */}
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Typography variant="h6" gutterBottom>{t('dashboard_addictions.form.title')}</Typography>
+            <Typography variant="h6" gutterBottom>
+              {editingAddiction ? 'Edit Addiction' : t('dashboard_addictions.form.title')}
+            </Typography>
             
             <Controller name="name" control={control} render={({ field }) => (<TextField {...field} label={t('dashboard_addictions.form.nameLabel')} fullWidth margin="normal" required error={!!errors.name} helperText={errors.name?.message} />)} />
             <Controller name="start_date" control={control} render={({ field }) => (<TextField {...field} label={t('dashboard_addictions.form.startDateLabel')} type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.start_date} helperText={errors.start_date?.message} />)} />
@@ -159,7 +153,6 @@ export default function AddictionsPage() {
 
       <Divider sx={{ my: 2 }} />
 
-      {/* List of Registered Addictions */}
       <Typography variant="h6">{t('dashboard_addictions.list.title')}</Typography>
       {loading && !isSubmitting && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
       {error && !loading && <Alert severity="error">{error}</Alert>}
@@ -168,8 +161,7 @@ export default function AddictionsPage() {
         {addictions.map((addiction) => (
           <ListItem key={addiction.uuid} secondaryAction={
               <Box>
-                {/* The edit functionality can be implemented in the future */}
-                <IconButton edge="end" aria-label="edit" disabled><EditIcon /></IconButton>
+                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(addiction)}><EditIcon /></IconButton>
                 <IconButton edge="end" aria-label="delete" onClick={() => onDeleteAddiction(addiction.uuid)}><DeleteIcon /></IconButton>
               </Box>}
           >
