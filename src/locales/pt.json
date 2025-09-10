@@ -36,7 +36,11 @@
     "registerNameMinLength": "O nome deve ter pelo menos 2 caracteres",
     "registerPasswordMinLength": "A senha deve ter pelo menos 6 caracteres",
     "registerPasswordRepeatMinLength": "A senha deve ter pelo menos 6 caracteres",
-    "registerPasswordsDoNotMatch": "As senhas não coincidem"
+    "registerPasswordsDoNotMatch": "As senhas não coincidem",
+    "addictionNameRequired": "O nome do vício é obrigatório.",
+    "addictionStartDateRequired": "A data de início é obrigatória.",
+    "infectiousDiseaseNameRequired": "O nome da doença é obrigatório.",
+    "infectiousDiseaseDiagnosisDateRequired": "A data do diagnóstico é obrigatória."
   },
   "navigation": {
     "aboutUs": "Sobre Nós",
@@ -47,6 +51,11 @@
     "dashboard_profile": "Meu Perfil",
     "dashboard_allergies": "Minhas Alergias",
     "dashboard_diseases": "Condições Médicas",
+    "dashboard_addictions": "Vícios",
+    "dashboard_infectious_diseases": "Doenças Infecciosas",
+    "dashboard_psychiatric": "Condições Psiquiátricas",
+    "dashboard_menstrual_cycle": "Ciclo Menstrual",
+    "dashboard_pregnancy": "Acompanhamento de Gravidez",
     "dashboard_vitals": "Sinais Vitais",
     "dashboard_medications": "Medicamentos",
     "dashboard_history": "Histórico Médico",
@@ -383,9 +392,80 @@
       "deleteError": "Não foi possível excluir o evento."
     }
   },
-  "dashboard_timeline": {
-    "title": "Linha do Tempo Médica",
-    "noEvents": "Não há eventos em seu histórico médico para exibir."
+  "dashboard_addictions": {
+    "title": "Meus Vícios",
+    "addButton": "Adicionar Vício",
+    "form": {
+      "title": "Adicionar Novo Vício",
+      "nameLabel": "Nome do Vício (ex. Nicotina)",
+      "startDateLabel": "Data de Início",
+      "statusLabel": "Status (ex. Ativo, Em Remissão)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Adicionar Vício"
+    },
+    "list": {
+      "title": "Vícios Registrados",
+      "noAddictions": "Você não tem vícios registrados.",
+      "startedLabel": "Iniciou em",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Vício adicionado com sucesso!",
+      "addError": "Não foi possível adicionar o vício.",
+      "deleteConfirm": "Tem certeza de que deseja excluir este vício?",
+      "deleteSuccess": "Vício excluído.",
+      "deleteError": "Não foi possível excluir o vício."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "Minhas Doenças Infecciosas",
+    "addButton": "Adicionar Doença",
+    "form": {
+      "title": "Adicionar Nova Doença Infecciosa",
+      "nameLabel": "Nome da Doença (ex. COVID-19)",
+      "diagnosisDateLabel": "Data do Diagnóstico",
+      "statusLabel": "Status (ex. Ativo, Curado)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Adicionar Doença"
+    },
+    "list": {
+      "title": "Doenças Registradas",
+      "noDiseases": "Você não tem doenças infecciosas registradas.",
+      "diagnosedLabel": "Diagnosticado em",
+      "statusLabel": "Status"
+    },
+    "feedback": {
+      "addSuccess": "Doença infecciosa adicionada com sucesso!",
+      "addError": "Não foi possível adicionar a doença infecciosa.",
+      "deleteConfirm": "Tem certeza de que deseja excluir esta doença?",
+      "deleteSuccess": "Doença infecciosa excluída.",
+      "deleteError": "Não foi possível excluir a doença infecciosa."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Botão de Pânico",
+    "dialogTitle": "Ativar Alerta de Pânico?",
+    "dialogContent": "Isso notificará imediatamente todos os seus contatos de emergência. Tem certeza de que deseja continuar?",
+    "confirmButton": "Ativar",
+    "activatingButton": "Ativando...",
+    "successMessage": "Alerta de pânico ativado! Seus contatos de emergência foram notificados.",
+    "errorMessage": "Não foi possível ativar o alerta de pânico. Por favor, tente novamente."
+  },
+  "dashboard_admin": {
+    "title": "Administração de Usuários",
+    "searchPlaceholder": "Buscar por nome ou email...",
+    "table": {
+      "name": "Nome",
+      "email": "Email",
+      "status": "Status",
+      "role": "Função",
+      "actions": "Ações"
+    },
+    "statusActive": "Ativo",
+    "statusInactive": "Inativo",
+    "roleAdmin": "Admin",
+    "roleUser": "Usuário",
+    "noUsers": "Nenhum usuário encontrado."
   },
   "contacts": {
     "title": "Contactos de Emergência",

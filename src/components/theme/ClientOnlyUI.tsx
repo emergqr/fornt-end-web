@@ -18,6 +18,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Fab from '@mui/material/Fab';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Tooltip from '@mui/material/Tooltip';
 
 // --- i18n Imports ---
 import '@/services/i18n';
@@ -35,6 +42,12 @@ import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import VaccinesIcon from '@mui/icons-material/Vaccines';
 import ArticleIcon from '@mui/icons-material/Article';
+import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
+import BugReportIcon from '@mui/icons-material/BugReport';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
+import WarningIcon from '@mui/icons-material/Warning';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
@@ -44,24 +57,17 @@ import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 import { useThemeStore, ThemeMode } from '@/store/theme/theme.store';
 import { useAuthStore } from '@/store/auth/auth.store';
+import { usePanicStore } from '@/store/panic/panic.store';
+import { useSnackbar } from '@/hooks/useSnackbar';
 
-/**
- * Defines the width of the dashboard navigation drawer.
- */
 const drawerWidth = 240;
 
-/**
- * Renders the permanent navigation drawer for the dashboard layout.
- * It displays a list of navigation items with icons and text.
- * @returns {React.ReactElement} The rendered dashboard navigation component.
- */
 function DashboardNav() {
-  // Hook to get the current URL path, used to highlight the active navigation item.
   const pathname = usePathname();
-  // Hook to access the translation function.
   const { t } = useTranslation();
 
-  // Array of navigation items to be displayed in the drawer.
+  // NOTE: Phase 4 features are temporarily disabled in the UI until their
+  // corresponding backend endpoints are implemented.
   const navItems = [
     { key: 'dashboard_summary', path: '/dashboard', icon: <DashboardIcon sx={{ color: '#1976d2' }} /> },
     { key: 'dashboard_timeline', path: '/dashboard/timeline', icon: <TimelineIcon sx={{ color: '#ff9800' }} /> },
@@ -72,6 +78,12 @@ function DashboardNav() {
     { key: 'dashboard_vitals', path: '/dashboard/vital-signs', icon: <MonitorHeartIcon sx={{ color: '#c2185b' }} /> },
     { key: 'dashboard_medications', path: '/dashboard/medications', icon: <VaccinesIcon sx={{ color: '#512da8' }} /> },
     { key: 'dashboard_history', path: '/dashboard/medical-history', icon: <ArticleIcon sx={{ color: '#757575' }} /> },
+    // --- Phase 4 Modules (Frontend Skeleton Only) ---
+    { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} />, disabled: true },
+    { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} />, disabled: true },
+    { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} />, disabled: true },
+    { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} />, disabled: true },
+    { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} />, disabled: true },
   ];
 
   return (
@@ -88,9 +100,8 @@ function DashboardNav() {
           {navItems.map((item) => (
             <ListItem key={item.key} disablePadding>
               <Link href={item.path} passHref style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-                <ListItemButton selected={pathname === item.path}>
+                <ListItemButton selected={pathname === item.path} disabled={item.disabled}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  {/* The text is translated using the item's key. */}
                   <ListItemText primary={t(`navigation.${item.key}`)} />
                 </ListItemButton>
               </Link>
@@ -102,35 +113,19 @@ function DashboardNav() {
   );
 }
 
-/**
- * This component renders the main UI shell, including the AppBar and Drawer.
- * It's loaded only on the client-side to prevent SSR issues with UI libraries.
- * It handles the display of different UI elements based on the authentication state.
- * @param {object} props - The component props.
- * @param {React.ReactNode} props.children - The main content to be rendered within the layout.
- * @returns {React.ReactElement} The main UI layout.
- */
 export default function ClientOnlyUI({ children }: { children: React.ReactNode }) {
-  // Hooks for navigation, state management, and internationalization.
   const router = useRouter();
   const { mode, setTheme } = useThemeStore();
   const { t, i18n } = useTranslation();
   const { isAuthenticated, user, logout } = useAuthStore();
-  
-  // State for managing the anchor elements of the language and theme menus.
+  const { isLoading: isPanicLoading, triggerPanic } = usePanicStore();
+  const { showSnackbar } = useSnackbar();
+
   const [langMenuAnchor, setLangMenuAnchor] = React.useState<null | HTMLElement>(null);
   const [themeMenuAnchor, setThemeMenuAnchor] = React.useState<null | HTMLElement>(null);
+  const [isPanicDialogOpen, setPanicDialogOpen] = React.useState(false);
 
-  /**
-   * Opens the language selection menu.
-   * @param {React.MouseEvent<HTMLElement>} event - The mouse event that triggered the handler.
-   */
   const handleLanguageMenu = (event: React.MouseEvent<HTMLElement>) => setLangMenuAnchor(event.currentTarget);
-
-  /**
-   * Closes the language menu and changes the language if a new one is selected.
-   * @param {string} [langCode] - The code of the selected language (e.g., 'en', 'es').
-   */
   const handleLanguageClose = (langCode?: string) => {
     setLangMenuAnchor(null);
     if (langCode && i18n.language !== langCode) {
@@ -138,16 +133,7 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
     }
   };
 
-  /**
-   * Opens the theme selection menu.
-   * @param {React.MouseEvent<HTMLElement>} event - The mouse event that triggered the handler.
-   */
   const handleThemeMenu = (event: React.MouseEvent<HTMLElement>) => setThemeMenuAnchor(event.currentTarget);
-
-  /**
-   * Closes the theme menu and applies the new theme if one is selected.
-   * @param {ThemeMode} [themeMode] - The name of the selected theme.
-   */
   const handleThemeClose = (themeMode?: ThemeMode) => {
     setThemeMenuAnchor(null);
     if (themeMode) {
@@ -155,18 +141,24 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
     }
   };
 
-  /**
-   * Handles the user logout process.
-   */
   const handleLogout = () => {
     logout();
     router.push('/');
   };
 
-  // Finds the current language object from the constants to display its flag.
+  const handlePanicConfirm = async () => {
+    try {
+      await triggerPanic();
+      showSnackbar(t('panic_button.successMessage'), 'success');
+    } catch (error: any) {
+      showSnackbar(error.message || t('panic_button.errorMessage'), 'error');
+    } finally {
+      setPanicDialogOpen(false);
+    }
+  };
+
   const currentLanguage = a_languages.find(lang => lang.code === i18n.language) || a_languages[0];
 
-  // Defines the available themes with their labels and icons.
   const themes: { name: ThemeMode; label: string; icon: React.ReactNode }[] = [
     { name: 'light', label: t('themes.light'), icon: <Brightness7Icon fontSize="small" /> },
     { name: 'dark', label: t('themes.dark'), icon: <Brightness4Icon fontSize="small" /> },
@@ -176,7 +168,6 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
     { name: 'winter', label: t('themes.winter'), icon: <AcUnitIcon fontSize="small" /> },
   ];
 
-  // Renders the buttons for public (unauthenticated) users.
   const publicButtons = (
     <>
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -187,7 +178,6 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
     </>
   );
 
-  // Renders the buttons and user info for authenticated users.
   const authenticatedButtons = (
     <>
       <Typography variant="subtitle1" sx={{ mr: 2 }}>
@@ -201,7 +191,6 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
     <Box>
       <AppBar position="sticky" color="primary" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          {/* Logo */}
           <Box sx={{ flexGrow: 1 }}>
             <Link href={isAuthenticated ? "/dashboard" : "/"} passHref>
               <Image
@@ -214,10 +203,8 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
             </Link>
           </Box>
           
-          {/* Conditional rendering of buttons based on auth state */}
           <>{isAuthenticated ? authenticatedButtons : publicButtons}</>
 
-          {/* Language Selector */}
           <IconButton onClick={handleLanguageMenu} color="inherit" sx={{ p: 0, mx: 1.5 }}>
             <Image src={currentLanguage.flag} alt={t(`languages.${currentLanguage.code}`)} width={24} height={24} />
           </IconButton>
@@ -232,7 +219,6 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
             ))}
           </Menu>
 
-          {/* Theme Selector */}
           <IconButton onClick={handleThemeMenu} sx={{ color: '#FFD700' }}>
             <PaletteIcon />
           </IconButton>
@@ -249,14 +235,46 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
       </AppBar>
       
       <Box sx={{ display: 'flex' }}>
-        {/* The dashboard navigation is only shown to authenticated users. */}
         {isAuthenticated && <DashboardNav />}
 
-        {/* Main content area */}
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {children}
         </Box>
       </Box>
+
+      {/* Panic Button - only visible when authenticated */}
+      {isAuthenticated && (
+        <Tooltip title={t('panic_button.tooltip')}>
+            <Fab 
+                color="error" 
+                sx={{ position: 'fixed', bottom: 24, right: 24 }} 
+                onClick={() => setPanicDialogOpen(true)}
+                disabled={isPanicLoading}
+            >
+                {isPanicLoading ? <CircularProgress size={24} color="inherit" /> : <WarningIcon />}
+            </Fab>
+        </Tooltip>
+      )}
+
+      {/* Panic Button Confirmation Dialog */}
+      <Dialog
+        open={isPanicDialogOpen}
+        onClose={() => setPanicDialogOpen(false)}
+      >
+        <DialogTitle>{t('panic_button.dialogTitle')}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {t('panic_button.dialogContent')}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPanicDialogOpen(false)}>{t('common.cancel')}</Button>
+          <Button onClick={handlePanicConfirm} color="error" autoFocus disabled={isPanicLoading}>
+            {isPanicLoading ? t('panic_button.activatingButton') : t('panic_button.confirmButton')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 }

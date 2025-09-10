@@ -36,7 +36,11 @@
     "registerNameMinLength": "Le nom doit comporter au moins 2 caractères",
     "registerPasswordMinLength": "Le mot de passe doit comporter au moins 6 caractères",
     "registerPasswordRepeatMinLength": "Le mot de passe doit comporter au moins 6 caractères",
-    "registerPasswordsDoNotMatch": "Les mots de passe ne correspondent pas"
+    "registerPasswordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "addictionNameRequired": "Le nom de la dépendance est requis.",
+    "addictionStartDateRequired": "La date de début est requise.",
+    "infectiousDiseaseNameRequired": "Le nom de la maladie est requis.",
+    "infectiousDiseaseDiagnosisDateRequired": "La date de diagnostic est requise."
   },
   "navigation": {
     "aboutUs": "À Propos",
@@ -47,6 +51,11 @@
     "dashboard_profile": "Mon Profil",
     "dashboard_allergies": "Mes Allergies",
     "dashboard_diseases": "Conditions Médicales",
+    "dashboard_addictions": "Dépendances",
+    "dashboard_infectious_diseases": "Maladies Infectieuses",
+    "dashboard_psychiatric": "Conditions Psychiatriques",
+    "dashboard_menstrual_cycle": "Cycle Menstruel",
+    "dashboard_pregnancy": "Suivi de Grossesse",
     "dashboard_vitals": "Signes Vitaux",
     "dashboard_medications": "Médicaments",
     "dashboard_history": "Historique Médical",
@@ -383,9 +392,80 @@
       "deleteError": "Impossible de supprimer l'événement."
     }
   },
-  "dashboard_timeline": {
-    "title": "Chronologie Médicale",
-    "noEvents": "Il n'y a aucun événement dans votre historique médical à afficher."
+  "dashboard_addictions": {
+    "title": "Mes Dépendances",
+    "addButton": "Ajouter une Dépendance",
+    "form": {
+      "title": "Ajouter une Nouvelle Dépendance",
+      "nameLabel": "Nom de la Dépendance (ex. Nicotine)",
+      "startDateLabel": "Date de Début",
+      "statusLabel": "Statut (ex. Actif, En Rémission)",
+      "notesLabel": "Notes (Optionnel)",
+      "submitButton": "Ajouter la Dépendance"
+    },
+    "list": {
+      "title": "Dépendances Enregistrées",
+      "noAddictions": "Vous n'avez aucune dépendance enregistrée.",
+      "startedLabel": "Commencé le",
+      "statusLabel": "Statut"
+    },
+    "feedback": {
+      "addSuccess": "Dépendance ajoutée avec succès !",
+      "addError": "Impossible d'ajouter la dépendance.",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette dépendance ?",
+      "deleteSuccess": "Dépendance supprimée.",
+      "deleteError": "Impossible de supprimer la dépendance."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "Mes Maladies Infectieuses",
+    "addButton": "Ajouter une Maladie",
+    "form": {
+      "title": "Ajouter une Nouvelle Maladie Infectieuse",
+      "nameLabel": "Nom de la Maladie (ex. COVID-19)",
+      "diagnosisDateLabel": "Date du Diagnostic",
+      "statusLabel": "Statut (ex. Actif, Guéri)",
+      "notesLabel": "Notes (Optionnel)",
+      "submitButton": "Ajouter la Maladie"
+    },
+    "list": {
+      "title": "Maladies Enregistrées",
+      "noDiseases": "Vous n'avez aucune maladie infectieuse enregistrée.",
+      "diagnosedLabel": "Diagnostiqué le",
+      "statusLabel": "Statut"
+    },
+    "feedback": {
+      "addSuccess": "Maladie infectieuse ajoutée avec succès !",
+      "addError": "Impossible d'ajouter la maladie infectieuse.",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette maladie ?",
+      "deleteSuccess": "Maladie infectieuse supprimée.",
+      "deleteError": "Impossible de supprimer la maladie infectieuse."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Bouton de Panique",
+    "dialogTitle": "Activer l'Alerte de Panique ?",
+    "dialogContent": "Cela notifiera immédiatement tous vos contacts d'urgence. Êtes-vous sûr de vouloir continuer ?",
+    "confirmButton": "Activer",
+    "activatingButton": "Activation...",
+    "successMessage": "Alerte de panique activée ! Vos contacts d'urgence ont été notifiés.",
+    "errorMessage": "Impossible d'activer l'alerte de panique. Veuillez réessayer."
+  },
+  "dashboard_admin": {
+    "title": "Administration des Utilisateurs",
+    "searchPlaceholder": "Rechercher par nom ou e-mail...",
+    "table": {
+      "name": "Nom",
+      "email": "Email",
+      "status": "Statut",
+      "role": "Rôle",
+      "actions": "Actions"
+    },
+    "statusActive": "Actif",
+    "statusInactive": "Inactif",
+    "roleAdmin": "Admin",
+    "roleUser": "Utilisateur",
+    "noUsers": "Aucun utilisateur trouvé."
   },
   "contacts": {
     "title": "Contacts d'Urgence",

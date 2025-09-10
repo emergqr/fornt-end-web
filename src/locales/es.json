@@ -36,7 +36,11 @@
     "registerNameMinLength": "El nombre debe tener al menos 2 caracteres",
     "registerPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
     "registerPasswordRepeatMinLength": "La contraseña debe tener al menos 6 caracteres",
-    "registerPasswordsDoNotMatch": "Las contraseñas no coinciden"
+    "registerPasswordsDoNotMatch": "Las contraseñas no coinciden",
+    "addictionNameRequired": "El nombre de la adicción es requerido.",
+    "addictionStartDateRequired": "La fecha de inicio es requerida.",
+    "infectiousDiseaseNameRequired": "El nombre de la enfermedad es requerido.",
+    "infectiousDiseaseDiagnosisDateRequired": "La fecha de diagnóstico es requerida."
   },
   "navigation": {
     "aboutUs": "Quiénes Somos",
@@ -47,6 +51,11 @@
     "dashboard_profile": "Mi Perfil",
     "dashboard_allergies": "Mis Alergias",
     "dashboard_diseases": "Condiciones Médicas",
+    "dashboard_addictions": "Adicciones",
+    "dashboard_infectious_diseases": "Enfermedades Infecciosas",
+    "dashboard_psychiatric": "Condiciones Psiquiátricas",
+    "dashboard_menstrual_cycle": "Ciclo Menstrual",
+    "dashboard_pregnancy": "Seguimiento de Embarazo",
     "dashboard_vitals": "Signos Vitales",
     "dashboard_medications": "Medicamentos",
     "dashboard_history": "Historial Médico",
@@ -383,9 +392,80 @@
       "deleteError": "No se pudo eliminar el evento."
     }
   },
-  "dashboard_timeline": {
-    "title": "Línea de Tiempo Médica",
-    "noEvents": "No hay eventos en tu historial médico para mostrar."
+  "dashboard_addictions": {
+    "title": "Mis Adicciones",
+    "addButton": "Añadir Adicción",
+    "form": {
+      "title": "Añadir Nueva Adicción",
+      "nameLabel": "Nombre de la Adicción (ej. Nicotina)",
+      "startDateLabel": "Fecha de Inicio",
+      "statusLabel": "Estado (ej. Activo, En Remisión)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Añadir Adicción"
+    },
+    "list": {
+      "title": "Adicciones Registradas",
+      "noAddictions": "No tienes adicciones registradas.",
+      "startedLabel": "Inició",
+      "statusLabel": "Estado"
+    },
+    "feedback": {
+      "addSuccess": "¡Adicción añadida con éxito!",
+      "addError": "No se pudo añadir la adicción.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta adicción?",
+      "deleteSuccess": "Adicción eliminada.",
+      "deleteError": "No se pudo eliminar la adicción."
+    }
+  },
+  "dashboard_infectious_diseases": {
+    "title": "Mis Enfermedades Infecciosas",
+    "addButton": "Añadir Enfermedad",
+    "form": {
+      "title": "Añadir Nueva Enfermedad Infecciosa",
+      "nameLabel": "Nombre de la Enfermedad (ej. COVID-19)",
+      "diagnosisDateLabel": "Fecha de Diagnóstico",
+      "statusLabel": "Estado (ej. Activo, Curado)",
+      "notesLabel": "Notas (Opcional)",
+      "submitButton": "Añadir Enfermedad"
+    },
+    "list": {
+      "title": "Enfermedades Registradas",
+      "noDiseases": "No tienes enfermedades infecciosas registradas.",
+      "diagnosedLabel": "Diagnosticado",
+      "statusLabel": "Estado"
+    },
+    "feedback": {
+      "addSuccess": "¡Enfermedad infecciosa añadida con éxito!",
+      "addError": "No se pudo añadir la enfermedad infecciosa.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta enfermedad?",
+      "deleteSuccess": "Enfermedad infecciosa eliminada.",
+      "deleteError": "No se pudo eliminar la enfermedad infecciosa."
+    }
+  },
+  "panic_button": {
+    "tooltip": "Botón de Pánico",
+    "dialogTitle": "¿Activar Alerta de Pánico?",
+    "dialogContent": "Esto notificará inmediatamente a todos tus contactos de emergencia. ¿Estás seguro de que quieres proceder?",
+    "confirmButton": "Activar",
+    "activatingButton": "Activando...",
+    "successMessage": "¡Alerta de pánico activada! Tus contactos de emergencia han sido notificados.",
+    "errorMessage": "No se pudo activar la alerta de pánico. Por favor, inténtalo de nuevo."
+  },
+  "dashboard_admin": {
+    "title": "Administración de Usuarios",
+    "searchPlaceholder": "Buscar por nombre o email...",
+    "table": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "status": "Estado",
+      "role": "Rol",
+      "actions": "Acciones"
+    },
+    "statusActive": "Activo",
+    "statusInactive": "Inactivo",
+    "roleAdmin": "Admin",
+    "roleUser": "Usuario",
+    "noUsers": "No se encontraron usuarios."
   },
   "contacts": {
     "title": "Contactos de Emergencia",
