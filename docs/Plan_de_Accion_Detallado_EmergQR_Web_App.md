@@ -28,80 +28,46 @@
 - [x] **Campos de Datos de Emergencia**: Implementados y funcionales los campos para Grupo Sanguíneo y Sistema de Salud.
 - [x] **Eliminación de Cuenta Segura**: El usuario puede eliminar su cuenta de forma segura desde su perfil.
 - [x] **Perfil de Usuario Completo**: Añadidos y funcionales los campos de `sexo` y `ocupación`.
-- [x] **Internacionalización (i18n) y Documentación Técnica Integral**: Toda la aplicación ha sido traducida a 5 idiomas y el código ha sido completamente documentado.
+- [x] **Internacionalización (i18n) y Sincronización de Idioma**: La aplicación está traducida a 5 idiomas y la preferencia del usuario se guarda en el backend.
 
 ---
 
-<!--
-## 🚀 **Fase 4: Funcionalidades de Administración y Expansión del Perfil (En Progreso)**
-
-**Nota: La navegación a esta fase está deshabilitada hasta que el backend esté completamente funcional.**
-
-### ⭐ **Tareas Priorizadas**
-
-- [x] **Nuevas Secciones Médicas: Adicciones y Enfermedades Infectocontagiosas**
-  - **Descripción**: Crear dos nuevos módulos en el dashboard para que los usuarios puedan registrar adicciones y enfermedades infectocontagiosas.
-  - **Estado**: **Completado** (Frontend).
-
-- [x] **Botón de Pánico**
-  - **Descripción**: Implementar un Botón de Acción Flotante (FAB) en el dashboard que, previa confirmación, envíe una notificación de emergencia a los contactos designados.
-  - **Estado**: **Completado** (Frontend). Bloqueado a la espera del endpoint del backend.
-
-- [ ] **Panel de Administración de Usuarios**
-  - **Descripción**: Crear una nueva sección protegida para administradores (`is_admin: true`) que permita gestionar perfiles de usuario.
-  - **Estado**: **En Progreso**. Esqueleto de UI y `store` con datos simulados implementado. Bloqueado a la espera de endpoints de backend.
-
-### ⭐ **Esqueleto de Frontend para Futuras Funcionalidades**
-
-- [ ] **Módulo de Salud Mental**
-  - **Descripción**: Crear la estructura inicial (interfaces, servicios simulados, traducciones y enlace de navegación desactivado) para un futuro módulo de seguimiento de salud mental (ej. enfermedades psiquiátricas, estado de ánimo).
-  - **Valor**: Expande el perfil de salud a un área crítica y a menudo descuidada.
-  - **Estado**: Pendiente.
-
-- [ ] **Módulo de Seguimiento Menstrual**
-  - **Descripción**: Crear la estructura inicial para un futuro módulo de seguimiento del ciclo menstrual.
-  - **Valor**: Añade una funcionalidad de alto valor y muy personal para una gran parte de la base de usuarios.
-  - **Estado**: Pendiente.
-
-- [ ] **Módulo de Seguimiento de Embarazo**
-  - **Descripción**: Crear la estructura inicial para un futuro módulo de seguimiento del embarazo.
-  - **Valor**: Proporciona una herramienta de seguimiento detallado para un período de salud crítico.
-  - **Estado**: Pendiente.
--->
-
----
-
-## 🚀 **Fase 5: Calidad de Proyecto y Mantenibilidad (Pendiente)**
-
-### ⭐ **Tareas Priorizadas**
-
-- [ ] **Implementación de Pruebas Unitarias y de Integración**
-  - **Descripción**: Configurar el entorno de pruebas con **Jest** y **React Testing Library**. Desarrollar un conjunto sólido de pruebas para los componentes, servicios y stores, asegurando la estabilidad del código y previniendo regresiones.
-  - **Valor**: Aumenta la confianza en los despliegues, facilita la refactorización y garantiza el correcto funcionamiento de la lógica de negocio.
-
-- [ ] **Generación de Documentación Automática**
-  - **Descripción**: Implementar **TypeDoc** para generar un sitio web de documentación HTML a partir de los comentarios técnicos existentes en el código. Configurar un script (`docs:generate`) en `package.json` para automatizar este proceso.
-  - **Valor**: Proporciona una documentación técnica siempre actualizada, accesible y fácil de navegar, crucial para la escalabilidad del proyecto y la incorporación de nuevos desarrolladores.
+## ✅ **Fase 4: Expansión del Perfil de Salud (Completado)**
+- [x] **Módulo de Adicciones**: CRUD completo conectado al backend.
+- [x] **Módulo de Enfermedades Infecciosas**: CRUD completo conectado al backend.
+- [x] **Módulo de Condiciones Psiquiátricas**: CRUD completo conectado al backend.
+- [x] **Módulo de Seguimiento de Ciclo Menstrual**: CRUD completo conectado al backend.
+- [x] **Módulo de Seguimiento de Embarazo**: CRUD completo conectado al backend.
+- [x] **Botón de Pánico**: Funcionalidad conectada al backend.
+- [x] **Navegación Condicional**: Los menús de Ciclo Menstrual y Embarazo se muestran según el sexo del perfil.
 
 ---
 
 ## ✅ **Fase 5: Calidad de Proyecto y Mantenibilidad (Completado)**
+- [x] **Implementación de Pruebas Unitarias y de Integración**: Se ha configurado el entorno de pruebas con Jest y React Testing Library.
+- [x] **Generación de Documentación Automática**: Se ha implementado TypeDoc para generar documentación técnica a partir de los comentarios del código.
 
-### ⭐ **Tareas Completadas**
+---
 
-- [x] **Implementación de Pruebas Unitarias y de Integración**
-  - **Descripción**: Se ha configurado el entorno de pruebas con **Jest** y **React Testing Library**. Se ha añadido un script `test` y una prueba de ejemplo para validar la configuración.
-  - **Valor**: Aumenta la confianza en los despliegues, facilita la refactorización y garantiza el correcto funcionamiento de la lógica de negocio.
+## 🚀 **Fase 6: Administración y Mejoras Futuras (Pendiente)**
 
-- [x] **Generación de Documentación Automática**
-  - **Descripción**: Se ha implementado **TypeDoc** para generar un sitio web de documentación HTML a partir de los comentarios del código. Se ha configurado un script (`docs:generate`) en `package.json` para automatizar este proceso.
-  - **Valor**: Proporciona una documentación técnica siempre actualizada, accesible y fácil de navegar, crucial para la escalabilidad del proyecto.
+### ⭐ **Tareas Priorizadas**
+
+- [ ] **Panel de Administración de Usuarios**
+  - **Descripción**: Crear una nueva sección protegida para administradores (`is_admin: true`) que permita visualizar, buscar y gestionar perfiles de usuario (ej. editar datos, desactivar cuentas).
+  - **Endpoints Requeridos**: `GET /api/v1/clients/`, `GET /api/v1/clients/{uuid}`, `DELETE /api/v1/clients/{uuid}`.
+  - **Estado**: Pendiente.
+
+- [ ] **Sistema de Acceso Remoto Temporal y Revocable**
+  - **Descripción**: Implementar el flujo completo para que usuarios externos soliciten acceso, los administradores lo aprueben (con duración) y lo revoquen.
+  - **Endpoints Requeridos**: `POST /api/v1/access-requests`, `POST /api/v1/activate-account`, `GET /api/v1/admin/access-requests`, etc.
+  - **Estado**: Pendiente.
 
 ---
 
 ## 📌 Notas Adicionales
 
-- **Próxima Tarea**: El siguiente gran desafío es el desarrollo de la **aplicación móvil**.
+- **Próxima Tarea**: Implementar el Panel de Administración de Usuarios.
 - **Feedback Loop**: Continuar con la revisión de funcionalidades y la priorización según las necesidades que surjan.
 
 ✅ **¡Plan actualizado y listo para seguir avanzando!**

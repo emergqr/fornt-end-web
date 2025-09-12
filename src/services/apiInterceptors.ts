@@ -6,19 +6,16 @@
  * such as automatic user logout on session expiry.
  */
 
-import api from './api';
+import api, { recursiveUrlCorrection } from './api'; // Import the URL correction utility
 import { getApiErrorMessage } from './apiErrors';
 import { i18n as i18nInstanceType } from 'i18next'; // Import the i18n instance type
 
 /**
  * Configures the application's Axios interceptors.
  * This function should be called once when the application initializes.
- * It uses a form of dependency injection to avoid circular dependencies between the API layer
- * and the Zustand auth store, which might depend on this API layer.
- * 
- * @param {() => Promise<string | null>} getTokenFn - A function that retrieves the authentication token from its source (e.g., Zustand store).
- * @param {() => Promise<void>} signOutFn - A function that handles the user sign-out process, typically by clearing the auth store.
- * @param {i18nInstanceType} i18nInstance - The i18next instance to get the current language for the Accept-Language header.
+ * @param {() => Promise<string | null>} getTokenFn - A function that retrieves the authentication token.
+ * @param {() => Promise<void>} signOutFn - A function that handles the user sign-out process.
+ * @param {i18nInstanceType} i18nInstance - The i18next instance to get the current language.
  */
 export const setupApiInterceptors = (
   getTokenFn: () => Promise<string | null>,
@@ -27,11 +24,10 @@ export const setupApiInterceptors = (
 ) => {
   /**
    * Request Interceptor:
-   * This function is executed before each API request is sent.
-   * Its primary roles are to dynamically inject the Authorization and Accept-Language headers.
+   * Injects Authorization and Accept-Language headers into every outgoing request.
    */
   api.interceptors.request.use(
-    async (config) => { // The interceptor is async to allow awaiting the token retrieval.
+    async (config) => {
       const token = await getTokenFn();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -49,20 +45,25 @@ export const setupApiInterceptors = (
 
   /**
    * Response Interceptor:
-   * This function is executed when a response is received from the API.
-   * It handles global error responses, such as logging the user out on a 401 Unauthorized error.
+   * Handles global success and error responses.
    */
   api.interceptors.response.use(
-    (response) => response, // If the response is successful (2xx), pass it through without modification.
+    (response) => {
+      // On a successful response, apply the recursive URL correction for assets.
+      if (response.data) {
+        response.data = recursiveUrlCorrection(response.data);
+      }
+      return response;
+    },
     (error) => {
       const errorMessage = getApiErrorMessage(error);
-      // If the token is invalid or has expired, the API should return a 401 status.
-      // In this case, we trigger a global sign-out.
+      // On a 401 Unauthorized error, trigger a global sign-out.
       if (error.response?.status === 401) {
-        signOutFn(); // Call the provided signOut function to clear the session.
+        signOutFn();
       }
-      // Reject the promise with a standardized, user-friendly error message.
+      // Reject the promise with a standardized error message.
       return Promise.reject(new Error(errorMessage));
     },
   );
+  console.log('[API] Interceptors configured successfully.');
 };
