@@ -1,5 +1,5 @@
 /**
- * @file This file defines the Zustand store for managing user menstrual cycle logs.
+ * @file This file defines the Zustand store for managing user menstrual cycle logs and predictions.
  */
 
 import { create } from 'zustand';
@@ -7,6 +7,7 @@ import {
   MenstrualLogRead,
   MenstrualLogCreate,
   MenstrualLogUpdate,
+  MenstrualCyclePrediction,
 } from '@/interfaces/client/menstrual-cycle.interface';
 import { menstrualCycleService } from '@/services/client/menstrualCycleService';
 import { getApiErrorMessage } from '@/services/apiErrors';
@@ -15,16 +16,23 @@ interface MenstrualCycleState {
   logs: MenstrualLogRead[];
   loading: boolean;
   error: string | null;
+  prediction: MenstrualCyclePrediction | null;
+  predictionLoading: boolean;
+  predictionError: string | null;
   fetchLogs: () => Promise<void>;
   addLog: (data: MenstrualLogCreate) => Promise<void>;
   updateLog: (uuid: string, data: MenstrualLogUpdate) => Promise<void>;
   deleteLog: (uuid: string) => Promise<void>;
+  fetchPrediction: () => Promise<void>;
 }
 
 export const useMenstrualCycleStore = create<MenstrualCycleState>((set) => ({
   logs: [],
   loading: false,
   error: null,
+  prediction: null,
+  predictionLoading: false,
+  predictionError: null,
 
   fetchLogs: async () => {
     set({ loading: true, error: null });
@@ -50,9 +58,7 @@ export const useMenstrualCycleStore = create<MenstrualCycleState>((set) => ({
     try {
       const updatedLog = await menstrualCycleService.updateMenstrualLog(uuid, data);
       set((state) => ({
-        logs: state.logs.map((log) =>
-          log.uuid === uuid ? updatedLog : log
-        ),
+        logs: state.logs.map((log) => (log.uuid === uuid ? updatedLog : log)),
       }));
     } catch (error) {
       const message = getApiErrorMessage(error);
@@ -63,12 +69,20 @@ export const useMenstrualCycleStore = create<MenstrualCycleState>((set) => ({
   deleteLog: async (uuid: string) => {
     try {
       await menstrualCycleService.deleteMenstrualLog(uuid);
-      set((state) => ({
-        logs: state.logs.filter((log) => log.uuid !== uuid),
-      }));
+      set((state) => ({ logs: state.logs.filter((log) => log.uuid !== uuid) }));
     } catch (error) {
       const message = getApiErrorMessage(error);
       throw new Error(message);
+    }
+  },
+
+  fetchPrediction: async () => {
+    set({ predictionLoading: true, predictionError: null });
+    try {
+      const prediction = await menstrualCycleService.getMenstrualCyclePredictions();
+      set({ prediction, predictionLoading: false });
+    } catch (error) {
+      set({ predictionError: getApiErrorMessage(error), predictionLoading: false });
     }
   },
 }));
