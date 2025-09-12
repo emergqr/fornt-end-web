@@ -33,6 +33,19 @@ const updateProfile = async (data: ClientUpdate): Promise<Client> => {
 };
 
 /**
+ * Updates the preferred language for the currently authenticated user.
+ * Corresponds to the PATCH /clients/me/language endpoint.
+ * @param {string} languageCode - The new language code (e.g., 'en', 'es').
+ * @returns {Promise<Client>} A promise that resolves with the updated client profile.
+ */
+const updateLanguagePreference = async (languageCode: string): Promise<Client> => {
+  const response = await api.patch<Client>('/clients/me/language', {
+    preferred_language: languageCode,
+  });
+  return response.data;
+};
+
+/**
  * Fetches the public emergency profile for a given user UUID.
  * This endpoint does not require authentication and is used for the public QR code view.
  * Corresponds to the GET /public-profile/{uuid} endpoint.
@@ -72,6 +85,7 @@ const uploadAvatar = async (file: File): Promise<Client> => {
 export const profileService = {
   getProfile,
   updateProfile,
+  updateLanguagePreference,
   getPublicProfile,
   uploadAvatar,
 };

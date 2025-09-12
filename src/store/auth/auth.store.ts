@@ -5,6 +5,7 @@ import { Client } from '@/interfaces/client/client.interface';
 import { profileService } from '@/services/profileService';
 import { authService } from '@/services/auth/authService';
 import api from '@/services/api';
+import i18n from '@/services/i18n'; // Import i18n instance
 
 /**
  * @file This file defines the Zustand store for authentication management.
@@ -52,6 +53,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   /**
    * Logs the user in, stores the token, and updates the state.
+   * It also sets the application language based on the user's preference.
    * @param {string} token - The JWT received from the API.
    * @param {Client} user - The user profile data.
    */
@@ -59,6 +61,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.setItem('authToken', token);
     setAuthToken(token);
     set({ user, token, isAuthenticated: true });
+
+    // Sync language based on user's preference from the backend.
+    if (user.preferred_language && i18n.language !== user.preferred_language) {
+      i18n.changeLanguage(user.preferred_language);
+    }
   },
 
   /**
@@ -73,6 +80,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   /**
    * Checks if a valid session exists on application startup.
    * It looks for a token in localStorage and validates it by fetching the user profile.
+   * It also syncs the language preference.
    */
   checkAuthStatus: async () => {
     try {
@@ -94,6 +102,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         isAuthenticated: true,
         isChecking: false,
       });
+
+      // Sync language based on user's preference from the backend.
+      if (user.preferred_language && i18n.language !== user.preferred_language) {
+        i18n.changeLanguage(user.preferred_language);
+      }
+
     } catch (error) {
       // If fetching the profile fails (e.g., invalid token), log the user out.
       get().logout();
