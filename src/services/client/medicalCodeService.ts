@@ -1,47 +1,39 @@
 'use client';
 
 /**
- * @file This file provides a service layer for interacting with external medical terminology APIs.
- * It abstracts the calls to our backend, which in turn queries services like SNOMED, ICD-11, etc.
+ * @file This file provides a service layer for searching external medical code terminologies.
  */
 
-import api from '../api';
+import api from '@/services/api';
 
 /**
- * Represents a single result from a medical terminology search.
- * The structure is kept generic as it can vary between different external services.
+ * Represents a single result from a medical code search.
  */
-export interface MedicalCodeSearchResult {
-  code: string; // The unique code for the medical term (e.g., '59621000').
-  name: string; // The human-readable name of the term (e.g., 'Essential hypertension').
-  // The API might return other fields, but these are the essential ones.
-  [key: string]: any;
+export interface MedicalCodeResult {
+  code: string;
+  name: string;
+  [key: string]: any; // Allow for other properties from the external API.
 }
 
 /**
- * Performs a medical terminology search in an external service via our backend API.
- * Corresponds to the GET /medical-codes/search/{serviceName} endpoint.
- *
- * @param {string} serviceName - The external service to query (e.g., 'snomed', 'icd11').
- * @param {string} term - The search term (e.g., 'diabetes').
- * @returns {Promise<MedicalCodeSearchResult[]>} A promise that resolves with an array of search results.
+ * Searches for a medical term in an external service like SNOMED or ICD-11.
+ * @param {string} serviceName - The name of the service to search (e.g., 'snomed').
+ * @param {string} term - The search term provided by the user.
+ * @returns {Promise<MedicalCodeResult[]>} A promise that resolves with an array of search results.
  */
-const search = async (
+const searchMedicalTerm = async (
   serviceName: string,
   term: string
-): Promise<MedicalCodeSearchResult[]> => {
-  const response = await api.get<MedicalCodeSearchResult[]>(
+): Promise<MedicalCodeResult[]> => {
+  const response = await api.get<MedicalCodeResult[]>(
     `/medical-codes/search/${serviceName}`,
     {
-      params: { term }, // The search term is passed as a query parameter.
+      params: { term },
     }
   );
   return response.data;
 };
 
-/**
- * An object that groups all medical code service functions for easy import and usage.
- */
 export const medicalCodeService = {
-  search,
+  searchMedicalTerm,
 };

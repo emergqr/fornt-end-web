@@ -25,8 +25,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 // Import stores and services
 import { useAllergyStore } from '@/store/allergy/allergy.store';
-import { AllergyRead, AllergyUpdate } from '@/interfaces/client/allergy.interface';
-import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
+import { AllergyRead, AllergyUpdate, AllergyCreateFromCode } from '@/interfaces/client/allergy.interface';
+import { medicalCodeService, MedicalCodeResult } from '@/services/client/medicalCodeService';
 import { useDebounce } from '@/hooks/useDebounce';
 
 /**
@@ -36,7 +36,7 @@ import { useDebounce } from '@/hooks/useDebounce';
  * @returns The Zod schema.
  */
 const getAllergySchema = (t: (key: string) => string) => z.object({
-  allergen: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
+  allergen: z.custom<MedicalCodeResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
     message: t('validation.allergenRequired'),
   }),
   reaction_type: z.string().optional(),
@@ -108,7 +108,7 @@ export default function AllergiesPage() {
     const search = async () => {
       setSearchLoading(true);
       try {
-        const results = await medicalCodeService.search('snomed', debouncedSearchQuery);
+        const results = await medicalCodeService.searchMedicalTerm('snomed', debouncedSearchQuery);
         setSearchResults(results);
       } catch (error) {
         console.error("Search failed:", error);
@@ -143,6 +143,8 @@ export default function AllergiesPage() {
   // Form submission handler
   const onSubmit: SubmitHandler<AllergyFormInputs> = async (data) => {
     setFeedback(null);
+    if (!data.allergen) return; // Should not happen due to validation, but good practice
+
     if (editingAllergy) {
       // Logic for updating an existing allergy (simplified for now)
       const updatePayload: AllergyUpdate = { reaction_type: data.reaction_type, severity: data.severity };
@@ -151,13 +153,14 @@ export default function AllergiesPage() {
     } else {
       // Logic for creating a new allergy using data from the smart search
       try {
-        await addAllergyFromCode({
+        const payload: AllergyCreateFromCode = {
           code: data.allergen.code,
           name: data.allergen.name,
           source: 'snomed',
           reaction_type: data.reaction_type,
           severity: data.severity,
-        });
+        };
+        await addAllergyFromCode(payload);
         setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.addSuccess') });
       } catch (err: any) {
         setFeedback({ type: 'error', message: err.message || t('dashboard_allergies.feedback.addError') });

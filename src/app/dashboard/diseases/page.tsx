@@ -25,7 +25,7 @@ import Collapse from '@mui/material/Collapse';
 
 // Import stores and services
 import { useDiseaseStore } from '@/store/disease/disease.store';
-import { PatientDiseaseRead, PatientDiseaseUpdate } from '@/interfaces/client/disease.interface';
+import { PatientDiseaseRead, PatientDiseaseUpdate, DiseaseCreateFromCode } from '@/interfaces/client/disease.interface';
 import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -110,7 +110,7 @@ export default function DiseasesPage() {
     const search = async () => {
       setSearchLoading(true);
       try {
-        const results = await medicalCodeService.search('snomed', debouncedSearchQuery);
+        const results = await medicalCodeService.searchMedicalTerm('snomed', debouncedSearchQuery);
         setSearchResults(results);
       } catch (error) {
         console.error("Search failed:", error);
@@ -145,6 +145,8 @@ export default function DiseasesPage() {
   // Form submission handler for both creating and updating diseases.
   const onSubmit: SubmitHandler<DiseaseFormInputs> = async (data) => {
     setFeedback(null);
+    if (!data.disease) return; // Should not happen due to validation
+
     if (editingDisease) {
       // Logic for updating an existing disease (simplified for now).
       const updatePayload: PatientDiseaseUpdate = { 
@@ -157,14 +159,15 @@ export default function DiseasesPage() {
     } else {
       // Logic for creating a new disease using data from the smart search.
       try {
-        await addDiseaseFromCode({
+        const payload: DiseaseCreateFromCode = {
           code: data.disease.code,
           name: data.disease.name,
           source: 'snomed',
           diagnosis_date: data.diagnosis_date,
           severity: data.severity,
           notes: data.notes,
-        });
+        };
+        await addDiseaseFromCode(payload);
         setFeedback({ type: 'success', message: t('dashboard_diseases.feedback.addSuccess') });
       } catch (err: any) {
         setFeedback({ type: 'error', message: err.message || t('dashboard_diseases.feedback.addError') });
