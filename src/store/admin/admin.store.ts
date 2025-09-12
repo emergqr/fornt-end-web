@@ -1,9 +1,8 @@
 'use client';
 
 /**
- * @file This file defines the Zustand store for managing the user list in the Admin Panel.
- * It handles state and actions for fetching and manipulating user data.
- * NOTE: This store currently interacts with a mock service.
+ * @file This file defines the Zustand store for the admin panel,
+ * managing the state of users, loading, and errors.
  */
 
 import { create } from 'zustand';
@@ -11,31 +10,23 @@ import { Client } from '@/interfaces/client/client.interface';
 import { adminService } from '@/services/client/adminService';
 import { getApiErrorMessage } from '@/services/apiErrors';
 
-/**
- * Interface defining the shape of the admin state and its associated actions.
- */
 interface AdminState {
-  users: Client[]; // An array to hold the list of all users.
-  loading: boolean; // Flag to indicate loading state.
-  error: string | null; // Holds any error message from API calls.
-  fetchAllUsers: () => Promise<void>; // Action to fetch all users.
-  updateAdminStatus: (uuid: string, isAdmin: boolean) => Promise<void>; // Action to update a user's admin status.
+  users: Client[];
+  loading: boolean;
+  error: string | null;
+  fetchUsers: () => Promise<void>;
+  deleteUser: (uuid: string) => Promise<void>;
 }
 
-/**
- * Creates the Zustand store for admin-level user management.
- */
-export const useAdminStore = create<AdminState>((set, get) => ({
-  // Initial state
+export const useAdminStore = create<AdminState>((set) => ({
   users: [],
   loading: false,
   error: null,
 
   /**
-   * Fetches all users from the admin service.
+   * Fetches all users from the API and updates the store.
    */
-  fetchAllUsers: async () => {
-    if (get().loading) return;
+  fetchUsers: async () => {
     set({ loading: true, error: null });
     try {
       const users = await adminService.getAllClients();
@@ -46,19 +37,19 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
 
   /**
-   * Updates the admin status of a specific user.
-   * @param {string} uuid - The UUID of the user to update.
-   * @param {boolean} isAdmin - The new admin status to set.
+   * Deletes a user and removes them from the local state on success.
+   * @param {string} uuid - The UUID of the user to delete.
    */
-  updateAdminStatus: async (uuid: string, isAdmin: boolean) => {
+  deleteUser: async (uuid: string) => {
     try {
-      const updatedUser = await adminService.updateUserAdminStatus(uuid, isAdmin);
+      await adminService.deleteClient(uuid);
       set((state) => ({
-        users: state.users.map((u) => (u.uuid === uuid ? { ...u, is_admin: isAdmin } : u)),
+        users: state.users.filter((user) => user.uuid !== uuid),
       }));
     } catch (error) {
-      console.error('Failed to update admin status:', error);
-      throw error; // Re-throw to be handled by the UI component.
+      const message = getApiErrorMessage(error);
+      // Re-throw the error to be handled by the UI component (e.g., to show a snackbar).
+      throw new Error(message);
     }
   },
 }));

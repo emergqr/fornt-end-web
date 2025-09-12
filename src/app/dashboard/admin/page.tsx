@@ -1,137 +1,137 @@
 'use client';
 
 /**
- * @file This file implements the main page for the User Administration Panel.
- * It is a protected route, accessible only to users with administrative privileges.
- * It displays a list of all users in the system and provides controls for management.
- * NOTE: This component currently uses a mock service and store.
+ * @file Implements the User Administration Panel for admin users.
+ * It allows admins to view, search, and manage all users in the system.
  */
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import Chip from '@mui/material/Chip';
-import TablePagination from '@mui/material/TablePagination';
-
-import AdminProtectedRoute from '@/components/auth/AdminProtectedRoute';
 import { useAdminStore } from '@/store/admin/admin.store';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useSnackbar } from '@/hooks/useSnackbar';
 
-function AdminDashboard() {
+import {
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  Alert,
+  Chip,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PersonIcon from '@mui/icons-material/Person';
+
+export default function AdminPage() {
   const { t } = useTranslation();
-  const { users, loading, error, fetchAllUsers } = useAdminStore();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const { users, loading, error, fetchUsers, deleteUser } = useAdminStore();
+  const { showSnackbar } = useSnackbar();
 
-  // Fetch users when the component mounts.
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   React.useEffect(() => {
-    fetchAllUsers();
-  }, [fetchAllUsers]);
+    fetchUsers();
+  }, [fetchUsers]);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleDelete = async (uuid: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete the user ${name}? This action cannot be undone.`)) {
+      try {
+        await deleteUser(uuid);
+        showSnackbar('User deleted successfully', 'success');
+      } catch (err: any) {
+        showSnackbar(err.message || 'Failed to delete user', 'error');
+      }
+    }
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  const filteredUsers = users.filter(user =>
+    user.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  );
 
   return (
-    <Paper sx={{ p: 3, width: '100%' }}>
+    <Paper sx={{ p: 3, mx: 'auto' }}>
       <Typography variant="h4" component="h1" gutterBottom>
         {t('dashboard_admin.title')}
       </Typography>
 
-      <Box sx={{ mb: 2 }}>
-        <TextField 
-          fullWidth 
-          label={t('dashboard_admin.searchPlaceholder')} 
-          variant="outlined" 
-        />
-      </Box>
+      <TextField
+        fullWidth
+        label={t('dashboard_admin.searchPlaceholder')}
+        variant="outlined"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{ mb: 3 }}
+      />
 
       {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 4 }} />}
       {error && <Alert severity="error">{error}</Alert>}
 
       {!loading && !error && (
-        <Paper variant="outlined">
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('dashboard_admin.table.name')}</TableCell>
-                  <TableCell>{t('dashboard_admin.table.email')}</TableCell>
-                  <TableCell>{t('dashboard_admin.table.status')}</TableCell>
-                  <TableCell>{t('dashboard_admin.table.role')}</TableCell>
-                  <TableCell align="right">{t('dashboard_admin.table.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      {t('dashboard_admin.noUsers')}
+        <TableContainer>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('dashboard_admin.table.name')}</TableCell>
+                <TableCell>{t('dashboard_admin.table.email')}</TableCell>
+                <TableCell>{t('dashboard_admin.table.status')}</TableCell>
+                <TableCell>{t('dashboard_admin.table.role')}</TableCell>
+                <TableCell align="right">{t('dashboard_admin.table.actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <TableRow key={user.uuid} hover>
+                    <TableCell>{user.name || 'N/A'}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={user.is_active ? t('dashboard_admin.statusActive') : t('dashboard_admin.statusInactive')}
+                        color={user.is_active ? 'success' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        icon={user.is_admin ? <AdminPanelSettingsIcon /> : <PersonIcon />}
+                        label={user.is_admin ? t('dashboard_admin.roleAdmin') : t('dashboard_admin.roleUser')}
+                        variant="outlined"
+                        color={user.is_admin ? 'primary' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip title="Delete User">
+                        <IconButton onClick={() => handleDelete(user.uuid, user.name || user.email)} color="error">
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
-                    <TableRow key={user.uuid}>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={user.is_active ? t('dashboard_admin.statusActive') : t('dashboard_admin.statusInactive')} 
-                          color={user.is_active ? 'success' : 'default'} 
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={user.is_admin ? t('dashboard_admin.roleAdmin') : t('dashboard_admin.roleUser')} 
-                          color={user.is_admin ? 'primary' : 'secondary'} 
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {/* Action buttons will be implemented here once the API is ready */}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={users.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    {t('dashboard_admin.noUsers')}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
     </Paper>
-  );
-}
-
-// Wrap the entire page with the AdminProtectedRoute to secure it.
-export default function AdminPage() {
-  return (
-    <AdminProtectedRoute>
-      <AdminDashboard />
-    </AdminProtectedRoute>
   );
 }

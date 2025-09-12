@@ -14,38 +14,16 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 
 // Import all the necessary Zustand stores for state management
 import { useAuthStore } from '@/store/auth/auth.store';
-import { useAllergyStore } from '@/store/allergy/allergy.store';
-import { useDiseaseStore } from '@/store/disease/disease.store';
 import { useVitalSignStore } from '@/store/vital-sign/vital-sign.store';
 import { useMedicationStore } from '@/store/medication/medication.store';
 import { useDateFilterStore } from '@/store/date-filter/date-filter.store';
 
+// Import the new widgets
+import SummaryWidget from './summary/SummaryWidget';
+import RemindersWidget from './summary/RemindersWidget';
+
 // Import date-fns for robust date manipulation and formatting
 import { format, parseISO, isWithinInterval, startOfDay, endOfDay, eachDayOfInterval } from 'date-fns';
-
-/**
- * A reusable widget to display a summary metric.
- * @param {{ title: string; value: React.ReactNode; loading: boolean; details?: string[] }} props
- * @returns {React.ReactElement}
- */
-function SummaryWidget({ title, value, loading, details }: { title: string; value: React.ReactNode; loading: boolean; details?: string[] }) {
-  return (
-    <Paper sx={{ p: 2, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" color="text.secondary">{title}</Typography>
-      <Typography variant="h4" component="p" sx={{ mt: 1, flexGrow: 1 }}>
-        {loading ? <CircularProgress size={24} /> : value}
-      </Typography>
-      {/* Optional details section */}
-      {details && details.length > 0 && (
-        <Box sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}>
-          {details.map((item, index) => (
-            <Typography key={index} variant="body2" color="text.secondary">{item}</Typography>
-          ))}
-        </Box>
-      )}
-    </Paper>
-  );
-}
 
 /**
  * A component for filtering data within a date range.
@@ -102,29 +80,27 @@ function DateFilter() {
 function VitalSignsChart({ data, loading }: { data: any[]; loading: boolean }) {
   const { t } = useTranslation();
 
-  // Memoized transformation of raw vital signs data into a format suitable for Recharts.
   const chartData = React.useMemo(() => {
     const groupedByDate = data.reduce((acc, vs) => {
       const date = format(parseISO(vs.measured_at), 'yyyy-MM-dd');
       if (!acc[date]) {
         acc[date] = { date };
       }
-      const typeKey = vs.type.split(' ')[0]; // Simple key generation (e.g., "Blood Pressure" -> "Blood")
-      acc[date][typeKey] = vs.value_numeric; // Use numeric value for the chart
+      const typeKey = vs.type.split(' ')[0];
+      acc[date][typeKey] = vs.value_numeric;
       return acc;
     }, {} as { [key: string]: any });
 
     return Object.values(groupedByDate).sort((a, b) => a.date.localeCompare(b.date));
   }, [data]);
 
-  // Dynamically generate keys for each line in the chart based on the data.
   const lineKeys = React.useMemo(() => {
     if (chartData.length === 0) return [];
     return Object.keys(chartData[0]).filter(key => key !== 'date');
   }, [chartData]);
 
   return (
-    <Paper sx={{ p: 2, height: 300 }}>
+    <Paper sx={{ p: 2, height: 300, mt: 4 }}>
       <Typography variant="h6" gutterBottom>{t('dashboard_summary.vitalsChartTitle')}</Typography>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></Box>
@@ -157,7 +133,6 @@ function MedicationsChart({ data, loading }: { data: any[]; loading: boolean }) 
   const { t } = useTranslation();
   const { startDate, endDate } = useDateFilterStore();
 
-  // Memoized calculation of active medications for each day in the selected date range.
   const chartData = React.useMemo(() => {
     if (!data || data.length === 0 || !startDate || !endDate) return [];
 
@@ -168,7 +143,7 @@ function MedicationsChart({ data, loading }: { data: any[]; loading: boolean }) 
       const activeCount = data.filter(s => {
         if (!s.start_date) return false;
         const scheduleStart = startOfDay(parseISO(s.start_date));
-        const scheduleEnd = s.end_date ? endOfDay(parseISO(s.end_date)) : new Date(8640000000000000); // A very far future date for schedules without an end date
+        const scheduleEnd = s.end_date ? endOfDay(parseISO(s.end_date)) : new Date(8640000000000000);
         return scheduleStart <= day && scheduleEnd >= day;
       }).length;
 
@@ -180,7 +155,7 @@ function MedicationsChart({ data, loading }: { data: any[]; loading: boolean }) 
   }, [data, startDate, endDate, t]);
 
   return (
-    <Paper sx={{ p: 2, height: 300 }}>
+    <Paper sx={{ p: 2, height: 300, mt: 4 }}>
       <Typography variant="h6" gutterBottom>{t('dashboard_summary.medsChartTitle')}</Typography>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></Box>
@@ -207,33 +182,24 @@ function MedicationsChart({ data, loading }: { data: any[]; loading: boolean }) 
 export default function DashboardSummaryPage() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const { allergies, loading: allergiesLoading, fetchMyAllergies } = useAllergyStore();
-  const { diseases, loading: diseasesLoading, fetchMyDiseases } = useDiseaseStore();
   const { vitalSigns, loading: vitalSignsLoading, fetchMyVitalSigns } = useVitalSignStore();
   const { schedules, loading: medicationsLoading, fetchSchedules } = useMedicationStore();
   const { startDate, endDate } = useDateFilterStore();
 
-  // Effect to fetch all necessary data on component mount.
   React.useEffect(() => {
-    fetchMyAllergies();
-    fetchMyDiseases();
     fetchMyVitalSigns();
     fetchSchedules();
-  }, [fetchMyAllergies, fetchMyDiseases, fetchMyVitalSigns, fetchSchedules]);
+  }, [fetchMyVitalSigns, fetchSchedules]);
 
-  // Memoized filtering of vital signs based on the selected date range.
   const filteredVitalSigns = React.useMemo(() => {
     return vitalSigns.filter(vs => 
       isWithinInterval(parseISO(vs.measured_at), { start: startDate, end: endDate })
     );
   }, [vitalSigns, startDate, endDate]);
 
-  // Memoized filtering of medication schedules based on the selected date range.
   const filteredSchedules = React.useMemo(() => {
     return schedules.filter(s => {
-      if (!s.start_date) {
-        return false;
-      }
+      if (!s.start_date) return false;
       const scheduleStart = startOfDay(parseISO(s.start_date));
       const scheduleEnd = s.end_date ? endOfDay(parseISO(s.end_date)) : new Date(8640000000000000);
       return scheduleStart <= endDate && scheduleEnd >= startDate;
@@ -251,24 +217,12 @@ export default function DashboardSummaryPage() {
 
       <DateFilter />
 
-      <Grid container spacing={3}>
-        {/* Summary Widgets */}
-        <Grid item xs={12} sm={4}>
-          <SummaryWidget 
-            title={t('dashboard_summary.widgetMedsTitle')} 
-            value={filteredSchedules.length} 
-            loading={medicationsLoading}
-            details={filteredSchedules.map(s => s.medication_name)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <SummaryWidget title={t('dashboard_summary.widgetAllergiesTitle')} value={allergies.length} loading={allergiesLoading} />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <SummaryWidget title={t('dashboard_summary.widgetDiseasesTitle')} value={diseases.length} loading={diseasesLoading} />
-        </Grid>
+      {/* New Dynamic Widgets */}
+      <SummaryWidget />
+      <RemindersWidget />
 
-        {/* Charts */}
+      {/* Existing Charts */}
+      <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid item xs={12}>
           <VitalSignsChart data={filteredVitalSigns} loading={vitalSignsLoading} />
         </Grid>

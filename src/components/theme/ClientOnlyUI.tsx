@@ -25,6 +25,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '@mui/material/Tooltip';
+import Divider from '@mui/material/Divider';
 
 // --- i18n Imports ---
 import '@/services/i18n';
@@ -48,6 +49,7 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
 import WarningIcon from '@mui/icons-material/Warning';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
@@ -78,17 +80,22 @@ function DashboardNav({ user }: { user: Client | null }) {
     { key: 'dashboard_vitals', path: '/dashboard/vital-signs', icon: <MonitorHeartIcon sx={{ color: '#c2185b' }} /> },
     { key: 'dashboard_medications', path: '/dashboard/medications', icon: <VaccinesIcon sx={{ color: '#512da8' }} /> },
     { key: 'dashboard_history', path: '/dashboard/medical-history', icon: <ArticleIcon sx={{ color: '#757575' }} /> },
-    // --- Phase 4 Modules ---
     { key: 'dashboard_addictions', path: '/dashboard/addictions', icon: <SmokeFreeIcon sx={{ color: '#f44336' }} /> },
     { key: 'dashboard_infectious_diseases', path: '/dashboard/infectious-diseases', icon: <BugReportIcon sx={{ color: '#8BC34A' }} /> },
     { key: 'dashboard_psychiatric', path: '/dashboard/psychiatric', icon: <PsychologyIcon sx={{ color: '#9C27B0' }} /> },
     { key: 'dashboard_menstrual_cycle', path: '/dashboard/menstrual-cycle', icon: <WaterDropIcon sx={{ color: '#E91E63' }} />, gender: 'female' },
     { key: 'dashboard_pregnancy', path: '/dashboard/pregnancy', icon: <PregnantWomanIcon sx={{ color: '#F48FB1' }} />, gender: 'female' },
+    { key: 'dashboard_admin', path: '/dashboard/admin', icon: <AdminPanelSettingsIcon sx={{ color: '#607d8b' }} />, adminOnly: true },
   ];
 
   const filteredNavItems = navItems.filter(item => {
-    if (!item.gender) return true; // Always show items without a gender property
-    return user?.sex?.toLowerCase() === item.gender;
+    if ((item as any).adminOnly && !user?.is_admin) {
+      return false;
+    }
+    if ((item as any).gender && user?.sex?.toLowerCase() !== (item as any).gender) {
+      return false;
+    }
+    return true;
   });
 
   return (
@@ -105,7 +112,7 @@ function DashboardNav({ user }: { user: Client | null }) {
           {filteredNavItems.map((item) => (
             <ListItem key={item.key} disablePadding>
               <Link href={item.path} passHref style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-                <ListItemButton selected={pathname === item.path} disabled={(item as any).disabled}>
+                <ListItemButton selected={pathname === item.path}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={t(`navigation.${item.key}`)} />
                 </ListItemButton>
@@ -135,15 +142,11 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
   const handleLanguageClose = async (langCode?: string) => {
     setLangMenuAnchor(null);
     if (langCode && i18n.language !== langCode) {
-      // Optimistically change the UI language first for a responsive feel.
       i18n.changeLanguage(langCode);
-
-      // If the user is authenticated, save the preference to the backend.
       if (isAuthenticated) {
         try {
           const updatedUser = await profileService.updateLanguagePreference(langCode);
-          setUser(updatedUser); // Update the user state with the new profile data.
-          showSnackbar('Language preference saved!', 'success');
+          setUser(updatedUser);
         } catch (error) {
           console.error('Failed to save language preference:', error);
           showSnackbar('Could not save language preference.', 'error');

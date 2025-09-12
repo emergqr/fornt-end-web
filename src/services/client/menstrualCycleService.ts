@@ -7,16 +7,17 @@ import {
   MenstrualLogRead,
   MenstrualLogCreate,
   MenstrualLogUpdate,
+  MenstrualCyclePrediction,
 } from '@/interfaces/client/menstrual-cycle.interface';
 
-const BASE_URL = '/menstrual-cycle/menstrual-cycle/logs';
+const BASE_URL = '/menstrual-cycle/menstrual-cycle';
 
 /**
  * Fetches the list of menstrual logs for the authenticated user.
  * @returns {Promise<MenstrualLogRead[]>} A promise that resolves with an array of the user's menstrual logs.
  */
 const getMyMenstrualLogs = async (): Promise<MenstrualLogRead[]> => {
-  const response = await api.get<MenstrualLogRead[]>(`${BASE_URL}/`);
+  const response = await api.get<MenstrualLogRead[]>(`${BASE_URL}/logs`);
   return response.data;
 };
 
@@ -26,7 +27,7 @@ const getMyMenstrualLogs = async (): Promise<MenstrualLogRead[]> => {
  * @returns {Promise<MenstrualLogRead>} A promise that resolves with the newly created menstrual log data.
  */
 const createMenstrualLog = async (data: MenstrualLogCreate): Promise<MenstrualLogRead> => {
-  const response = await api.post<MenstrualLogRead>(`${BASE_URL}/`, data);
+  const response = await api.post<MenstrualLogRead>(`${BASE_URL}/logs`, data);
   return response.data;
 };
 
@@ -40,7 +41,7 @@ const updateMenstrualLog = async (
   uuid: string,
   data: MenstrualLogUpdate
 ): Promise<MenstrualLogRead> => {
-  const response = await api.put<MenstrualLogRead>(`${BASE_URL}/${uuid}`, data);
+  const response = await api.put<MenstrualLogRead>(`${BASE_URL}/logs/${uuid}`, data);
   return response.data;
 };
 
@@ -50,7 +51,16 @@ const updateMenstrualLog = async (
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteMenstrualLog = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
+  await api.delete(`${BASE_URL}/logs/${uuid}`);
+};
+
+/**
+ * Fetches the menstrual cycle predictions for the user.
+ * @returns {Promise<MenstrualCyclePrediction>} A promise that resolves with the prediction data.
+ */
+const getMenstrualCyclePredictions = async (): Promise<MenstrualCyclePrediction> => {
+  const response = await api.get<MenstrualCyclePrediction>(`${BASE_URL}/predictions`);
+  return response.data;
 };
 
 export const menstrualCycleService = {
@@ -58,4 +68,5 @@ export const menstrualCycleService = {
   createMenstrualLog,
   updateMenstrualLog,
   deleteMenstrualLog,
+  getMenstrualCyclePredictions,
 };

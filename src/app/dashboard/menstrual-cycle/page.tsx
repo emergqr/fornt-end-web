@@ -2,7 +2,7 @@
 
 /**
  * @file This file implements the Menstrual Cycle management page for the user dashboard.
- * It allows users to add, view, edit, and delete their menstrual cycle logs.
+ * It allows users to add, view, edit, and delete their menstrual cycle logs and see predictions.
  */
 
 import * as React from 'react';
@@ -29,12 +29,13 @@ import Collapse from '@mui/material/Collapse';
 
 import { useMenstrualCycleStore } from '@/store/menstrual-cycle/menstrual-cycle.store';
 import { MenstrualLogRead, MenstrualLogCreate, MenstrualLogUpdate } from '@/interfaces/client/menstrual-cycle.interface';
+import PredictionWidget from './PredictionWidget'; // Import the new widget
 
 const getMenstrualLogSchema = (t: (key: string) => string) => z.object({
   start_date: z.string().min(1, { message: t('validation.startDateRequired') }),
   end_date: z.string().optional().nullable(),
   flow_level: z.string().optional().nullable(),
-  symptoms: z.array(z.string()).optional().nullable(), // Assuming symptoms are managed elsewhere or as a simple string for now
+  symptoms: z.array(z.string()).optional().nullable(),
   notes: z.string().optional().nullable(),
 });
 
@@ -42,15 +43,7 @@ type MenstrualLogFormInputs = z.infer<ReturnType<typeof getMenstrualLogSchema>>;
 
 export default function MenstrualCyclePage() {
   const { t } = useTranslation();
-  const {
-    logs,
-    loading,
-    error,
-    fetchLogs,
-    addLog,
-    deleteLog,
-    updateLog,
-  } = useMenstrualCycleStore();
+  const { logs, loading, error, fetchLogs, addLog, deleteLog, updateLog } = useMenstrualCycleStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isFormVisible, setIsFormVisible] = React.useState(false);
@@ -58,12 +51,7 @@ export default function MenstrualCyclePage() {
 
   const formSchema = getMenstrualLogSchema(t);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<MenstrualLogFormInputs>({
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<MenstrualLogFormInputs>({
     resolver: zodResolver(formSchema),
     defaultValues: { start_date: '', end_date: '', flow_level: '', notes: '' },
   });
@@ -81,12 +69,7 @@ export default function MenstrualCyclePage() {
 
   const handleEditClick = (log: MenstrualLogRead) => {
     setEditingLog(log);
-    reset({
-      start_date: log.start_date,
-      end_date: log.end_date || '',
-      flow_level: log.flow_level || '',
-      notes: log.notes || '',
-    });
+    reset({ start_date: log.start_date, end_date: log.end_date || '', flow_level: log.flow_level || '', notes: log.notes || '' });
     setIsFormVisible(true);
     setFeedback(null);
   };
@@ -101,7 +84,7 @@ export default function MenstrualCyclePage() {
   const onSubmit: SubmitHandler<MenstrualLogFormInputs> = async (data) => {
     setFeedback(null);
     try {
-      const payload = { ...data, symptoms: [] }; // Temp fix for symptoms
+      const payload = { ...data, symptoms: [] };
       if (editingLog) {
         await updateLog(editingLog.uuid, payload as MenstrualLogUpdate);
         setFeedback({ type: 'success', message: 'Log updated successfully' });
@@ -132,6 +115,9 @@ export default function MenstrualCyclePage() {
         <Typography variant="h4" component="h1">Menstrual Cycle</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>Add Log</Button>
       </Box>
+
+      {/* Display the Prediction Widget */}
+      <PredictionWidget />
 
       <Collapse in={isFormVisible}>
         <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
