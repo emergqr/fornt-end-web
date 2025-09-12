@@ -10,6 +10,7 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link'; // Import Link for navigation
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -18,6 +19,7 @@ import Alert from '@mui/material/Alert';
 import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton'; // Import ListItemButton
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -41,15 +43,7 @@ type PregnancyFormInputs = z.infer<ReturnType<typeof getPregnancySchema>>;
 
 export default function PregnancyPage() {
   const { t } = useTranslation();
-  const {
-    records,
-    loading,
-    error,
-    fetchRecords,
-    addRecord,
-    deleteRecord,
-    updateRecord,
-  } = usePregnancyStore();
+  const { records, loading, error, fetchRecords, addRecord, deleteRecord, updateRecord } = usePregnancyStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isFormVisible, setIsFormVisible] = React.useState(false);
@@ -57,19 +51,12 @@ export default function PregnancyPage() {
 
   const formSchema = getPregnancySchema(t);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<PregnancyFormInputs>({
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<PregnancyFormInputs>({
     resolver: zodResolver(formSchema),
     defaultValues: { start_date: '', due_date: '', status: '', notes: '' },
   });
 
-  React.useEffect(() => {
-    fetchRecords();
-  }, [fetchRecords]);
+  React.useEffect(() => { fetchRecords(); }, [fetchRecords]);
 
   const handleAddNewClick = () => {
     setEditingRecord(null);
@@ -78,14 +65,10 @@ export default function PregnancyPage() {
     setFeedback(null);
   };
 
-  const handleEditClick = (record: PregnancyRead) => {
+  const handleEditClick = (e: React.MouseEvent, record: PregnancyRead) => {
+    e.stopPropagation(); // Prevent navigation
     setEditingRecord(record);
-    reset({
-      start_date: record.start_date,
-      due_date: record.due_date || '',
-      status: record.status,
-      notes: record.notes || '',
-    });
+    reset({ start_date: record.start_date, due_date: record.due_date || '', status: record.status, notes: record.notes || '' });
     setIsFormVisible(true);
     setFeedback(null);
   };
@@ -113,7 +96,8 @@ export default function PregnancyPage() {
     }
   };
 
-  const onDelete = async (uuid: string) => {
+  const onDelete = async (e: React.MouseEvent, uuid: string) => {
+    e.stopPropagation(); // Prevent navigation
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
         await deleteRecord(uuid);
@@ -155,13 +139,22 @@ export default function PregnancyPage() {
       {!loading && !error && records.length === 0 && <Typography sx={{ mt: 2 }}>No records registered.</Typography>}
       <List>
         {records.map((record) => (
-          <ListItem key={record.uuid} secondaryAction={
+          <ListItem
+            key={record.uuid}
+            disablePadding
+            secondaryAction={
               <Box>
-                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(record)}><EditIcon /></IconButton>
-                <IconButton edge="end" aria-label="delete" onClick={() => onDelete(record.uuid)}><DeleteIcon /></IconButton>
-              </Box>}
+                <IconButton edge="end" aria-label="edit" onClick={(e) => handleEditClick(e, record)}><EditIcon /></IconButton>
+                <IconButton edge="end" aria-label="delete" onClick={(e) => onDelete(e, record.uuid)}><DeleteIcon /></IconButton>
+              </Box>
+            }
           >
-            <ListItemText primary={`Pregnancy started ${new Date(record.start_date).toLocaleDateString()}`} secondary={`Week: ${record.current_week || 'N/A'} - Status: ${record.status}`} />
+            <ListItemButton component={Link} href={`/dashboard/pregnancy/${record.uuid}`}>
+              <ListItemText
+                primary={`Pregnancy started ${new Date(record.start_date).toLocaleDateString()}`}
+                secondary={`Week: ${record.current_week || 'N/A'} - Status: ${record.status}`}
+              />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>

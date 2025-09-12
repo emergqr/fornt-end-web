@@ -7,6 +7,8 @@ import {
   PregnancyRead,
   PregnancyCreate,
   PregnancyUpdate,
+  PregnancyLogRead,
+  PregnancyLogCreate,
 } from '@/interfaces/client/pregnancy.interface';
 
 const BASE_URL = '/pregnancies/pregnancies';
@@ -53,9 +55,32 @@ const deletePregnancyRecord = async (uuid: string): Promise<void> => {
   await api.delete(`${BASE_URL}/${uuid}`);
 };
 
+/**
+ * Fetches all log entries for a specific pregnancy.
+ * @param {string} pregnancyUuid - The UUID of the pregnancy.
+ * @returns {Promise<PregnancyLogRead[]>} A promise that resolves with the list of log entries.
+ */
+const getPregnancyLogs = async (pregnancyUuid: string): Promise<PregnancyLogRead[]> => {
+  const response = await api.get<PregnancyLogRead[]>(`${BASE_URL}/${pregnancyUuid}/logs`);
+  return response.data;
+};
+
+/**
+ * Creates a new log entry for a specific pregnancy.
+ * @param {string} pregnancyUuid - The UUID of the pregnancy.
+ * @param {PregnancyLogCreate} data - The data for the new log entry.
+ * @returns {Promise<PregnancyLogRead>} A promise that resolves with the newly created log entry.
+ */
+const createPregnancyLog = async (pregnancyUuid: string, data: PregnancyLogCreate): Promise<PregnancyLogRead> => {
+  const response = await api.post<PregnancyLogRead>(`${BASE_URL}/${pregnancyUuid}/logs`, data);
+  return response.data;
+};
+
 export const pregnancyService = {
   getMyPregnancyRecords,
   createPregnancyRecord,
   updatePregnancyRecord,
   deletePregnancyRecord,
+  getPregnancyLogs,
+  createPregnancyLog,
 };
