@@ -60,6 +60,7 @@ import { useAuthStore } from '@/store/auth/auth.store';
 import { usePanicStore } from '@/store/panic/panic.store';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import { Client } from '@/interfaces/client/client.interface';
+import { profileService } from '@/services/profileService';
 
 const drawerWidth = 240;
 
@@ -121,7 +122,7 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
   const router = useRouter();
   const { mode, setTheme } = useThemeStore();
   const { t, i18n } = useTranslation();
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user, setUser, logout } = useAuthStore();
   const { isLoading: isPanicLoading, triggerPanic } = usePanicStore();
   const { showSnackbar } = useSnackbar();
 
@@ -130,10 +131,24 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
   const [isPanicDialogOpen, setPanicDialogOpen] = React.useState(false);
 
   const handleLanguageMenu = (event: React.MouseEvent<HTMLElement>) => setLangMenuAnchor(event.currentTarget);
-  const handleLanguageClose = (langCode?: string) => {
+  
+  const handleLanguageClose = async (langCode?: string) => {
     setLangMenuAnchor(null);
     if (langCode && i18n.language !== langCode) {
+      // Optimistically change the UI language first for a responsive feel.
       i18n.changeLanguage(langCode);
+
+      // If the user is authenticated, save the preference to the backend.
+      if (isAuthenticated) {
+        try {
+          const updatedUser = await profileService.updateLanguagePreference(langCode);
+          setUser(updatedUser); // Update the user state with the new profile data.
+          showSnackbar('Language preference saved!', 'success');
+        } catch (error) {
+          console.error('Failed to save language preference:', error);
+          showSnackbar('Could not save language preference.', 'error');
+        }
+      }
     }
   };
 
