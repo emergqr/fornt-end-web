@@ -30,6 +30,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { useMedicalHistoryStore } from '@/store/medical-history/medical-history.store';
 import { MedicalEventCreate } from '@/interfaces/client/medical-history.interface';
 import { getMedicalEventTypes } from '@/services/client/medicalHistoryService';
+import EventListItemSkeleton from './EventListItemSkeleton'; // Import the skeleton component
 
 const getEventSchema = (t: (key: string) => string) => z.object({
   title: z.string().min(3, { message: t('validation.titleRequired') }),
@@ -45,15 +46,7 @@ type EventFormInputs = z.infer<ReturnType<typeof getEventSchema>>;
 
 export default function MedicalHistoryPage() {
   const { t } = useTranslation();
-  const {
-    events,
-    loading,
-    error,
-    fetchMedicalHistory,
-    addMedicalEvent,
-    removeMedicalEvent,
-    addDocumentsToEvent,
-  } = useMedicalHistoryStore();
+  const { events, loading, error, fetchMedicalHistory, addMedicalEvent, removeMedicalEvent, addDocumentsToEvent } = useMedicalHistoryStore();
 
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [eventTypes, setEventTypes] = React.useState<string[]>([]);
@@ -62,20 +55,12 @@ export default function MedicalHistoryPage() {
 
   const eventSchema = getEventSchema(t);
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<EventFormInputs>({
+  const { control, register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<EventFormInputs>({
     resolver: zodResolver(eventSchema),
     defaultValues: { title: '', event_type: '', event_date: '', description: '', location: '', doctor_name: '' },
   });
 
-  React.useEffect(() => {
-    fetchMedicalHistory();
-  }, [fetchMedicalHistory]);
+  React.useEffect(() => { fetchMedicalHistory(); }, [fetchMedicalHistory]);
 
   React.useEffect(() => {
     const fetchEventTypes = async () => {
@@ -166,47 +151,58 @@ export default function MedicalHistoryPage() {
       <Divider sx={{ my: 2 }} />
 
       <Typography variant="h6">{t('dashboard_history.list.title')}</Typography>
-      {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
-      {error && !loading && <Alert severity="error">{error}</Alert>}
-      {!loading && !error && events.length === 0 && <Typography sx={{ mt: 2 }}>{t('dashboard_history.list.noEvents')}</Typography>}
-      <List>
-        {events.map((event) => (
-          <ListItem key={event.uuid} alignItems="flex-start" sx={{ flexDirection: 'column', borderBottom: '1px solid #eee', pb: 2, mb: 2 }}>
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <ListItemText 
-                primary={`${event.title} (${event.event_type})`}
-                secondary={`${t('dashboard_history.list.dateLabel')} ${new Date(event.event_date).toLocaleDateString()}`}
-              />
-              <IconButton edge="end" aria-label="delete" onClick={() => onDeleteEvent(event.uuid)}>
-                  <DeleteIcon />
-              </IconButton>
-            </Box>
-            {event.description && <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{event.description}</Typography>}
-            <Box mt={2} width="100%">
-              <Typography variant="subtitle2">{t('dashboard_history.list.documentsLabel')}</Typography>
-              {event.documents && event.documents.length > 0 ? (
-                event.documents.map(doc => (
-                  <Link href={doc.url} target="_blank" rel="noopener noreferrer" key={doc.uuid} sx={{ display: 'block', my: 0.5 }}>
-                    {doc.file_name}
-                  </Link>
-                ))
-              ) : (
-                <Typography variant="body2" color="text.secondary">No documents attached.</Typography>
-              )}
-              <Button
-                component="label"
-                size="small"
-                startIcon={uploadingEventId === event.uuid ? <CircularProgress size={16} /> : <CloudUploadIcon />}
-                disabled={uploadingEventId === event.uuid}
-                sx={{ mt: 1 }}
-              >
-                Attach Files
-                <input type="file" multiple hidden onChange={(e) => handleAttachFiles(event.uuid, e.target.files)} />
-              </Button>
-            </Box>
-          </ListItem>
-        ))}
-      </List>
+      
+      {/* Conditional rendering for loading, error, and data states */}
+      {loading ? (
+        <List>
+          <EventListItemSkeleton />
+          <EventListItemSkeleton />
+          <EventListItemSkeleton />
+        </List>
+      ) : error ? (
+        <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
+      ) : events.length === 0 ? (
+        <Typography sx={{ mt: 2 }}>{t('dashboard_history.list.noEvents')}</Typography>
+      ) : (
+        <List>
+          {events.map((event) => (
+            <ListItem key={event.uuid} alignItems="flex-start" sx={{ flexDirection: 'column', borderBottom: '1px solid #eee', pb: 2, mb: 2 }}>
+              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <ListItemText 
+                  primary={`${event.title} (${event.event_type})`}
+                  secondary={`${t('dashboard_history.list.dateLabel')} ${new Date(event.event_date).toLocaleDateString()}`}
+                />
+                <IconButton edge="end" aria-label="delete" onClick={() => onDeleteEvent(event.uuid)}>
+                    <DeleteIcon />
+                </IconButton>
+              </Box>
+              {event.description && <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{event.description}</Typography>}
+              <Box mt={2} width="100%">
+                <Typography variant="subtitle2">{t('dashboard_history.list.documentsLabel')}</Typography>
+                {event.documents && event.documents.length > 0 ? (
+                  event.documents.map(doc => (
+                    <Link href={doc.url} target="_blank" rel="noopener noreferrer" key={doc.uuid} sx={{ display: 'block', my: 0.5 }}>
+                      {doc.file_name}
+                    </Link>
+                  ))
+                ) : (
+                  <Typography variant="body2" color="text.secondary">No documents attached.</Typography>
+                )}
+                <Button
+                  component="label"
+                  size="small"
+                  startIcon={uploadingEventId === event.uuid ? <CircularProgress size={16} /> : <CloudUploadIcon />}
+                  disabled={uploadingEventId === event.uuid}
+                  sx={{ mt: 1 }}
+                >
+                  Attach Files
+                  <input type="file" multiple hidden onChange={(e) => handleAttachFiles(event.uuid, e.target.files)} />
+                </Button>
+              </Box>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Paper>
   );
 }
