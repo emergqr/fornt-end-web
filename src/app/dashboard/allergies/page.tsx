@@ -8,7 +8,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllergyStore } from '@/store/allergy/allergy.store';
 import { AllergyRead, AllergyUpdate, AllergyCreateFromCode, ReactionHistoryCreate } from '@/interfaces/client/allergy.interface';
-import AllergyForm from './AllergyForm'; // Import the new reusable form
+import AllergyForm from './AllergyForm';
 import AddReactionForm from './AddReactionForm';
 
 import {
@@ -149,7 +149,7 @@ export default function AllergiesPage() {
       </List>
 
       <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingAllergy ? t('dashboard_allergies.feedback.editNotAvailable') : t('dashboard_allergies.form.title')}</DialogTitle>
+        <DialogTitle>{editingAllergy ? 'Edit Allergy' : t('dashboard_allergies.form.title')}</DialogTitle>
         <DialogContent>
           <AllergyForm
             onSubmit={handleFormSubmit}
