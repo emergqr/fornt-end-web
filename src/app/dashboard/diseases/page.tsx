@@ -116,7 +116,7 @@ export default function DiseasesPage() {
       </List>
 
       <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingDisease ? t('dashboard_diseases.feedback.editNotAvailable') : t('dashboard_diseases.form.title')}</DialogTitle>
+        <DialogTitle>{editingDisease ? 'Edit Condition' : t('dashboard_diseases.form.title')}</DialogTitle>
         <DialogContent>
           <DiseaseForm
             onSubmit={handleFormSubmit}

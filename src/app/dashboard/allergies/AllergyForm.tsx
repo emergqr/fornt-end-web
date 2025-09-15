@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * @file A reusable form component for creating and editing medical conditions (diseases).
+ * @file A reusable form component for creating and editing allergies.
  * It includes a smart search feature for finding standardized medical terms.
  */
 
@@ -16,31 +16,30 @@ import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { DiseaseCreateFromCode, PatientDiseaseUpdate } from '@/interfaces/client/disease.interface';
+import { AllergyCreateFromCode, AllergyUpdate } from '@/interfaces/client/allergy.interface';
 import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
 import { useDebounce } from '@/hooks/useDebounce';
 
-const getDiseaseFormSchema = (t: (key: string) => string) => z.object({
-  disease: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
-    message: t('validation.diseaseRequired'),
+const getAllergySchema = (t: (key: string) => string) => z.object({
+  allergen: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
+    message: t('validation.allergenRequired'),
   }),
-  diagnosis_date: z.string().min(1, { message: t('validation.diagnosisDateRequired') }),
-  severity: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  reaction_type: z.string().optional(),
+  severity: z.string().optional(),
 });
 
-type DiseaseFormInputs = z.infer<ReturnType<typeof getDiseaseFormSchema>>;
+type AllergyFormInputs = z.infer<ReturnType<typeof getAllergySchema>>;
 
-interface DiseaseFormProps {
-  onSubmit: (data: DiseaseCreateFromCode | PatientDiseaseUpdate) => Promise<void>;
+interface AllergyFormProps {
+  onSubmit: (data: AllergyCreateFromCode | AllergyUpdate) => Promise<void>;
   onCancel: () => void;
   initialData?: any | null;
   isEditMode?: boolean;
 }
 
-export default function DiseaseForm({ onSubmit, onCancel, initialData, isEditMode = false }: DiseaseFormProps) {
+export default function AllergyForm({ onSubmit, onCancel, initialData, isEditMode = false }: AllergyFormProps) {
   const { t } = useTranslation();
-  const formSchema = getDiseaseFormSchema(t);
+  const formSchema = getAllergySchema(t);
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchResults, setSearchResults] = React.useState<MedicalCodeSearchResult[]>([]);
@@ -52,13 +51,13 @@ export default function DiseaseForm({ onSubmit, onCancel, initialData, isEditMod
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<DiseaseFormInputs>({
+  } = useForm<AllergyFormInputs>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { disease: null, diagnosis_date: '', severity: '', notes: '' },
+    defaultValues: initialData || { allergen: null, reaction_type: '', severity: '' },
   });
 
   React.useEffect(() => {
-    reset(initialData || { disease: null, diagnosis_date: '', severity: '', notes: '' });
+    reset(initialData || { allergen: null, reaction_type: '', severity: '' });
   }, [initialData, reset]);
 
   React.useEffect(() => {
@@ -77,14 +76,14 @@ export default function DiseaseForm({ onSubmit, onCancel, initialData, isEditMod
     void search();
   }, [debouncedSearchQuery]);
 
-  const handleFormSubmit: SubmitHandler<DiseaseFormInputs> = async (data) => {
+  const handleFormSubmit: SubmitHandler<AllergyFormInputs> = async (data) => {
     await onSubmit(data);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Controller
-        name="disease"
+        name="allergen"
         control={control}
         render={({ field }) => (
           <Autocomplete
@@ -95,25 +94,24 @@ export default function DiseaseForm({ onSubmit, onCancel, initialData, isEditMod
             loading={searchLoading}
             onInputChange={(_, newInputValue) => setSearchQuery(newInputValue)}
             onChange={(_, data) => field.onChange(data)}
-            disabled={isEditMode}
+            disabled={isEditMode} // Disable changing the allergen when editing
             renderInput={(params) => (
               <TextField
                 {...params}
-                label={t('dashboard_diseases.form.searchLabel')}
+                label={t('dashboard_allergies.form.searchLabel')}
                 margin="normal"
                 required
                 autoFocus
-                error={!!errors.disease}
-                helperText={errors.disease?.message || (isEditMode ? 'Cannot change the disease' : t('dashboard_diseases.form.searchHelperText'))}
+                error={!!errors.allergen}
+                helperText={errors.allergen?.message || (isEditMode ? 'Cannot change the allergen' : t('dashboard_allergies.form.searchHelperText'))}
                 InputProps={{ ...params.InputProps, endAdornment: <>{searchLoading ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
               />
             )}
           />
         )}
       />
-      <Controller name="diagnosis_date" control={control} render={({ field }) => <TextField {...field} label={t('dashboard_diseases.form.diagnosisDateLabel')} type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.diagnosis_date} helperText={errors.diagnosis_date?.message} />} />
-      <Controller name="severity" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_diseases.form.severityLabel')} fullWidth margin="normal" />} />
-      <Controller name="notes" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_diseases.form.notesLabel')} fullWidth margin="normal" multiline rows={2} />} />
+      <Controller name="reaction_type" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_allergies.form.reactionLabel')} fullWidth margin="normal" />} />
+      <Controller name="severity" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_allergies.form.severityLabel')} fullWidth margin="normal" />} />
       
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
         <Button onClick={onCancel} variant="outlined">{t('common.cancel')}</Button>

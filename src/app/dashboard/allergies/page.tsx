@@ -1,112 +1,72 @@
 'use client';
 
-import * as React from 'react';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import Paper from '@mui/material/Paper';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
-import AddIcon from '@mui/icons-material/Add';
-import Collapse from '@mui/material/Collapse';
-import Autocomplete from '@mui/material/Autocomplete';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import AddReactionForm from './AddReactionForm';
+/**
+ * @file This file implements the Allergies management page using a modal-based form.
+ */
 
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAllergyStore } from '@/store/allergy/allergy.store';
 import { AllergyRead, AllergyUpdate, AllergyCreateFromCode, ReactionHistoryCreate } from '@/interfaces/client/allergy.interface';
-import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
-import { useDebounce } from '@/hooks/useDebounce';
+import AllergyForm from './AllergyForm'; // Import the new reusable form
+import AddReactionForm from './AddReactionForm';
 
-const getAllergySchema = (t: (key: string) => string) => z.object({
-  allergen: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
-    message: t('validation.allergenRequired'),
-  }),
-  reaction_type: z.string().optional(),
-  severity: z.string().optional(),
-});
-
-type AllergyFormInputs = z.infer<ReturnType<typeof getAllergySchema>>;
+import {
+  Box,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  CircularProgress,
+  Alert,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Divider,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function AllergiesPage() {
   const { t } = useTranslation();
   const { allergies, loading, error, fetchMyAllergies, addAllergyFromCode, removeAllergy, editAllergy, addNewReaction } = useAllergyStore();
 
-  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [isFormVisible, setIsFormVisible] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingAllergy, setEditingAllergy] = React.useState<AllergyRead | null>(null);
   const [reactionFormOpen, setReactionFormOpen] = React.useState(false);
   const [selectedAllergyForReaction, setSelectedAllergyForReaction] = React.useState<string | null>(null);
-
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState<MedicalCodeSearchResult[]>([]);
-  const [searchLoading, setSearchLoading] = React.useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
-  const allergySchema = getAllergySchema(t);
-
-  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<AllergyFormInputs>({
-    resolver: zodResolver(allergySchema),
-    defaultValues: { allergen: null, reaction_type: '', severity: '' },
-  });
+  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   React.useEffect(() => { fetchMyAllergies(); }, [fetchMyAllergies]);
 
-  React.useEffect(() => {
-    if (debouncedSearchQuery.length < 3) {
-      setSearchResults([]);
-      return;
-    }
-    const search = async () => {
-      setSearchLoading(true);
-      try {
-        const results = await medicalCodeService.searchMedicalTerm('snomed', debouncedSearchQuery);
-        setSearchResults(results);
-      } catch (error) { console.error("Search failed:", error); setSearchResults([]); }
-      setSearchLoading(false);
-    };
-    void search();
-  }, [debouncedSearchQuery]);
-
-  const handleAddNewClick = () => {
-    setEditingAllergy(null);
-    reset({ allergen: null, reaction_type: '', severity: '' });
-    setIsFormVisible(true);
+  const handleOpenModal = (allergy: AllergyRead | null = null) => {
+    setEditingAllergy(allergy);
+    setIsModalOpen(true);
     setFeedback(null);
   };
 
-  const handleEditClick = (allergy: AllergyRead) => { alert(t('dashboard_allergies.feedback.editNotAvailable')); };
-
-  const handleCancel = () => {
-    setIsFormVisible(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
     setEditingAllergy(null);
-    reset();
-    setFeedback(null);
   };
 
-  const onSubmit: SubmitHandler<AllergyFormInputs> = async (data) => {
+  const handleFormSubmit = async (data: any) => {
     setFeedback(null);
-    if (!data.allergen) return;
-
     try {
-      const payload: AllergyCreateFromCode = { code: data.allergen.code, name: data.allergen.name, source: 'snomed', reaction_type: data.reaction_type, severity: data.severity };
-      await addAllergyFromCode(payload);
-      setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.addSuccess') });
-      handleCancel();
+      if (editingAllergy) {
+        const updatePayload: AllergyUpdate = { reaction_type: data.reaction_type, severity: data.severity };
+        await editAllergy(editingAllergy.uuid, updatePayload);
+        setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.updateSuccess') });
+      } else {
+        const createPayload: AllergyCreateFromCode = { code: data.allergen.code, name: data.allergen.name, source: 'snomed', reaction_type: data.reaction_type, severity: data.severity };
+        await addAllergyFromCode(createPayload);
+        setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.addSuccess') });
+      }
+      handleCloseModal();
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message || t('dashboard_allergies.feedback.addError') });
     }
@@ -148,37 +108,24 @@ export default function AllergiesPage() {
     <Paper sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1">{t('dashboard_allergies.title')}</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>{t('dashboard_allergies.addButton')}</Button>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenModal()}>{t('dashboard_allergies.addButton')}</Button>
       </Box>
-
-      <Collapse in={isFormVisible}>
-        <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Typography variant="h6" gutterBottom>{t('dashboard_allergies.form.title')}</Typography>
-            <Controller name="allergen" control={control} render={({ field }) => <Autocomplete {...field} options={searchResults} getOptionLabel={(option) => option.name || ''} isOptionEqualToValue={(option, value) => option.code === value.code} loading={searchLoading} onInputChange={(_, newInputValue) => setSearchQuery(newInputValue)} onChange={(_, data) => field.onChange(data)} renderInput={(params) => <TextField {...params} label={t('dashboard_allergies.form.searchLabel')} margin="normal" required error={!!errors.allergen} helperText={errors.allergen?.message || t('dashboard_allergies.form.searchHelperText')} InputProps={{ ...params.InputProps, endAdornment: <>{searchLoading ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }} />} />} />
-            <Controller name="reaction_type" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_allergies.form.reactionLabel')} fullWidth margin="normal" />} />
-            <Controller name="severity" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} label={t('dashboard_allergies.form.severityLabel')} fullWidth margin="normal" />} />
-            <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>{isSubmitting ? t('common.saving') : t('dashboard_allergies.form.submitButton')}</Button>
-            <Button variant="outlined" onClick={handleCancel} sx={{ mt: 2, ml: 2 }}>{t('common.cancel')}</Button>
-          </Box>
-        </Paper>
-      </Collapse>
-
-      {feedback && <Alert severity={feedback.type} sx={{ my: 2 }} onClose={() => setFeedback(null)}>{feedback.message}</Alert>}
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h6">{t('dashboard_allergies.list.title')}</Typography>
-      {loading && !isSubmitting && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
-      {error && !loading && <Alert severity="error">{error}</Alert>}
+      {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
+
+      {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
+      {error && <Alert severity="error">{error}</Alert>}
       {!loading && !error && allergies.length === 0 && <Typography sx={{ mt: 2 }}>{t('dashboard_allergies.list.noAllergies')}</Typography>}
+      
       <List>
         {allergies.map((allergy) => (
           <ListItem key={allergy.uuid} sx={{ flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid #eee', pb: 2, mb: 2 }}>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <ListItemText primary={allergy.allergen} secondary={`${t('dashboard_allergies.list.reactionLabel')}: ${allergy.reaction_type || 'N/A'} - ${t('dashboard_allergies.list.severityLabel')}: ${allergy.severity || 'N/A'}`} />
               <Box>
-                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(allergy)} disabled><EditIcon /></IconButton>
+                <IconButton edge="end" aria-label="edit" onClick={() => handleOpenModal(allergy)}><EditIcon /></IconButton>
                 <IconButton edge="end" aria-label="delete" onClick={() => onDeleteAllergy(allergy.uuid)}><DeleteIcon /></IconButton>
               </Box>
             </Box>
@@ -200,6 +147,18 @@ export default function AllergiesPage() {
           </ListItem>
         ))}
       </List>
+
+      <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+        <DialogTitle>{editingAllergy ? t('dashboard_allergies.feedback.editNotAvailable') : t('dashboard_allergies.form.title')}</DialogTitle>
+        <DialogContent>
+          <AllergyForm
+            onSubmit={handleFormSubmit}
+            onCancel={handleCloseModal}
+            initialData={editingAllergy ? { allergen: { code: editingAllergy.source_code, name: editingAllergy.allergen }, reaction_type: editingAllergy.reaction_type, severity: editingAllergy.severity } : null}
+            isEditMode={!!editingAllergy}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={reactionFormOpen} onClose={handleCloseReactionForm}>
         <DialogTitle>Add New Reaction</DialogTitle>
