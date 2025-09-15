@@ -1,37 +1,43 @@
 'use client';
 
 /**
- * @file This file provides a mock service for QR code management.
- * In a real-world application, these functions would make API calls to a backend endpoint.
- * For now, they simulate the generation of a QR code string based on the user's UUID.
+ * @file This file provides a service for QR code management.
+ * It is the single source of truth for constructing the QR code URL string
+ * using base URL and path from environment variables.
  */
 
 /**
- * Simulates fetching the user's QR data from the API.
- * The data is a string (URL) that will be encoded into the QR code.
+ * Constructs the full public URL to be encoded in the QR code.
  * @param {string} uuid - The user's unique identifier.
- * @returns {Promise<{ qrString: string }>} A promise that resolves with an object containing the QR string.
- * @throws {Error} If the user UUID is not provided.
+ * @returns {Promise<{ qrString: string }>} A promise that resolves with an object containing the full QR URL string.
+ * @throws {Error} If the user UUID is not provided or environment variables are missing.
  */
 const getMyQR = async (uuid: string): Promise<{ qrString: string }> => {
-    console.log(`Generating QR string for user UUID: ${uuid}`);
     if (!uuid) {
         throw new Error('User UUID is required to generate a QR code.');
     }
-    // In a real application, this URL would point to the public profile page.
-    const qrString = `https://www.emerqr.com/view/profile/${uuid}`;
+
+    const appBaseUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
+    const qrProfilePath = process.env.NEXT_PUBLIC_QR_PROFILE_PATH;
+
+    if (!appBaseUrl || !qrProfilePath) {
+        console.error('Environment variables NEXT_PUBLIC_APP_BASE_URL or NEXT_PUBLIC_QR_PROFILE_PATH are not set.');
+        throw new Error('Application is not configured correctly to generate QR codes.');
+    }
+
+    // Construct the full URL from environment variables.
+    const qrString = `${appBaseUrl}/${qrProfilePath}/${uuid}`;
+    
     return { qrString };
 };
 
 /**
- * Simulates regenerating the user's QR code.
- * In a real-world scenario, this would typically involve an API call to invalidate
- * the old QR code and generate a new one, but here it just re-generates the same string.
+ * Regenerates the user's QR code string.
  * @param {string} uuid - The user's unique identifier.
  * @returns {Promise<{ qrString: string }>} A promise that resolves with the regenerated QR string.
  */
 const regenerateMyQR = async (uuid: string): Promise<{ qrString:string }> => {
-    console.log('Regenerating QR data...');
+    // This is functionally the same as getMyQR, but provides a separate endpoint for clarity.
     return getMyQR(uuid);
 };
 
