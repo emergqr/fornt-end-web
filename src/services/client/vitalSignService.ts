@@ -6,12 +6,13 @@ import {
 } from '@/interfaces/client/vital-sign.interface';
 
 const BASE_URL = '/vital-signs';
-
+const VITAL_SIGN = process.env.NEXT_PUBLIC_API_VITAL_SIGN_BASE;
+const TYPE = process.env.NEXT_PUBLIC_API_TYPES;
 /**
  * Fetches the list of vital signs for the authenticated patient.
  */
 const getMyVitalSigns = async (): Promise<VitalSignRead[]> => {
-  const response = await api.get<VitalSignRead[]>(`${BASE_URL}/`);
+  const response = await api.get<VitalSignRead[]>(`${VITAL_SIGN}/`);
   return response.data;
 };
 
@@ -19,7 +20,7 @@ const getMyVitalSigns = async (): Promise<VitalSignRead[]> => {
  * Fetches the list of available vital sign types.
  */
 const getVitalSignTypes = async (): Promise<string[]> => {
-  const response = await api.get<string[]>(`${BASE_URL}/types`);
+  const response = await api.get<string[]>(`${VITAL_SIGN}${TYPE}`);
   return response.data;
 };
 
@@ -27,7 +28,7 @@ const getVitalSignTypes = async (): Promise<string[]> => {
  * Creates a new vital sign record.
  */
 const createVitalSign = async (data: VitalSignCreate): Promise<VitalSignRead> => {
-  const response = await api.post<VitalSignRead>(`${BASE_URL}/`, data);
+  const response = await api.post<VitalSignRead>(`${VITAL_SIGN}/`, data);
   return response.data;
 };
 
@@ -38,7 +39,7 @@ const updateVitalSign = async (
   uuid: string,
   data: VitalSignUpdate
 ): Promise<VitalSignRead> => {
-  const response = await api.put<VitalSignRead>(`${BASE_URL}/${uuid}`, data);
+  const response = await api.put<VitalSignRead>(`${VITAL_SIGN}/${uuid}`, data);
   return response.data;
 };
 
@@ -46,7 +47,7 @@ const updateVitalSign = async (
  * Deletes a vital sign record.
  */
 const deleteVitalSign = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
+  await api.delete(`${VITAL_SIGN}/${uuid}`);
 };
 
 export const vitalSignService = {

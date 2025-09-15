@@ -11,14 +11,15 @@ import {
   PregnancyLogCreate,
 } from '@/interfaces/client/pregnancy.interface';
 
-const BASE_URL = '/pregnancies';
+
+const BASE_URL_API_PREGNANCY = process.env.NEXT_PUBLIC_API_PREGNANCY_LOGS;
 
 /**
  * Fetches the list of pregnancy records for the authenticated user.
  * @returns {Promise<PregnancyRead[]>} A promise that resolves with an array of the user's pregnancy records.
  */
 const getMyPregnancyRecords = async (): Promise<PregnancyRead[]> => {
-  const response = await api.get<PregnancyRead[]>(`${BASE_URL}/`);
+  const response = await api.get<PregnancyRead[]>(`${BASE_URL_API_PREGNANCY}/`);
   return response.data;
 };
 
@@ -28,7 +29,7 @@ const getMyPregnancyRecords = async (): Promise<PregnancyRead[]> => {
  * @returns {Promise<PregnancyRead>} A promise that resolves with the newly created pregnancy record data.
  */
 const createPregnancyRecord = async (data: PregnancyCreate): Promise<PregnancyRead> => {
-  const response = await api.post<PregnancyRead>(`${BASE_URL}/`, data);
+  const response = await api.post<PregnancyRead>(`${BASE_URL_API_PREGNANCY}/`, data);
   return response.data;
 };
 
@@ -42,7 +43,7 @@ const updatePregnancyRecord = async (
   uuid: string,
   data: PregnancyUpdate
 ): Promise<PregnancyRead> => {
-  const response = await api.put<PregnancyRead>(`${BASE_URL}/${uuid}`, data);
+  const response = await api.put<PregnancyRead>(`${BASE_URL_API_PREGNANCY}/${uuid}`, data);
   return response.data;
 };
 
@@ -52,7 +53,7 @@ const updatePregnancyRecord = async (
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deletePregnancyRecord = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
+  await api.delete(`${BASE_URL_API_PREGNANCY}/${uuid}`);
 };
 
 /**
@@ -61,7 +62,7 @@ const deletePregnancyRecord = async (uuid: string): Promise<void> => {
  * @returns {Promise<PregnancyLogRead[]>} A promise that resolves with the list of log entries.
  */
 const getPregnancyLogs = async (pregnancyUuid: string): Promise<PregnancyLogRead[]> => {
-  const response = await api.get<PregnancyLogRead[]>(`${BASE_URL}/${pregnancyUuid}/logs`);
+  const response = await api.get<PregnancyLogRead[]>(`${BASE_URL_API_PREGNANCY}/${pregnancyUuid}/logs`);
   return response.data;
 };
 
@@ -72,7 +73,7 @@ const getPregnancyLogs = async (pregnancyUuid: string): Promise<PregnancyLogRead
  * @returns {Promise<PregnancyLogRead>} A promise that resolves with the newly created log entry.
  */
 const createPregnancyLog = async (pregnancyUuid: string, data: PregnancyLogCreate): Promise<PregnancyLogRead> => {
-  const response = await api.post<PregnancyLogRead>(`${BASE_URL}/${pregnancyUuid}/logs`, data);
+  const response = await api.post<PregnancyLogRead>(`${BASE_URL_API_PREGNANCY}/${pregnancyUuid}/logs`, data);
   return response.data;
 };
 

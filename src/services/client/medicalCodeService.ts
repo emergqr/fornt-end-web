@@ -6,6 +6,9 @@
 
 import api from '@/services/api';
 
+// The base URL for all medical code-related API requests.
+const BASE_URL = process.env.NEXT_PUBLIC_API_MEDICAL_CODES_BASE_URL || '/medical-codes';
+
 /**
  * Represents a single result from a medical code search.
  */
@@ -26,7 +29,7 @@ const searchMedicalTerm = async (
   term: string
 ): Promise<MedicalCodeResult[]> => {
   const response = await api.get<MedicalCodeResult[]>(
-    `/medical-codes/search/${serviceName}`,
+    `${BASE_URL}/search/${serviceName}`,
     {
       params: { term },
     }

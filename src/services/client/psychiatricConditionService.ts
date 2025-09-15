@@ -9,14 +9,15 @@ import {
   PsychiatricConditionUpdate,
 } from '@/interfaces/client/psychiatric-condition.interface';
 
-const BASE_URL = '/psychiatric-conditions';
+
+const BASE_URL_PSYCHIATRIC = process.env.NEXT_PUBLIC_API_PSYCHIATRIC_CONDITIONS_BASE;
 
 /**
  * Fetches the list of psychiatric conditions for the authenticated client.
  * @returns {Promise<PsychiatricConditionRead[]>} A promise that resolves with an array of the client's psychiatric conditions.
  */
 const getMyPsychiatricConditions = async (): Promise<PsychiatricConditionRead[]> => {
-  const response = await api.get<PsychiatricConditionRead[]>(`${BASE_URL}/`);
+  const response = await api.get<PsychiatricConditionRead[]>(`${BASE_URL_PSYCHIATRIC}/`);
   return response.data;
 };
 
@@ -26,7 +27,7 @@ const getMyPsychiatricConditions = async (): Promise<PsychiatricConditionRead[]>
  * @returns {Promise<PsychiatricConditionRead>} A promise that resolves with the newly created psychiatric condition data.
  */
 const createPsychiatricCondition = async (data: PsychiatricConditionCreate): Promise<PsychiatricConditionRead> => {
-  const response = await api.post<PsychiatricConditionRead>(`${BASE_URL}/`, data);
+  const response = await api.post<PsychiatricConditionRead>(`${BASE_URL_PSYCHIATRIC}/`, data);
   return response.data;
 };
 
@@ -40,7 +41,7 @@ const updatePsychiatricCondition = async (
   uuid: string,
   data: PsychiatricConditionUpdate
 ): Promise<PsychiatricConditionRead> => {
-  const response = await api.put<PsychiatricConditionRead>(`${BASE_URL}/${uuid}`, data);
+  const response = await api.put<PsychiatricConditionRead>(`${BASE_URL_PSYCHIATRIC}/${uuid}`, data);
   return response.data;
 };
 
@@ -50,7 +51,7 @@ const updatePsychiatricCondition = async (
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deletePsychiatricCondition = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
+  await api.delete(`${BASE_URL_PSYCHIATRIC}/${uuid}`);
 };
 
 export const psychiatricConditionService = {
