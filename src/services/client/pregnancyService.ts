@@ -11,7 +11,7 @@ import {
   PregnancyLogCreate,
 } from '@/interfaces/client/pregnancy.interface';
 
-const BASE_URL = '/pregnancies/pregnancies';
+const BASE_URL = '/pregnancies';
 
 /**
  * Fetches the list of pregnancy records for the authenticated user.

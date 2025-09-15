@@ -9,7 +9,7 @@ import {
   AddictionUpdate,
 } from '@/interfaces/client/addiction.interface';
 
-const BASE_URL = '/addictions/addictions';
+const BASE_URL = '/addictions';
 
 /**
  * Fetches the list of addictions for the authenticated client.

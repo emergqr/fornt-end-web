@@ -9,7 +9,7 @@ import {
   PsychiatricConditionUpdate,
 } from '@/interfaces/client/psychiatric-condition.interface';
 
-const BASE_URL = '/psychiatric-conditions/psychiatric-conditions';
+const BASE_URL = '/psychiatric-conditions';
 
 /**
  * Fetches the list of psychiatric conditions for the authenticated client.

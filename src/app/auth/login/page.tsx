@@ -143,14 +143,14 @@ export default function LoginPage() {
           {/* Links for password recovery and registration */}
           <Grid container>
             <Grid item xs>
-              <Link href="/auth/forgot-password" passHref>
-                <MuiLink variant="body2">{t('auth_login.forgotPasswordLink')}</MuiLink>
-              </Link>
+              <MuiLink component={Link} href="/auth/forgot-password" variant="body2">
+                {t('auth_login.forgotPasswordLink')}
+              </MuiLink>
             </Grid>
             <Grid item>
-              <Link href="/auth/registro" passHref>
-                <MuiLink variant="body2">{t('auth_login.noAccountLink')}</MuiLink>
-              </Link>
+              <MuiLink component={Link} href="/auth/registro" variant="body2">
+                {t('auth_login.noAccountLink')}
+              </MuiLink>
             </Grid>
           </Grid>
 

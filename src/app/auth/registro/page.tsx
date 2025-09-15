@@ -195,9 +195,9 @@ export default function RegisterPage() {
             {isSubmitting ? t('auth_register.submittingButton') : t('auth_register.submitButton')}
           </Button>
           <Box textAlign="center">
-            <Link href="/auth/login" passHref>
-               <MuiLink variant="body2">{t('auth_register.hasAccountLink')}</MuiLink>
-            </Link>
+            <MuiLink component={Link} href="/auth/login" variant="body2">
+              {t('auth_register.hasAccountLink')}
+            </MuiLink>
           </Box>
         </Box>
       </Box>

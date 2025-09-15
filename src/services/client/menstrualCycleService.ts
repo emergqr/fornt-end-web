@@ -10,7 +10,7 @@ import {
   MenstrualCyclePrediction,
 } from '@/interfaces/client/menstrual-cycle.interface';
 
-const BASE_URL = '/menstrual-cycle/menstrual-cycle';
+const BASE_URL = '/menstrual-cycle';
 
 /**
  * Fetches the list of menstrual logs for the authenticated user.

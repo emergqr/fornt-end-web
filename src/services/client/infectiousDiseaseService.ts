@@ -9,7 +9,7 @@ import {
   InfectiousDiseaseUpdate,
 } from '@/interfaces/client/infectious-disease.interface';
 
-const BASE_URL = '/infectious-diseases/infectious-diseases';
+const BASE_URL = '/infectious-diseases ';
 
 /**
  * Fetches the list of infectious diseases for the authenticated client.
