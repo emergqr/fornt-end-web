@@ -12,7 +12,7 @@ import {
 } from '@/interfaces/client/emergency-data.interface';
 
 // The base URL for all emergency data-related API requests.
-const BASE_URL = '/emerg-data';
+const BASE_URL = process.env.NEXT_PUBLIC_API_EMERG_DATA_BASE_URL || '/emerg-data';
 
 /**
  * Fetches the emergency data for the authenticated client.

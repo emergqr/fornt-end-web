@@ -12,12 +12,11 @@ import {
   AddressUpdate,
 } from '@/interfaces/client/address.interface';
 
-// The base URL for all address-related API requests.
-const BASE_URL = '/addresses';
+// The base URL for all address-related API requests, read from environment variables.
+const BASE_URL = process.env.NEXT_PUBLIC_API_ADDRESSES_BASE_URL || '/addresses';
 
 /**
  * Fetches the list of addresses for the authenticated client.
- * Corresponds to the GET /addresses/ endpoint.
  * @returns {Promise<AddressRead[]>} A promise that resolves with an array of the client's addresses.
  */
 const getMyAddresses = async (): Promise<AddressRead[]> => {
@@ -27,7 +26,6 @@ const getMyAddresses = async (): Promise<AddressRead[]> => {
 
 /**
  * Creates a new address for the authenticated client.
- * Corresponds to the POST /addresses/ endpoint.
  * @param {AddressCreate} data - The data for the new address.
  * @returns {Promise<AddressRead>} A promise that resolves with the newly created address data.
  */
@@ -38,7 +36,6 @@ const createAddress = async (data: AddressCreate): Promise<AddressRead> => {
 
 /**
  * Updates an existing address by its UUID.
- * Corresponds to the PUT /addresses/{uuid} endpoint.
  * @param {string} uuid - The unique identifier of the address to update.
  * @param {AddressUpdate} data - An object containing the address fields to update.
  * @returns {Promise<AddressRead>} A promise that resolves with the updated address data.
@@ -53,7 +50,6 @@ const updateAddress = async (
 
 /**
  * Deletes an address by its UUID.
- * Corresponds to the DELETE /addresses/{uuid} endpoint.
  * @param {string} uuid - The unique identifier of the address to delete.
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */

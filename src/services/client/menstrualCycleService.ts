@@ -10,14 +10,16 @@ import {
   MenstrualCyclePrediction,
 } from '@/interfaces/client/menstrual-cycle.interface';
 
-const BASE_URL = '/menstrual-cycle/menstrual-cycle';
+const MENSTRUAL_CICLE=process.env.NEXT_PUBLIC_API_MESTRUAL_CICLE_BASE;
+const LOGS= process.env.NEXT_PUBLIC_API_LOG_BASE;
+const PREDICTION= process.env.NEXT_PUBLIC_API_MESTRUAL_CICLE_PREDICTION;
 
 /**
  * Fetches the list of menstrual logs for the authenticated user.
  * @returns {Promise<MenstrualLogRead[]>} A promise that resolves with an array of the user's menstrual logs.
  */
 const getMyMenstrualLogs = async (): Promise<MenstrualLogRead[]> => {
-  const response = await api.get<MenstrualLogRead[]>(`${BASE_URL}/logs`);
+  const response = await api.get<MenstrualLogRead[]>(`${MENSTRUAL_CICLE}${LOGS}`);
   return response.data;
 };
 
@@ -27,7 +29,7 @@ const getMyMenstrualLogs = async (): Promise<MenstrualLogRead[]> => {
  * @returns {Promise<MenstrualLogRead>} A promise that resolves with the newly created menstrual log data.
  */
 const createMenstrualLog = async (data: MenstrualLogCreate): Promise<MenstrualLogRead> => {
-  const response = await api.post<MenstrualLogRead>(`${BASE_URL}/logs`, data);
+  const response = await api.post<MenstrualLogRead>(`${MENSTRUAL_CICLE}${LOGS}`, data);
   return response.data;
 };
 
@@ -41,7 +43,7 @@ const updateMenstrualLog = async (
   uuid: string,
   data: MenstrualLogUpdate
 ): Promise<MenstrualLogRead> => {
-  const response = await api.put<MenstrualLogRead>(`${BASE_URL}/logs/${uuid}`, data);
+  const response = await api.put<MenstrualLogRead>(`${MENSTRUAL_CICLE}${LOGS}/${uuid}`, data);
   return response.data;
 };
 
@@ -51,7 +53,7 @@ const updateMenstrualLog = async (
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteMenstrualLog = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/logs/${uuid}`);
+  await api.delete(`${MENSTRUAL_CICLE}${LOGS}/${uuid}`);
 };
 
 /**
@@ -59,7 +61,7 @@ const deleteMenstrualLog = async (uuid: string): Promise<void> => {
  * @returns {Promise<MenstrualCyclePrediction>} A promise that resolves with the prediction data.
  */
 const getMenstrualCyclePredictions = async (): Promise<MenstrualCyclePrediction> => {
-  const response = await api.get<MenstrualCyclePrediction>(`${BASE_URL}/predictions`);
+  const response = await api.get<MenstrualCyclePrediction>(`${MENSTRUAL_CICLE}${PREDICTION}`);
   return response.data;
 };
 

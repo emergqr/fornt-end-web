@@ -8,7 +8,7 @@
 import api from '@/services/api';
 import { Client } from '@/interfaces/client/client.interface';
 
-const BASE_URL = '/clients';
+const BASE_URL_CLIENTS =process.env.NEXT_PUBLIC_API_CLIENT_BASE;
 
 /**
  * Fetches a paginated list of all clients in the system.
@@ -18,7 +18,7 @@ const BASE_URL = '/clients';
  * @returns {Promise<Client[]>} A promise that resolves with an array of client data.
  */
 const getAllClients = async (skip: number = 0, limit: number = 100): Promise<Client[]> => {
-  const response = await api.get<Client[]>(`${BASE_URL}/`, {
+  const response = await api.get<Client[]>(`${BASE_URL_CLIENTS}/`, {
     params: { skip, limit },
   });
   return response.data;
@@ -31,7 +31,7 @@ const getAllClients = async (skip: number = 0, limit: number = 100): Promise<Cli
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteClient = async (uuid: string): Promise<void> => {
-  await api.delete(`${BASE_URL}/${uuid}`);
+  await api.delete(`${BASE_URL_CLIENTS}/${uuid}`);
 };
 
 /**

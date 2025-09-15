@@ -125,9 +125,9 @@ export default function ForgotPasswordPage() {
             </>
           ) : null}
           <Box textAlign="center" sx={{ mt: 2 }}>
-            <Link href="/auth/login" passHref>
-              <MuiLink variant="body2">{t('auth_forgot_password.backToLoginLink')}</MuiLink>
-            </Link>
+            <MuiLink component={Link} href="/auth/login" variant="body2">
+              {t('auth_forgot_password.backToLoginLink')}
+            </MuiLink>
           </Box>
         </Box>
       </Paper>

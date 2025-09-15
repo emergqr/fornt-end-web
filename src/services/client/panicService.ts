@@ -8,7 +8,7 @@
 import api from '@/services/api';
 
 // The base URL for the panic button API endpoint.
-const BASE_URL = '/panic/panic';
+const BASE_URL = process.env.NEXT_PUBLIC_API_PANIC_BASE_URL || '/panic/panic';
 
 /**
  * Triggers the panic alert for the authenticated user.

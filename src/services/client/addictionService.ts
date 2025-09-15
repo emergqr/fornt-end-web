@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * @file This file provides a service layer for interacting with the addiction-related API endpoints.
  */
@@ -9,7 +11,8 @@ import {
   AddictionUpdate,
 } from '@/interfaces/client/addiction.interface';
 
-const BASE_URL = '/addictions/addictions';
+// The base URL for all addiction-related API requests.
+const BASE_URL = process.env.NEXT_PUBLIC_API_ADDICTIONS_BASE_URL || '/addictions/addictions';
 
 /**
  * Fetches the list of addictions for the authenticated client.

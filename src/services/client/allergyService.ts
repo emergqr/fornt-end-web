@@ -16,11 +16,10 @@ import {
 } from '@/interfaces/client/allergy.interface';
 
 // The base URL for all allergy-related API requests.
-const BASE_URL = '/allergies';
+const BASE_URL = process.env.NEXT_PUBLIC_API_ALLERGIES_BASE_URL || '/allergies';
 
 /**
  * Fetches the list of allergies for the authenticated client.
- * Corresponds to the GET /allergies/ endpoint.
  * @returns {Promise<AllergyRead[]>} A promise that resolves with an array of the client's allergies.
  */
 const getMyAllergies = async (): Promise<AllergyRead[]> => {
@@ -30,7 +29,6 @@ const getMyAllergies = async (): Promise<AllergyRead[]> => {
 
 /**
  * Creates a new allergy for the authenticated client.
- * Corresponds to the POST /allergies/ endpoint.
  * @param {AllergyCreate} data - The data for the new allergy.
  * @returns {Promise<AllergyRead>} A promise that resolves with the newly created allergy data.
  */
@@ -41,7 +39,6 @@ const createAllergy = async (data: AllergyCreate): Promise<AllergyRead> => {
 
 /**
  * Creates and associates an allergy from a standardized medical code (e.g., SNOMED).
- * Corresponds to the POST /allergies/from-code endpoint.
  * @param {AllergyCreateFromCode} data - The data containing the code, name, and source.
  * @returns {Promise<AllergyRead>} A promise that resolves with the newly created allergy data.
  */
@@ -54,7 +51,6 @@ const createAllergyFromCode = async (
 
 /**
  * Updates an existing allergy by its UUID.
- * Corresponds to the PUT /allergies/{uuid} endpoint.
  * @param {string} uuid - The unique identifier of the allergy to update.
  * @param {AllergyUpdate} data - An object containing the allergy fields to update.
  * @returns {Promise<AllergyRead>} A promise that resolves with the updated allergy data.
@@ -66,7 +62,6 @@ const updateAllergy = async (uuid: string, data: AllergyUpdate): Promise<Allergy
 
 /**
  * Deletes an allergy by its UUID.
- * Corresponds to the DELETE /allergies/{uuid} endpoint.
  * @param {string} uuid - The unique identifier of the allergy to delete.
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
@@ -76,7 +71,6 @@ const deleteAllergy = async (uuid: string): Promise<void> => {
 
 /**
  * Adds a reaction history record to a specific allergy.
- * Corresponds to the POST /allergies/{uuid}/reactions endpoint.
  * @param {string} allergyUuid - The UUID of the allergy to add the reaction to.
  * @param {ReactionHistoryCreate} data - The data for the new reaction.
  * @returns {Promise<AllergyRead>} A promise that resolves with the updated allergy data, including the new reaction.

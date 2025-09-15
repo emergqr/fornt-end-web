@@ -2,7 +2,7 @@
 
 /**
  * @file This file provides a service layer for interacting with the medical history API endpoints.
- * It handles all CRUD (Create, Read, Update, Delete) operations for a user's medical events.
+ * It handles all CRUD operations for a user's medical events and their associated documents.
  */
 
 import api from '@/services/api';
@@ -14,14 +14,14 @@ import {
 } from '@/interfaces/client/medical-history.interface';
 
 // The base URL for all medical history-related API requests.
-const MEDICAL_HISTORY_API_PREFIX = '/medical-history/events';
+const BASE_URL = process.env.NEXT_PUBLIC_API_MEDICAL_HISTORY_BASE_URL || '/medical-history';
 
 /**
  * Fetches the list of allowed medical event types from the API.
  * @returns {Promise<string[]>} A promise that resolves with an array of event type names.
  */
 export const getMedicalEventTypes = async (): Promise<string[]> => {
-    const response = await api.get<string[]>(`${MEDICAL_HISTORY_API_PREFIX}/event-types`);
+    const response = await api.get<string[]>(`${BASE_URL}/event-types`);
     return response.data;
 };
 
@@ -30,7 +30,7 @@ export const getMedicalEventTypes = async (): Promise<string[]> => {
  * @returns {Promise<MedicalEventRead[]>} A promise that resolves with an array of medical events.
  */
 export const getMedicalHistory = async (): Promise<MedicalEventRead[]> => {
-    const response = await api.get<MedicalEventRead[]>(`${MEDICAL_HISTORY_API_PREFIX}`);
+    const response = await api.get<MedicalEventRead[]>(`${BASE_URL}/events`);
     return response.data;
 };
 
@@ -40,7 +40,7 @@ export const getMedicalHistory = async (): Promise<MedicalEventRead[]> => {
  * @returns {Promise<MedicalEventRead>} A promise that resolves with the detailed event data.
  */
 export const getMedicalEvent = async (eventUuid: string): Promise<MedicalEventRead> => {
-    const response = await api.get<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}/${eventUuid}`);
+    const response = await api.get<MedicalEventRead>(`${BASE_URL}/events/${eventUuid}`);
     return response.data;
 };
 
@@ -50,7 +50,7 @@ export const getMedicalEvent = async (eventUuid: string): Promise<MedicalEventRe
  * @returns {Promise<MedicalEventRead>} A promise that resolves with the newly created event data.
  */
 export const createMedicalEvent = async (data: MedicalEventCreate): Promise<MedicalEventRead> => {
-    const response = await api.post<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}`, data);
+    const response = await api.post<MedicalEventRead>(`${BASE_URL}/events`, data);
     return response.data;
 };
 
@@ -61,7 +61,7 @@ export const createMedicalEvent = async (data: MedicalEventCreate): Promise<Medi
  * @returns {Promise<MedicalEventRead>} A promise that resolves with the updated event data.
  */
 export const updateMedicalEvent = async (eventUuid: string, data: MedicalEventUpdate): Promise<MedicalEventRead> => {
-    const response = await api.put<MedicalEventRead>(`${MEDICAL_HISTORY_API_PREFIX}/${eventUuid}`, data);
+    const response = await api.put<MedicalEventRead>(`${BASE_URL}/events/${eventUuid}`, data);
     return response.data;
 };
 
@@ -71,7 +71,7 @@ export const updateMedicalEvent = async (eventUuid: string, data: MedicalEventUp
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 export const deleteMedicalEvent = async (eventUuid: string): Promise<void> => {
-    await api.delete(`${MEDICAL_HISTORY_API_PREFIX}/${eventUuid}`);
+    await api.delete(`${BASE_URL}/events/${eventUuid}`);
 };
 
 /**
@@ -85,7 +85,7 @@ export const uploadDocumentForMedicalEvent = async (eventUuid: string, file: Fil
     formData.append('file', file);
 
     const response = await api.post<MedicalDocumentRead>(
-        `${MEDICAL_HISTORY_API_PREFIX}/${eventUuid}/documents`,
+        `${BASE_URL}/events/${eventUuid}/documents`,
         formData,
         {
             headers: {

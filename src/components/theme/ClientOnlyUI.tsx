@@ -38,6 +38,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ContactsIcon from '@mui/icons-material/Contacts';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
@@ -75,6 +76,7 @@ function DashboardNav({ user }: { user: Client | null }) {
     { key: 'dashboard_timeline', path: '/dashboard/timeline', icon: <TimelineIcon sx={{ color: '#ff9800' }} /> },
     { key: 'dashboard_qr', path: '/dashboard/qr-code', icon: <QrCode2Icon sx={{ color: '#6a1b9a' }} /> },
     { key: 'dashboard_profile', path: '/dashboard/perfil', icon: <AccountCircleIcon sx={{ color: '#00796b' }} /> },
+    { key: 'dashboard_contacts', path: '/dashboard/contacts', icon: <ContactsIcon sx={{ color: '#0288d1' }} /> },
     { key: 'dashboard_allergies', path: '/dashboard/allergies', icon: <MedicalInformationIcon sx={{ color: '#d32f2f' }} /> },
     { key: 'dashboard_diseases', path: '/dashboard/diseases', icon: <HealthAndSafetyIcon sx={{ color: '#f57c00' }} /> },
     { key: 'dashboard_vitals', path: '/dashboard/vital-signs', icon: <MonitorHeartIcon sx={{ color: '#c2185b' }} /> },

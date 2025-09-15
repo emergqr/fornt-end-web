@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * @file This file provides a service layer for interacting with the infectious disease-related API endpoints.
  */
@@ -9,7 +11,8 @@ import {
   InfectiousDiseaseUpdate,
 } from '@/interfaces/client/infectious-disease.interface';
 
-const BASE_URL = '/infectious-diseases/infectious-diseases';
+// The base URL for all infectious disease-related API requests.
+const BASE_URL = process.env.NEXT_PUBLIC_API_INFECTIOUS_DISEASES_BASE_URL || '/infectious-diseases/infectious-diseases';
 
 /**
  * Fetches the list of infectious diseases for the authenticated client.

@@ -1,103 +1,57 @@
 'use client';
 
 /**
- * @file This file implements the Infectious Diseases management page for the user dashboard.
- * It allows users to add, view, edit, and delete their infectious disease records.
+ * @file This file implements the Infectious Diseases management page using a modal-based form.
  */
 
 import * as React from 'react';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import Paper from '@mui/material/Paper';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
-import AddIcon from '@mui/icons-material/Add';
-import Collapse from '@mui/material/Collapse';
-
 import { useInfectiousDiseaseStore } from '@/store/infectious-disease/infectious-disease.store';
 import { InfectiousDiseaseRead, InfectiousDiseaseCreate, InfectiousDiseaseUpdate } from '@/interfaces/client/infectious-disease.interface';
+import InfectiousDiseaseForm from './InfectiousDiseaseForm'; // Import the new reusable form
 
-const getInfectiousDiseaseSchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(2, { message: t('validation.infectiousDiseaseNameRequired') }),
-  diagnosis_date: z.string().min(1, { message: t('validation.infectiousDiseaseDiagnosisDateRequired') }),
-  status: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-});
-
-type InfectiousDiseaseFormInputs = z.infer<ReturnType<typeof getInfectiousDiseaseSchema>>;
+import {
+  Box,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  CircularProgress,
+  Alert,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Divider,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function InfectiousDiseasesPage() {
   const { t } = useTranslation();
-  const {
-    diseases,
-    loading,
-    error,
-    fetchDiseases,
-    addDisease,
-    deleteDisease,
-    updateDisease,
-  } = useInfectiousDiseaseStore();
+  const { diseases, loading, error, fetchDiseases, addDisease, deleteDisease, updateDisease } = useInfectiousDiseaseStore();
 
-  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [isFormVisible, setIsFormVisible] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingDisease, setEditingDisease] = React.useState<InfectiousDiseaseRead | null>(null);
+  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const infectiousDiseaseSchema = getInfectiousDiseaseSchema(t);
+  React.useEffect(() => { fetchDiseases(); }, [fetchDiseases]);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<InfectiousDiseaseFormInputs>({
-    resolver: zodResolver(infectiousDiseaseSchema),
-    defaultValues: { name: '', diagnosis_date: '', status: '', notes: '' },
-  });
-
-  React.useEffect(() => {
-    fetchDiseases();
-  }, [fetchDiseases]);
-
-  const handleAddNewClick = () => {
-    setEditingDisease(null);
-    reset({ name: '', diagnosis_date: '', status: '', notes: '' });
-    setIsFormVisible(true);
-    setFeedback(null);
-  };
-
-  const handleEditClick = (disease: InfectiousDiseaseRead) => {
+  const handleOpenModal = (disease: InfectiousDiseaseRead | null = null) => {
     setEditingDisease(disease);
-    reset({
-      name: disease.name,
-      diagnosis_date: disease.diagnosis_date,
-      status: disease.status || '',
-      notes: disease.notes || '',
-    });
-    setIsFormVisible(true);
+    setIsModalOpen(true);
     setFeedback(null);
   };
 
-  const handleCancel = () => {
-    setIsFormVisible(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
     setEditingDisease(null);
-    reset();
-    setFeedback(null);
   };
 
-  const onSubmit: SubmitHandler<InfectiousDiseaseFormInputs> = async (data) => {
+  const handleFormSubmit = async (data: InfectiousDiseaseCreate | InfectiousDiseaseUpdate) => {
     setFeedback(null);
     try {
       if (editingDisease) {
@@ -107,7 +61,7 @@ export default function InfectiousDiseasesPage() {
         await addDisease(data as InfectiousDiseaseCreate);
         setFeedback({ type: 'success', message: t('dashboard_infectious_diseases.feedback.addSuccess') });
       }
-      handleCancel();
+      handleCloseModal();
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message || t('dashboard_infectious_diseases.feedback.addError') });
     }
@@ -128,45 +82,40 @@ export default function InfectiousDiseasesPage() {
     <Paper sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1">{t('dashboard_infectious_diseases.title')}</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddNewClick}>{t('dashboard_infectious_diseases.addButton')}</Button>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleOpenModal()}>{t('dashboard_infectious_diseases.addButton')}</Button>
       </Box>
-
-      <Collapse in={isFormVisible}>
-        <Paper variant="outlined" sx={{ p: 2, mb: 4, mt: 2 }}>
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <Typography variant="h6" gutterBottom>{editingDisease ? 'Edit Disease' : t('dashboard_infectious_diseases.form.title')}</Typography>
-            
-            <Controller name="name" control={control} render={({ field }) => (<TextField {...field} label={t('dashboard_infectious_diseases.form.nameLabel')} fullWidth margin="normal" required error={!!errors.name} helperText={errors.name?.message} />)} />
-            <Controller name="diagnosis_date" control={control} render={({ field }) => (<TextField {...field} label={t('dashboard_infectious_diseases.form.diagnosisDateLabel')} type="date" InputLabelProps={{ shrink: true }} fullWidth margin="normal" required error={!!errors.diagnosis_date} helperText={errors.diagnosis_date?.message} />)} />
-            <Controller name="status" control={control} render={({ field }) => (<TextField {...field} value={field.value || ''} label={t('dashboard_infectious_diseases.form.statusLabel')} fullWidth margin="normal" />)} />
-            <Controller name="notes" control={control} render={({ field }) => (<TextField {...field} value={field.value || ''} label={t('dashboard_infectious_diseases.form.notesLabel')} fullWidth margin="normal" multiline rows={2} />)} />
-            
-            <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ mt: 2 }}>{isSubmitting ? t('common.saving') : t('dashboard_infectious_diseases.form.submitButton')}</Button>
-            <Button variant="outlined" onClick={handleCancel} sx={{ mt: 2, ml: 2 }}>{t('common.cancel')}</Button>
-          </Box>
-        </Paper>
-      </Collapse>
-
-      {feedback && <Alert severity={feedback.type} sx={{ my: 2 }} onClose={() => setFeedback(null)}>{feedback.message}</Alert>}
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h6">{t('dashboard_infectious_diseases.list.title')}</Typography>
-      {loading && !isSubmitting && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
-      {error && !loading && <Alert severity="error">{error}</Alert>}
+      {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
+
+      {loading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
+      {error && <Alert severity="error">{error}</Alert>}
       {!loading && !error && diseases.length === 0 && <Typography sx={{ mt: 2 }}>{t('dashboard_infectious_diseases.list.noDiseases')}</Typography>}
+      
       <List>
         {diseases.map((disease) => (
           <ListItem key={disease.uuid} secondaryAction={
-              <Box>
-                <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(disease)}><EditIcon /></IconButton>
-                <IconButton edge="end" aria-label="delete" onClick={() => onDelete(disease.uuid)}><DeleteIcon /></IconButton>
-              </Box>}
-          >
+            <Box>
+              <IconButton edge="end" aria-label="edit" onClick={() => handleOpenModal(disease)}><EditIcon /></IconButton>
+              <IconButton edge="end" aria-label="delete" onClick={() => onDelete(disease.uuid)}><DeleteIcon /></IconButton>
+            </Box>
+          }>
             <ListItemText primary={disease.name} secondary={`${t('dashboard_infectious_diseases.list.diagnosedLabel')}: ${new Date(disease.diagnosis_date).toLocaleDateString()} - ${t('dashboard_infectious_diseases.list.statusLabel')}: ${disease.status || 'N/A'}`} />
           </ListItem>
         ))}
       </List>
+
+      <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+        <DialogTitle>{editingDisease ? 'Edit Disease' : t('dashboard_infectious_diseases.form.title')}</DialogTitle>
+        <DialogContent>
+          <InfectiousDiseaseForm
+            onSubmit={handleFormSubmit}
+            onCancel={handleCloseModal}
+            initialData={editingDisease}
+          />
+        </DialogContent>
+      </Dialog>
     </Paper>
   );
 }

@@ -5,16 +5,20 @@
  * It provides a clean and reusable interface for handling registration, login, password changes, and account deletion.
  */
 
-import api from '../api';
+import api from '@/services/api';
 import { AuthResponse } from '@/interfaces/auth-response.interface';
 import { AuthCredentials } from '@/interfaces/auth-credentials.interface';
 import { RegisterPayload } from '@/interfaces/auth/register-payload.interface';
 import { ChangePasswordDto } from "@/interfaces/auth/change-password.dto";
 
 // Defines the base paths for the authentication and client-related API endpoints.
-const AUTH_BASE_PATH = '/auth';
-const CLIENTS_BASE_PATH = '/clients';
 
+const AUTH_BASE_PATH = process.env.NEXT_PUBLIC_API_AUTH ;
+const CLIENTS_BASE_PATH = process.env.NEXT_PUBLIC_API_CLIENT_ME_BASE;
+const RESET_PASSWORD_BASE_PATH = process.env.NEXT_PUBLIC_API_RESET_PASSWORD;
+const REGISTER = process.env.NEXT_PUBLIC_API_AUTH_REGISTER;
+const LOGIN = process.env.NEXT_PUBLIC_API_AUTH_LOGIN;
+const CHANGE_PASSWORD = process.env.NEXT_PUBLIC_API_CHANGUE_PASSWORD;
 /**
  * Registers a new user with the provided payload.
  * Corresponds to the POST /auth/register endpoint.
@@ -23,7 +27,7 @@ const CLIENTS_BASE_PATH = '/clients';
  */
 const register = async (payload: RegisterPayload): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
-    `${AUTH_BASE_PATH}/register`,
+    `${AUTH_BASE_PATH}/${REGISTER}`,
     payload
   );
   return response.data;
@@ -37,7 +41,7 @@ const register = async (payload: RegisterPayload): Promise<AuthResponse> => {
  */
 const login = async (credentials: AuthCredentials): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
-    `${AUTH_BASE_PATH}/login`,
+    `${AUTH_BASE_PATH}${LOGIN}`,
     credentials
   );
   return response.data;
@@ -50,7 +54,7 @@ const login = async (credentials: AuthCredentials): Promise<AuthResponse> => {
  * @returns {Promise<void>} A promise that resolves when the password has been successfully changed.
  */
 const changePassword = async (passwordData: ChangePasswordDto): Promise<void> => {
-  await api.post(`${AUTH_BASE_PATH}/change-password`, passwordData);
+  await api.post(`${AUTH_BASE_PATH}${CHANGE_PASSWORD}`, passwordData);
 };
 
 /**
@@ -60,7 +64,7 @@ const changePassword = async (passwordData: ChangePasswordDto): Promise<void> =>
  * @returns {Promise<void>} A promise that resolves when the request has been successfully sent.
  */
 const requestPasswordReset = async (email: string): Promise<void> => {
-  await api.post(`${AUTH_BASE_PATH}/reset-password`, { email });
+  await api.post(`${AUTH_BASE_PATH}${RESET_PASSWORD_BASE_PATH}`, { email });
 };
 
 /**
@@ -69,7 +73,7 @@ const requestPasswordReset = async (email: string): Promise<void> => {
  * @returns {Promise<void>} A promise that resolves when the account has been successfully deleted.
  */
 const deleteAccount = async (): Promise<void> => {
-  await api.delete(`${CLIENTS_BASE_PATH}/me`);
+  await api.delete(`${CLIENTS_BASE_PATH}`);
 };
 
 /**

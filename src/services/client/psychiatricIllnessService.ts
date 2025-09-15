@@ -14,17 +14,16 @@ import {
 } from '@/interfaces/client/psychiatric-illness.interface';
 
 // The base URL for all psychiatric illness-related API requests.
-const BASE_URL = '/psychiatric-illnesses';
+const MEDICAL_PSYCHIATRIC_ILLNESSES = process.env.NEXT_PUBLIC_API_MEDICAL_PSYCHIATRIC_ILLNESSES_BASE;
 
 /**
  * Fetches the list of psychiatric conditions for the authenticated client.
  * @returns {Promise<PsychiatricIllnessRead[]>} A promise that resolves with an array of records.
  */
 const getMyPsychiatricIllnesses = async (): Promise<PsychiatricIllnessRead[]> => {
-  // const response = await api.get<PsychiatricIllnessRead[]>(`${BASE_URL}/`);
-  // return response.data;
-  console.warn('getMyPsychiatricIllnesses service is a placeholder and not implemented.');
-  return Promise.resolve([]); // Return empty array for now
+   const response = await api.get<PsychiatricIllnessRead[]>(`${MEDICAL_PSYCHIATRIC_ILLNESSES}/`);
+   return response.data;
+
 };
 
 /**
@@ -33,11 +32,9 @@ const getMyPsychiatricIllnesses = async (): Promise<PsychiatricIllnessRead[]> =>
  * @returns {Promise<PsychiatricIllnessRead>} A promise that resolves with the newly created record.
  */
 const createPsychiatricIllness = async (data: PsychiatricIllnessCreate): Promise<PsychiatricIllnessRead> => {
-  // const response = await api.post<PsychiatricIllnessRead>(`${BASE_URL}/`, data);
-  // return response.data;
-  console.warn('createPsychiatricIllness service is a placeholder and not implemented.');
-  // Return a mock response for now
-  return Promise.resolve({ uuid: 'mock-uuid', ...data } as PsychiatricIllnessRead);
+   const response = await api.post<PsychiatricIllnessRead>(`${MEDICAL_PSYCHIATRIC_ILLNESSES}/`, data);
+   return response.data;
+
 };
 
 /**
@@ -47,10 +44,9 @@ const createPsychiatricIllness = async (data: PsychiatricIllnessCreate): Promise
  * @returns {Promise<PsychiatricIllnessRead>} A promise that resolves with the updated record.
  */
 const updatePsychiatricIllness = async (uuid: string, data: PsychiatricIllnessUpdate): Promise<PsychiatricIllnessRead> => {
-  // const response = await api.put<PsychiatricIllnessRead>(`${BASE_URL}/${uuid}`, data);
-  // return response.data;
-  console.warn(`updatePsychiatricIllness for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve({ uuid, name: '', diagnosis_date: '', ...data } as PsychiatricIllnessRead);
+   const response = await api.put<PsychiatricIllnessRead>(`${MEDICAL_PSYCHIATRIC_ILLNESSES}/${uuid}`, data);
+   return response.data;
+
 };
 
 /**
@@ -59,9 +55,9 @@ const updatePsychiatricIllness = async (uuid: string, data: PsychiatricIllnessUp
  * @returns {Promise<void>}
  */
 const deletePsychiatricIllness = async (uuid: string): Promise<void> => {
-  // await api.delete(`${BASE_URL}/${uuid}`);
-  console.warn(`deletePsychiatricIllness for ${uuid} is a placeholder and not implemented.`);
-  return Promise.resolve();
+  const response = await api.delete(`${MEDICAL_PSYCHIATRIC_ILLNESSES}/${uuid}`);
+   return response.data;
+
 };
 
 /**

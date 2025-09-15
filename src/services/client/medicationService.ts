@@ -13,11 +13,10 @@ import {
 } from '@/interfaces/client/medication.interface';
 
 // The base URL for all medication schedule-related API requests.
-const BASE_URL = '/medical-history/schedules';
+const BASE_URL = process.env.NEXT_PUBLIC_API_MEDICATION_SCHEDULES_BASE_URL || '/medical-history/schedules';
 
 /**
  * Fetches all medication schedules for the authenticated user.
- * Corresponds to the GET /medical-history/schedules endpoint.
  * @returns {Promise<MedicationScheduleRead[]>} A promise that resolves with an array of the user's medication schedules.
  */
 const getMySchedules = async (): Promise<MedicationScheduleRead[]> => {
@@ -27,7 +26,6 @@ const getMySchedules = async (): Promise<MedicationScheduleRead[]> => {
 
 /**
  * Creates a new medication schedule for the authenticated user.
- * Corresponds to the POST /medical-history/schedules endpoint.
  * @param {MedicationScheduleCreate} data - The data for the new medication schedule.
  * @returns {Promise<MedicationScheduleRead>} A promise that resolves with the newly created schedule data.
  */
