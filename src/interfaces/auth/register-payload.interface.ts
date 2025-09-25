@@ -21,11 +21,6 @@ export interface RegisterPayload {
   password: string;
 
   /**
-   * The user's full name (optional at registration).
-   */
-  name?: string | null;
-
-  /**
    * The user's phone number (optional at registration).
    */
   phone?: string | null;

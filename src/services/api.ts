@@ -11,7 +11,7 @@ const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!serverUrl) {
   console.error(
-    'CRITICAL ERROR: The NEXT_PUBLIC_API_BASE_URL environment variable is not defined. Please check your .env.local file.'
+    'CRITICAL ERROR: The NEXT_PUBLIC_API_BASE_URL environment variable is not defined. Please check your environment configuration (.env files).'
   );
 }
 

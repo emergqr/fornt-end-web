@@ -2,17 +2,17 @@
 
 /**
  * @file This file sets up Axios interceptors to handle API requests and responses globally.
- * It injects authentication tokens, language headers, and manages global error handling,
- * such as automatic user logout on session expiry.
+ * It injects authentication tokens, language headers, logs outgoing requests,
+ * and manages global error handling.
  */
 
-import api, { recursiveUrlCorrection } from './api'; // Import the URL correction utility
+import axios from 'axios'; // Import axios to use its utility functions
+import api, { recursiveUrlCorrection } from './api';
 import { getApiErrorMessage } from './apiErrors';
-import { i18n as i18nInstanceType } from 'i18next'; // Import the i18n instance type
+import { i18n as i18nInstanceType } from 'i18next';
 
 /**
  * Configures the application's Axios interceptors.
- * This function should be called once when the application initializes.
  * @param {() => Promise<string | null>} getTokenFn - A function that retrieves the authentication token.
  * @param {() => Promise<void>} signOutFn - A function that handles the user sign-out process.
  * @param {i18nInstanceType} i18nInstance - The i18next instance to get the current language.
@@ -24,7 +24,7 @@ export const setupApiInterceptors = (
 ) => {
   /**
    * Request Interceptor:
-   * Injects Authorization and Accept-Language headers into every outgoing request.
+   * Injects headers and logs the outgoing request for debugging purposes.
    */
   api.interceptors.request.use(
     async (config) => {
@@ -38,6 +38,10 @@ export const setupApiInterceptors = (
         config.headers['Accept-Language'] = language;
       }
 
+      // Log the full, resolved URL of the outgoing request.
+      const finalUrl = axios.getUri(config);
+      console.log(`[API Request] -> ${config.method?.toUpperCase()} ${finalUrl}`);
+
       return config;
     },
     (error) => Promise.reject(error),
@@ -49,7 +53,6 @@ export const setupApiInterceptors = (
    */
   api.interceptors.response.use(
     (response) => {
-      // On a successful response, apply the recursive URL correction for assets.
       if (response.data) {
         response.data = recursiveUrlCorrection(response.data);
       }
@@ -57,13 +60,11 @@ export const setupApiInterceptors = (
     },
     (error) => {
       const errorMessage = getApiErrorMessage(error);
-      // On a 401 Unauthorized error, trigger a global sign-out.
       if (error.response?.status === 401) {
         signOutFn();
       }
-      // Reject the promise with a standardized error message.
       return Promise.reject(new Error(errorMessage));
     },
   );
-  console.log('[API] Interceptors configured successfully.');
+  console.log('[API] Interceptors configured successfully with request logging.');
 };

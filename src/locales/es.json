@@ -33,7 +33,6 @@
     "eventDateRequired": "La fecha es requerida",
     "loginEmailInvalid": "Por favor, introduce un email válido",
     "loginPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
-    "registerNameMinLength": "El nombre debe tener al menos 2 caracteres",
     "registerPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
     "registerPasswordRepeatMinLength": "La contraseña debe tener al menos 6 caracteres",
     "registerPasswordsDoNotMatch": "Las contraseñas no coinciden",
@@ -49,6 +48,7 @@
     "dashboard_timeline": "Línea de Tiempo",
     "dashboard_qr": "Mi Código QR",
     "dashboard_profile": "Mi Perfil",
+    "dashboard_contacts": "Mis Contactos",
     "dashboard_allergies": "Mis Alergias",
     "dashboard_diseases": "Condiciones Médicas",
     "dashboard_addictions": "Adicciones",
@@ -75,6 +75,11 @@
     "fr": "Francés",
     "pt": "Portugués",
     "nl": "Holandés"
+  },
+  "gender_options": {
+    "male": "Masculino",
+    "female": "Femenino",
+    "other": "Indeterminado"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -124,7 +129,6 @@
   },
   "auth_register": {
     "title": "Crear una cuenta",
-    "nameLabel": "Nombre Completo",
     "emailLabel": "Correo Electrónico",
     "passwordLabel": "Contraseña",
     "passwordRepeatLabel": "Repetir Contraseña",
@@ -216,10 +220,13 @@
     },
     "address": {
       "title": "Mi Dirección",
+      "addButton": "Añadir Dirección",
+      "editTitle": "Editar Dirección",
+      "addTitle": "Añadir Nueva Dirección",
       "updateSuccess": "¡Dirección actualizada con éxito!",
       "addSuccess": "¡Dirección guardada con éxito!",
       "updateError": "No se pudo guardar la dirección.",
-      "noAddress": "No has añadido una dirección todavía. Haz clic en el botón de editar para añadir una.",
+      "noAddress": "No has añadido una dirección todavía. Haz clic en el botón para añadir una.",
       "form": {
         "streetLabel": "Calle y Número",
         "cityLabel": "Ciudad",

@@ -28,6 +28,7 @@ export default function HomePage() {
       <Box
         sx={{
           my: 4, // Vertical margin (top and bottom)
+
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',

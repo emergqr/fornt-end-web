@@ -15,6 +15,10 @@ import {
   Grid,
   Paper,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  MenuItem,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -32,6 +36,7 @@ export default function PerfilPage() {
   const { t } = useTranslation();
   const { user, setUser } = useAuthStore();
   const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = React.useState(false);
 
   const profileSchema = z.object({
     name: z.string().min(2, t('validation.nameRequired')),
@@ -50,24 +55,12 @@ export default function PerfilPage() {
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileFormInputs>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: '',
-      phone: '',
-      birth_date: '',
-      sex: '',
-      occupation: '',
-    },
+    defaultValues: { name: '', phone: '', birth_date: '', sex: '', occupation: '' },
   });
 
   React.useEffect(() => {
     if (user) {
-      reset({
-        name: user.name || '',
-        phone: user.phone || '',
-        birth_date: user.birth_date || '',
-        sex: user.sex || '',
-        occupation: user.occupation || '',
-      });
+      reset({ name: user.name || '', phone: user.phone || '', birth_date: user.birth_date || '', sex: user.sex?.toLowerCase() || '', occupation: user.occupation || '' });
     }
   }, [user, reset]);
 
@@ -89,59 +82,52 @@ export default function PerfilPage() {
   };
 
   if (!user) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}><CircularProgress /></Box>;
   }
 
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" component="h1" gutterBottom>
-        {t('dashboard_profile.title')}
-      </Typography>
+      <Typography variant="h4" component="h1" gutterBottom>{t('dashboard_profile.title')}</Typography>
       <Paper sx={{ p: 3, mt: 2 }}>
         <Grid container spacing={4}>
           <Grid component="div" item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <ProfileAvatar />
             <Typography variant="h5" sx={{ mt: 2 }}>{user.name}</Typography>
             <Typography color="text.secondary">{user.email}</Typography>
+            <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setIsPasswordModalOpen(true)}>{t('dashboard_profile.change_password.title')}</Button>
           </Grid>
 
           <Grid component="div" item xs={12} md={8}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-              {feedback && (
-                <Alert severity={feedback.type} sx={{ mb: 2 }}>
-                  {feedback.message}
-                </Alert>
-              )}
+              {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
               <Grid container spacing={2}>
-                <Grid component="div" item xs={12}>
-                  <Controller name="name" control={control} render={({ field }) => <TextField {...field} fullWidth required label={t('dashboard_profile.form.nameLabel')} error={!!errors.name} helperText={errors.name?.message} />} />
-                </Grid>
-                <Grid component="div" item xs={12}>
-                  <TextField fullWidth disabled label={t('dashboard_profile.form.emailLabel')} value={user.email} />
-                </Grid>
+                <Grid component="div" item xs={12}><Controller name="name" control={control} render={({ field }) => <TextField {...field} fullWidth required label={t('dashboard_profile.form.nameLabel')} error={!!errors.name} helperText={errors.name?.message} />} /></Grid>
+                <Grid component="div" item xs={12}><TextField fullWidth disabled label={t('dashboard_profile.form.emailLabel')} value={user.email} /></Grid>
+                <Grid component="div" item xs={12} sm={6}><Controller name="phone" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.phoneLabel')} error={!!errors.phone} helperText={errors.phone?.message} />} /></Grid>
+                <Grid component="div" item xs={12} sm={6}><Controller name="birth_date" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.birthDateLabel')} type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />} /></Grid>
                 <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="phone" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.phoneLabel')} error={!!errors.phone} helperText={errors.phone?.message} />} />
+                  <Controller
+                    name="sex"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        select
+                        fullWidth
+                        label={t('dashboard_profile.form.sexLabel')}
+                        error={!!errors.sex}
+                        helperText={errors.sex?.message}
+                      >
+                        <MenuItem value="male">{t('gender_options.male')}</MenuItem>
+                        <MenuItem value="female">{t('gender_options.female')}</MenuItem>
+                        <MenuItem value="other">{t('gender_options.other')}</MenuItem>
+                      </TextField>
+                    )}
+                  />
                 </Grid>
-                <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="birth_date" control={control} render={({ field }) => <TextField {...field} fullWidth label={t('dashboard_profile.form.birthDateLabel')} type="date" InputLabelProps={{ shrink: true }} error={!!errors.birth_date} helperText={errors.birth_date?.message} />} />
-                </Grid>
-                {/* --- Nuevos Campos --- */}
-                <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="sex" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label={t('dashboard_profile.form.sexLabel')} error={!!errors.sex} helperText={errors.sex?.message} />} />
-                </Grid>
-                <Grid component="div" item xs={12} sm={6}>
-                  <Controller name="occupation" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label={t('dashboard_profile.form.occupationLabel')} error={!!errors.occupation} helperText={errors.occupation?.message} />} />
-                </Grid>
+                <Grid component="div" item xs={12} sm={6}><Controller name="occupation" control={control} render={({ field }) => <TextField {...field} value={field.value || ''} fullWidth label={t('dashboard_profile.form.occupationLabel')} error={!!errors.occupation} helperText={errors.occupation?.message} />} /></Grid>
               </Grid>
-              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                <Button type="submit" variant="contained" disabled={isSubmitting || !isDirty}>
-                  {isSubmitting ? t('common.saving') : t('common.saveChanges')}
-                </Button>
-              </Box>
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}><Button type="submit" variant="contained" disabled={isSubmitting || !isDirty}>{isSubmitting ? t('common.saving') : t('common.saveChanges')}</Button></Box>
             </Box>
           </Grid>
         </Grid>
@@ -150,9 +136,14 @@ export default function PerfilPage() {
       <EmergencyDataCard />
       <AddressCard />
       <EmergencyContacts />
-      <ChangePasswordForm />
       <DeleteAccountCard />
 
+      <Dialog open={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{t('dashboard_profile.change_password.title')}</DialogTitle>
+        <DialogContent>
+          <ChangePasswordForm onSuccess={() => setIsPasswordModalOpen(false)} onCancel={() => setIsPasswordModalOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 }

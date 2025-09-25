@@ -49,6 +49,7 @@
     "dashboard_timeline": "Chronologie",
     "dashboard_qr": "Mon Code QR",
     "dashboard_profile": "Mon Profil",
+    "dashboard_contacts": "Mes Contacts",
     "dashboard_allergies": "Mes Allergies",
     "dashboard_diseases": "Conditions Médicales",
     "dashboard_addictions": "Dépendances",
@@ -75,6 +76,11 @@
     "fr": "Français",
     "pt": "Portugais",
     "nl": "Néerlandais"
+  },
+  "gender_options": {
+    "male": "Masculin",
+    "female": "Féminin",
+    "other": "Indéterminé"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -216,10 +222,13 @@
     },
     "address": {
       "title": "Mon Adresse",
+      "addButton": "Ajouter une adresse",
+      "editTitle": "Modifier l'adresse",
+      "addTitle": "Ajouter une nouvelle adresse",
       "updateSuccess": "Adresse mise à jour avec succès !",
       "addSuccess": "Adresse enregistrée avec succès !",
       "updateError": "Impossible d'enregistrer l'adresse.",
-      "noAddress": "Vous n'avez pas encore ajouté d'adresse. Cliquez sur le bouton modifier pour en ajouter une.",
+      "noAddress": "Vous n'avez pas encore ajouté d'adresse. Cliquez sur le bouton pour en ajouter une.",
       "form": {
         "streetLabel": "Rue et Numéro",
         "cityLabel": "Ville",
