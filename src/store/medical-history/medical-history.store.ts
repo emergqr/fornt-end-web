@@ -7,7 +7,7 @@ import {
     MedicalEventRead,
     MedicalEventUpdate,
 } from '@/interfaces/client/medical-history.interface';
-import * as medicalHistoryService from '@/services/client/medicalHistoryService';
+import { medicalHistoryService } from '@/services/client/medicalHistoryService';
 import { uploadDocumentsForEvent } from '@/services/client/fileUploadService';
 
 /**

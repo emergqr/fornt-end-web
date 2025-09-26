@@ -22,7 +22,7 @@ const getProfile = async (): Promise<Client> => {
 };
 
 const getFullProfile = async (): Promise<ClientFullProfile> => {
-  const response = await api.get<ClientFullProfile>(CLIENTS_ME_PATH+PROFILE_PATH);
+  const response = await api.get<ClientFullProfile>(`${CLIENTS_ME_PATH}${PROFILE_PATH}`);
   return response.data;
 };
 
@@ -32,20 +32,24 @@ const updateProfile = async (data: ClientUpdate): Promise<Client> => {
 };
 
 const updateLanguagePreference = async (languageCode: string): Promise<Client> => {
-  const response = await api.patch<Client>(CLIENTS_ME_PATH+LANGUAGE_PATH, { preferred_language: languageCode });
+  const response = await api.patch<Client>(`${CLIENTS_ME_PATH}${LANGUAGE_PATH}`, { preferred_language: languageCode });
   return response.data;
 };
 
 const getPublicProfile = async (uuid: string): Promise<PublicProfileResponse> => {
-  const response = await api.get<PublicProfileResponse>(`${CLIENTS_ME_PATH}+${PUBLIC_PROFILE_PATH}/${uuid}`);
+  const response = await api.get<PublicProfileResponse>(`${CLIENTS_ME_PATH}${PUBLIC_PROFILE_PATH}/${uuid}`);
   return response.data;
 };
 
 const uploadAvatar = async (file: File): Promise<Client> => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await api.post<Client>(CLIENTS_ME_PATH+AVATAR_PATH, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+
+  // Override the global default 'Content-Type: application/json' for this specific request.
+  const response = await api.put<Client>(CLIENTS_ME_PATH + AVATAR_PATH, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response.data;
 };
@@ -55,6 +59,6 @@ export const profileService = {
   getFullProfile,
   updateProfile,
   updateLanguagePreference,
-  getPublicProfile,
   uploadAvatar,
+  getPublicProfile
 };

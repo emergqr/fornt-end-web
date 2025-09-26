@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 
-import api from '@/services/api';
 import { getApiErrorMessage } from '@/services/apiErrors';
-import { uploadAvatar as uploadAvatarService } from '@/services/profileService';
+import { profileService} from '@/services/profileService';
 import { useAuthStore } from '../auth/auth.store';
 import { ClientFullProfile } from '@/interfaces/client/client-full-profile.interface';
 import { ClientUpdate } from '@/interfaces/client/client-update.interface';
@@ -15,7 +14,7 @@ interface ProfileState {
   isUploadingAvatar: boolean; // For avatar upload specifically
   error: string | null;
   fetchProfile: () => Promise<void>;
-  uploadAvatar: (uri: string) => Promise<void>; // Corrected type: accepts URI string
+  uploadAvatar: (file: File) => Promise<void>;
   updateProfile: (data: ClientUpdate) => Promise<void>;
 }
 
@@ -30,13 +29,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   fetchProfile: async () => {
     set({ isFetching: true, error: null });
     try {
-      const response = await api.get<ClientFullProfile>('/clients/me/profile');
-      set({ profile: response.data, isFetching: false });
+      const profileData = await profileService.getFullProfile();
+      set({ profile: profileData, isFetching: false });
 
       // Update the user in the auth store to keep them in sync.
       // This ensures that if the profile is re-fetched, the header/drawer
       // also get the latest information (e.g., updated name).
-      useAuthStore.getState().setUser(response.data);
+      useAuthStore.getState().setUser(profileData);
     } catch (error) {
       const errorMessage = getApiErrorMessage(error);
       set({ isFetching: false, error: errorMessage, profile: null });
@@ -46,7 +45,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   updateProfile: async (data: ClientUpdate) => {
     set({ isUpdating: true, error: null });
     try {
-      await api.put('/clients/me', data);
+      await profileService.updateProfile(data);
       // Re-fetch the full profile to ensure all data is consistent after update.
       await get().fetchProfile();
       set({ isUpdating: false });
@@ -60,10 +59,10 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     }
   },
 
-  uploadAvatar: async (uri: string) => {
+  uploadAvatar: async (file: File) => {
     set({ isUploadingAvatar: true, error: null });
     try {
-      await uploadAvatarService(uri);
+      await profileService.uploadAvatar(file);
       // Re-fetch the full profile to get the new avatar URL and ensure consistency.
       await get().fetchProfile();
       set({ isUploadingAvatar: false });

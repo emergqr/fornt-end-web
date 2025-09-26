@@ -38,6 +38,12 @@ export const setupApiInterceptors = (
         config.headers['Accept-Language'] = language;
       }
 
+      // Set Content-Type to JSON for all requests except for file uploads.
+      // Axios will automatically set the correct multipart/form-data header for FormData.
+      if (!(config.data instanceof FormData)) {
+        config.headers['Content-Type'] = 'application/json';
+      }
+
       // Log the full, resolved URL of the outgoing request.
       const finalUrl = axios.getUri(config);
       console.log(`[API Request] -> ${config.method?.toUpperCase()} ${finalUrl}`);
