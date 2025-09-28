@@ -5,6 +5,7 @@ import { profileService} from '@/services/profileService';
 import { useAuthStore } from '../auth/auth.store';
 import { ClientFullProfile } from '@/interfaces/client/client-full-profile.interface';
 import { ClientUpdate } from '@/interfaces/client/client-update.interface';
+import { recursiveUrlCorrection } from '@/services/api';
 
 // --- STORE INTERFACE ---
 interface ProfileState {
@@ -30,12 +31,15 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set({ isFetching: true, error: null });
     try {
       const profileData = await profileService.getFullProfile();
-      set({ profile: profileData, isFetching: false });
+      // Apply the URL correction to the raw data from the API.
+      const correctedProfile = recursiveUrlCorrection(profileData);
+
+      set({ profile: correctedProfile, isFetching: false });
 
       // Update the user in the auth store to keep them in sync.
       // This ensures that if the profile is re-fetched, the header/drawer
       // also get the latest information (e.g., updated name).
-      useAuthStore.getState().setUser(profileData);
+      useAuthStore.getState().setUser(correctedProfile);
     } catch (error) {
       const errorMessage = getApiErrorMessage(error);
       set({ isFetching: false, error: errorMessage, profile: null });
