@@ -9,68 +9,47 @@ import { Client } from '@/interfaces/client/client.interface';
 import { ClientUpdate } from '@/interfaces/client/client-update.interface';
 import { PublicProfileResponse, ClientFullProfile } from '@/interfaces/client/client-full-profile.interface';
 
-// Define base paths from environment variables with fallbacks
-const CLIENTS_BASE_URL = process.env.NEXT_PUBLIC_API_CLIENTS_BASE_URL || '/clients';
-const PUBLIC_PROFILE_BASE_URL = process.env.NEXT_PUBLIC_API_PUBLIC_PROFILE_BASE_URL || '/public-profile';
+// Define API paths directly from environment variables
+const CLIENTS_ME_PATH = process.env.NEXT_PUBLIC_API_CLIENT_ME_BASE || '/clients/me';
+const PROFILE_PATH = process.env.NEXT_PUBLIC_API_PROFILR || '/profile';
+const LANGUAGE_PATH = process.env.NEXT_PUBLIC_API_LANGUAGE || '/language';
+const AVATAR_PATH = process.env.NEXT_PUBLIC_API_CLIENT_AVATAR || '/avatar';
+const PUBLIC_PROFILE_PATH = process.env.NEXT_PUBLIC_API_PUBLIC_PROFILR || '/public-profile';
 
-/**
- * Fetches the basic profile of the currently authenticated user.
- * @returns {Promise<Client>} A promise that resolves with the client's basic profile data.
- */
 const getProfile = async (): Promise<Client> => {
-  const response = await api.get<Client>(`${CLIENTS_BASE_URL}/me`);
+  const response = await api.get<Client>(CLIENTS_ME_PATH);
   return response.data;
 };
 
-/**
- * Fetches the full profile of the currently authenticated user, including related data.
- * @returns {Promise<ClientFullProfile>} A promise that resolves with the client's full profile data.
- */
 const getFullProfile = async (): Promise<ClientFullProfile> => {
-  const response = await api.get<ClientFullProfile>(`${CLIENTS_BASE_URL}/me/profile`);
+  const response = await api.get<ClientFullProfile>(`${CLIENTS_ME_PATH}${PROFILE_PATH}`);
   return response.data;
 };
 
-/**
- * Updates the profile of the currently authenticated user.
- * @param {ClientUpdate} data - An object containing the fields to update.
- * @returns {Promise<Client>} A promise that resolves with the updated client profile.
- */
 const updateProfile = async (data: ClientUpdate): Promise<Client> => {
-  const response = await api.put<Client>(`${CLIENTS_BASE_URL}/me`, data);
+  const response = await api.put<Client>(CLIENTS_ME_PATH, data);
   return response.data;
 };
 
-/**
- * Updates the preferred language for the currently authenticated user.
- * @param {string} languageCode - The new language code (e.g., 'en', 'es').
- * @returns {Promise<Client>} A promise that resolves with the updated client profile.
- */
 const updateLanguagePreference = async (languageCode: string): Promise<Client> => {
-  const response = await api.patch<Client>(`${CLIENTS_BASE_URL}/me/language`, { preferred_language: languageCode });
+  const response = await api.patch<Client>(`${CLIENTS_ME_PATH}${LANGUAGE_PATH}`, { preferred_language: languageCode });
   return response.data;
 };
 
-/**
- * Fetches the public emergency profile for a given user UUID.
- * @param {string} uuid - The UUID of the user.
- * @returns {Promise<PublicProfileResponse>} A promise that resolves with the public profile data.
- */
 const getPublicProfile = async (uuid: string): Promise<PublicProfileResponse> => {
-  const response = await api.get<PublicProfileResponse>(`${PUBLIC_PROFILE_BASE_URL}/${uuid}`);
+  const response = await api.get<PublicProfileResponse>(`${CLIENTS_ME_PATH}${PUBLIC_PROFILE_PATH}/${uuid}`);
   return response.data;
 };
 
-/**
- * Uploads a user's avatar image to the backend.
- * @param {File} file - The image file selected by the user.
- * @returns {Promise<Client>} A promise that resolves with the updated client profile, including the new avatar URL.
- */
 const uploadAvatar = async (file: File): Promise<Client> => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await api.post<Client>(`${CLIENTS_BASE_URL}/me/avatar`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+
+  // Override the global default 'Content-Type: application/json' for this specific request.
+  const response = await api.put<Client>(CLIENTS_ME_PATH + AVATAR_PATH, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response.data;
 };
@@ -80,6 +59,6 @@ export const profileService = {
   getFullProfile,
   updateProfile,
   updateLanguagePreference,
-  getPublicProfile,
   uploadAvatar,
+  getPublicProfile
 };

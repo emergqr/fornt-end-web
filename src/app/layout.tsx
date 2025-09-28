@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import ThemeRegistry from '@/components/theme/ThemeRegistry';
 import { SnackbarProvider } from '@/contexts/SnackbarContext';
+import ClientOnlyUI from '@/components/theme/ClientOnlyUI';
 
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
  * - `AppRouterCacheProvider`: Optimizes the Next.js App Router caching for Material-UI.
  * - `SnackbarProvider`: Provides a global context for displaying snackbar notifications.
  * - `ThemeRegistry`: A client-side component that manages the application's theme and provides it to all child components.
+ * - `ClientOnlyUI`: A client-side component that provides the main UI shell, including the AppBar and Drawer.
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -45,7 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SnackbarProvider>
             {/* ThemeRegistry handles the theme providing logic, including dynamic theme switching. */}
             <ThemeRegistry>
-              {children}
+              <ClientOnlyUI>
+                {children}
+              </ClientOnlyUI>
             </ThemeRegistry>
           </SnackbarProvider>
         </AppRouterCacheProvider>

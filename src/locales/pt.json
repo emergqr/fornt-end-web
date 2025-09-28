@@ -49,6 +49,7 @@
     "dashboard_timeline": "Linha do Tempo",
     "dashboard_qr": "Meu Código QR",
     "dashboard_profile": "Meu Perfil",
+    "dashboard_contacts": "Meus Contatos",
     "dashboard_allergies": "Minhas Alergias",
     "dashboard_diseases": "Condições Médicas",
     "dashboard_addictions": "Vícios",
@@ -75,6 +76,11 @@
     "fr": "Francês",
     "pt": "Português",
     "nl": "Holandês"
+  },
+  "gender_options": {
+    "male": "Masculino",
+    "female": "Feminino",
+    "other": "Indeterminado"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -216,10 +222,13 @@
     },
     "address": {
       "title": "Meu Endereço",
+      "addButton": "Adicionar Endereço",
+      "editTitle": "Editar Endereço",
+      "addTitle": "Adicionar Novo Endereço",
       "updateSuccess": "Endereço atualizado com sucesso!",
       "addSuccess": "Endereço salvo com sucesso!",
       "updateError": "Não foi possível salvar o endereço.",
-      "noAddress": "Você ainda não adicionou um endereço. Clique no botão editar para adicionar um.",
+      "noAddress": "Você ainda não adicionou um endereço. Clique no botão para adicionar um.",
       "form": {
         "streetLabel": "Rua e Número",
         "cityLabel": "Cidade",

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
+import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useRouter, usePathname } from 'next/navigation';
-import Drawer from '@mui/material/Drawer';
+import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -25,7 +25,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '@mui/material/Tooltip';
-import Divider from '@mui/material/Divider';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // --- i18n Imports ---
 import '@/services/i18n';
@@ -67,7 +67,7 @@ import { profileService } from '@/services/profileService';
 
 const drawerWidth = 240;
 
-function DashboardNav({ user }: { user: Client | null }) {
+function SideDrawer({ user }: { user: Client | null }) {
   const pathname = usePathname();
   const { t } = useTranslation();
 
@@ -91,22 +91,24 @@ function DashboardNav({ user }: { user: Client | null }) {
   ];
 
   const filteredNavItems = navItems.filter(item => {
-    if ((item as any).adminOnly && !user?.is_admin) {
-      return false;
-    }
-    if ((item as any).gender && user?.sex?.toLowerCase() !== (item as any).gender) {
-      return false;
-    }
+    if ((item as any).adminOnly && !user?.is_admin) return false;
+    // Show gender-specific items unless the user is explicitly 'male'
+    if ((item as any).gender === 'female' && user?.sex?.toLowerCase() === 'male') return false;
     return true;
   });
 
   return (
-    <Drawer
+    <MuiDrawer
       variant="permanent"
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', position: 'relative' },
+        [`& .MuiDrawer-paper`]: { 
+          width: drawerWidth, 
+          boxSizing: 'border-box',
+          position: 'relative',
+          borderRight: 'none'
+        },
       }}
     >
       <Box sx={{ overflow: 'auto' }}>
@@ -123,7 +125,7 @@ function DashboardNav({ user }: { user: Client | null }) {
           ))}
         </List>
       </Box>
-    </Drawer>
+    </MuiDrawer>
   );
 }
 
@@ -140,7 +142,7 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
   const [isPanicDialogOpen, setPanicDialogOpen] = React.useState(false);
 
   const handleLanguageMenu = (event: React.MouseEvent<HTMLElement>) => setLangMenuAnchor(event.currentTarget);
-  
+
   const handleLanguageClose = async (langCode?: string) => {
     setLangMenuAnchor(null);
     if (langCode && i18n.language !== langCode) {
@@ -212,8 +214,8 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
   );
 
   return (
-    <Box>
-      <AppBar position="sticky" color="primary" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <MuiAppBar position="static">
         <Toolbar>
           <Box sx={{ flexGrow: 1 }}>
             <Link href={isAuthenticated ? "/dashboard" : "/"} passHref>
@@ -227,46 +229,47 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
             </Link>
           </Box>
           
-          <>{isAuthenticated ? authenticatedButtons : publicButtons}</>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {isAuthenticated ? authenticatedButtons : publicButtons}
 
-          <IconButton onClick={handleLanguageMenu} color="inherit" sx={{ p: 0, mx: 1.5 }}>
-            <Image src={currentLanguage.flag} alt={t(`languages.${currentLanguage.code}`)} width={24} height={24} />
-          </IconButton>
-          <Menu anchorEl={langMenuAnchor} open={Boolean(langMenuAnchor)} onClose={() => handleLanguageClose()}>
-            {a_languages.map((lang) => (
-              <MenuItem key={lang.code} onClick={() => handleLanguageClose(lang.code)}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Image src={lang.flag} alt={t(`languages.${lang.code}`)} width={20} height={20} style={{ marginRight: '8px' }} />
-                  {t(`languages.${lang.code}`)}
-                </Box>
-              </MenuItem>
-            ))}
-          </Menu>
+            <IconButton onClick={handleLanguageMenu} color="inherit" sx={{ p: 0, mx: 1.5 }}>
+              <Image src={currentLanguage.flag} alt={t(`languages.${currentLanguage.code}`)} width={24} height={24} />
+            </IconButton>
+            <Menu anchorEl={langMenuAnchor} open={Boolean(langMenuAnchor)} onClose={() => handleLanguageClose()}>
+              {a_languages.map((lang) => (
+                <MenuItem key={lang.code} onClick={() => handleLanguageClose(lang.code)}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Image src={lang.flag} alt={t(`languages.${lang.code}`)} width={20} height={20} style={{ marginRight: '8px' }} />
+                    {t(`languages.${lang.code}`)}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Menu>
 
-          <IconButton onClick={handleThemeMenu} sx={{ color: '#FFD700' }}>
-            <PaletteIcon />
-          </IconButton>
-          <Menu anchorEl={themeMenuAnchor} open={Boolean(themeMenuAnchor)} onClose={() => handleThemeClose()}>
-            {themes.map((themeItem) => (
-              <MenuItem key={themeItem.name} onClick={() => handleThemeClose(themeItem.name)} selected={mode === themeItem.name}>
-                <ListItemIcon>{themeItem.icon}</ListItemIcon>
-                <ListItemText>{themeItem.label}</ListItemText>
-              </MenuItem>
-            ))}
-          </Menu>
+            <IconButton onClick={handleThemeMenu} sx={{ color: '#FFD700' }}>
+              <PaletteIcon />
+            </IconButton>
+            <Menu anchorEl={themeMenuAnchor} open={Boolean(themeMenuAnchor)} onClose={() => handleThemeClose()}>
+              {themes.map((themeItem) => (
+                <MenuItem key={themeItem.name} onClick={() => handleThemeClose(themeItem.name)} selected={mode === themeItem.name}>
+                  <ListItemIcon>{themeItem.icon}</ListItemIcon>
+                  <ListItemText>{themeItem.label}</ListItemText>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
 
         </Toolbar>
-      </AppBar>
+      </MuiAppBar>
       
-      <Box sx={{ display: 'flex' }}>
-        {isAuthenticated && <DashboardNav user={user} />}
+      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {isAuthenticated && <SideDrawer user={user} />}
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box component="main" sx={{ flex: 1, p: 3, overflowY: 'auto' }}>
           {children}
         </Box>
       </Box>
 
-      {/* Panic Button - only visible when authenticated */}
       {isAuthenticated && (
         <Tooltip title={t('panic_button.tooltip')}>
             <Fab 
@@ -280,17 +283,9 @@ export default function ClientOnlyUI({ children }: { children: React.ReactNode }
         </Tooltip>
       )}
 
-      {/* Panic Button Confirmation Dialog */}
-      <Dialog
-        open={isPanicDialogOpen}
-        onClose={() => setPanicDialogOpen(false)}
-      >
+      <Dialog open={isPanicDialogOpen} onClose={() => setPanicDialogOpen(false)}>
         <DialogTitle>{t('panic_button.dialogTitle')}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {t('panic_button.dialogContent')}
-          </DialogContentText>
-        </DialogContent>
+        <DialogContent><DialogContentText>{t('panic_button.dialogContent')}</DialogContentText></DialogContent>
         <DialogActions>
           <Button onClick={() => setPanicDialogOpen(false)}>{t('common.cancel')}</Button>
           <Button onClick={handlePanicConfirm} color="error" autoFocus disabled={isPanicLoading}>

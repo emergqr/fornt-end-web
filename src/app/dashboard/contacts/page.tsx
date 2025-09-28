@@ -7,6 +7,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useContactStore } from '@/store/contacts/contact.store';
+import { useSnackbar } from '@/hooks/useSnackbar';
 import { Contact, ContactCreate, ContactUpdate } from '@/interfaces/client/contact.interface';
 import ContactForm from './ContactForm'; // Import the reusable form
 
@@ -19,31 +20,38 @@ import {
   ListItemText,
   IconButton,
   CircularProgress,
-  Alert,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   Divider,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import StarIcon from '@mui/icons-material/Star'; // Import the Star icon
 
 export default function ContactsPage() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const { showSnackbar } = useSnackbar();
   const { contacts, isLoading, error, fetchContacts, addContact, editContact, removeContact } = useContactStore();
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingContact, setEditingContact] = React.useState<Contact | null>(null);
-  const [feedback, setFeedback] = React.useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   React.useEffect(() => { fetchContacts(); }, [fetchContacts]);
+
+  React.useEffect(() => {
+    if (error) {
+      showSnackbar(error, 'error');
+    }
+  }, [error, showSnackbar]);
 
   const handleOpenModal = (contact: Contact | null = null) => {
     setEditingContact(contact);
     setIsModalOpen(true);
-    setFeedback(null);
   };
 
   const handleCloseModal = () => {
@@ -52,18 +60,18 @@ export default function ContactsPage() {
   };
 
   const handleFormSubmit = async (data: ContactCreate | ContactUpdate) => {
-    setFeedback(null);
     try {
       if (editingContact) {
         await editContact(editingContact.uuid, data as ContactUpdate);
-        setFeedback({ type: 'success', message: t('contacts.feedback.updateSuccess') });
+        showSnackbar(t('contacts.feedback.updateSuccess'), 'success');
       } else {
         await addContact(data as ContactCreate);
-        setFeedback({ type: 'success', message: t('contacts.feedback.addSuccess') });
+        showSnackbar(t('contacts.feedback.addSuccess'), 'success');
       }
       handleCloseModal();
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'An error occurred' });
+      const errorMessage = err?.response?.data?.message || err.message || t('common.unknownError');
+      showSnackbar(errorMessage, 'error');
     }
   };
 
@@ -71,9 +79,10 @@ export default function ContactsPage() {
     if (window.confirm(t('contacts.feedback.deleteConfirm'))) {
       try {
         await removeContact(uuid);
-        setFeedback({ type: 'success', message: t('contacts.feedback.deleteSuccess') });
+        showSnackbar(t('contacts.feedback.deleteSuccess'), 'success');
       } catch (err: any) {
-        setFeedback({ type: 'error', message: err.message });
+        const errorMessage = err?.response?.data?.message || err.message || t('common.unknownError');
+        showSnackbar(errorMessage, 'error');
       }
     }
   };
@@ -87,10 +96,7 @@ export default function ContactsPage() {
 
       <Divider sx={{ my: 2 }} />
 
-      {feedback && <Alert severity={feedback.type} sx={{ mb: 2 }}>{feedback.message}</Alert>}
-
       {isLoading && <CircularProgress sx={{ display: 'block', mx: 'auto', my: 2 }} />}
-      {error && <Alert severity="error">{error}</Alert>}
       {!isLoading && !error && contacts.length === 0 && <Typography sx={{ mt: 2 }}>{t('contacts.noContacts')}</Typography>}
       
       <List>
@@ -102,7 +108,14 @@ export default function ContactsPage() {
             </Box>
           }>
             <ListItemText
-              primary={contact.name}
+              primary={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {contact.is_emergency_contact && (
+                    <StarIcon sx={{ color: theme.palette.warning.main, mr: 1 }} />
+                  )}
+                  {contact.name}
+                </Box>
+              }
               secondary={`${contact.relationship_type} - ${contact.email} - ${contact.phone}`}
             />
           </ListItem>

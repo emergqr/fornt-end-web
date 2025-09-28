@@ -49,6 +49,7 @@
     "dashboard_timeline": "Timeline",
     "dashboard_qr": "My QR Code",
     "dashboard_profile": "My Profile",
+    "dashboard_contacts": "My Contacts",
     "dashboard_allergies": "My Allergies",
     "dashboard_diseases": "Medical Conditions",
     "dashboard_addictions": "Addictions",
@@ -75,6 +76,11 @@
     "fr": "French",
     "pt": "Portuguese",
     "nl": "Dutch"
+  },
+  "gender_options": {
+    "male": "Male",
+    "female": "Female",
+    "other": "Indeterminate"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -216,10 +222,13 @@
     },
     "address": {
       "title": "My Address",
+      "addButton": "Add Address",
+      "editTitle": "Edit Address",
+      "addTitle": "Add New Address",
       "updateSuccess": "Address updated successfully!",
       "addSuccess": "Address saved successfully!",
       "updateError": "Could not save address.",
-      "noAddress": "You have not added an address yet. Click the edit button to add one.",
+      "noAddress": "You have not added an address yet. Click the button to add one.",
       "form": {
         "streetLabel": "Street and Number",
         "cityLabel": "City",

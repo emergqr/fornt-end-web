@@ -87,3 +87,7 @@ export interface AllergyUpdate {
   diagnosis_date?: string | null; // format: date
   show_in_emergency?: boolean | null;
 }
+
+export interface AllergyCategory {
+  name: string;
+}

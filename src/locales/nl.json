@@ -49,6 +49,7 @@
     "dashboard_timeline": "Tijdlijn",
     "dashboard_qr": "Mijn QR Code",
     "dashboard_profile": "Mijn Profiel",
+    "dashboard_contacts": "Mijn Contacten",
     "dashboard_allergies": "Mijn Allergieën",
     "dashboard_diseases": "Medische Condities",
     "dashboard_addictions": "Verslavingen",
@@ -75,6 +76,11 @@
     "fr": "Frans",
     "pt": "Portugees",
     "nl": "Nederlands"
+  },
+  "gender_options": {
+    "male": "Mannelijk",
+    "female": "Vrouwelijk",
+    "other": "Onbepaald"
   },
   "footer": {
     "copyright": "Copyright © {{year}}"
@@ -216,10 +222,13 @@
     },
     "address": {
       "title": "Mijn Adres",
+      "addButton": "Adres toevoegen",
+      "editTitle": "Adres bewerken",
+      "addTitle": "Nieuw adres toevoegen",
       "updateSuccess": "Adres succesvol bijgewerkt!",
       "addSuccess": "Adres succesvol opgeslagen!",
       "updateError": "Kon adres niet opslaan.",
-      "noAddress": "U heeft nog geen adres toegevoegd. Klik op de bewerkknop om er een toe te voegen.",
+      "noAddress": "U heeft nog geen adres toegevoegd. Klik op de knop om er een toe te voegen.",
       "form": {
         "streetLabel": "Straat en Huisnummer",
         "cityLabel": "Stad",
@@ -343,7 +352,7 @@
     "title": "Mijn Medicijnen",
     "form": {
       "title": "Nieuw Medicatieplan Toevoegen",
-      "medicationNameLabel": "Naam van Medicijn",
+      "nameLabel": "Naam van Medicijn",
       "dosageLabel": "Dosis (bijv. 1 pil, 10mg)",
       "frequencyLabel": "Frequentie (bijv. Dagelijks, Elke 8 uur)",
       "startDateLabel": "Startdatum",

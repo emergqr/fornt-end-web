@@ -8,6 +8,7 @@
 
 import api from '@/services/api';
 import {
+  AllergyCategory,
   AllergyCreate,
   AllergyRead,
   AllergyUpdate,
@@ -17,6 +18,16 @@ import {
 
 // The base URL for all allergy-related API requests.
 const BASE_URL = process.env.NEXT_PUBLIC_API_ALLERGIES_BASE_URL || '/allergies';
+const CATEGORIES_URL = process.env.NEXT_PUBLIC_API_ALLERGIES_CATEGORIES || '/categories/';
+
+/**
+ * Fetches the list of all available allergy categories from the backend.
+ * @returns {Promise<AllergyCategory[]>} A promise that resolves with an array of allergy categories.
+ */
+const getAllergyCategories = async (): Promise<AllergyCategory[]> => {
+  const response = await api.get<AllergyCategory[]>(`${BASE_URL}${CATEGORIES_URL}`);
+  return response.data;
+};
 
 /**
  * Fetches the list of allergies for the authenticated client.
@@ -87,6 +98,7 @@ const addReactionToAllergy = async (
  * An object that groups all allergy-related service functions for easy import and usage.
  */
 export const allergyService = {
+    getAllergyCategories, // <-- Added this line
     getMyAllergies,
     createAllergy,
     createAllergyFromCode,

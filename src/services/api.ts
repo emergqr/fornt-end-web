@@ -7,18 +7,9 @@
 
 import axios from 'axios';
 
-const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-if (!serverUrl) {
-  console.error(
-    'CRITICAL ERROR: The NEXT_PUBLIC_API_BASE_URL environment variable is not defined. Please check your .env.local file.'
-  );
-}
-
-const fullBaseURL = `${serverUrl}/api/v1`;
-
+// The Axios instance is created with a base URL that reads the environment variable directly.
 const api = axios.create({
-  baseURL: fullBaseURL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1` : '/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -26,29 +17,41 @@ const api = axios.create({
 
 /**
  * A centralized utility to resolve the correct public URL for an API asset.
+ * This function is designed to be safe for use on both server and client.
  * @param {string | null | undefined} path - The asset path or URL from the API response.
  * @returns {string | null | undefined} The resolved, publicly accessible URL.
  */
 export const resolveApiAssetUrl = (path: string | null | undefined): string | null | undefined => {
-  if (!path || !serverUrl) {
+  // If there's no path, we can't do anything.
+  if (!path) {
     return path;
   }
 
-  const internalPort = ':8000';
-  let publicPort = '';
-  try {
-    const publicUrl = new URL(serverUrl);
-    publicPort = publicUrl.port ? `:${publicUrl.port}` : '';
-  } catch (e) {
+  // If the path is already a full URL, return it directly.
+  if (path.startsWith('http')) {
     return path;
   }
 
-  if (path.startsWith('http') && path.includes(internalPort)) {
-    return path.replace(internalPort, publicPort);
+  // Directly read the environment variable inside the function.
+  // This ensures it works correctly whether running on server or client.
+  const serverUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!serverUrl) {
+    console.error('CRITICAL: NEXT_PUBLIC_API_BASE_URL is not available. Asset URLs will be incorrect.');
+    return path; // Return relative path if base URL is not configured.
   }
 
+  // For relative paths (e.g., /storage/clients/avatar.jpg), combine with the base URL.
   if (path.startsWith('/')) {
-    return `${serverUrl}${path}`;
+    // DEBUG LOG: Show the two parts being combined.
+    console.log(`>>> Combining URL parts: Base='${serverUrl}', Path='${path}'`);
+    try {
+      const fullUrl = new URL(path, serverUrl);
+      return fullUrl.href;
+    } catch (e) {
+      console.error(`[URL Resolution Error] Failed to construct URL. Base: ${serverUrl}, Path: ${path}`);
+      return serverUrl + path; // Fallback
+    }
   }
 
   return path;
@@ -82,7 +85,5 @@ export const recursiveUrlCorrection = (data: any): any => {
 
   return data;
 };
-
-console.log(`[API] Axios client initialized for baseURL: ${fullBaseURL}`);
 
 export default api;

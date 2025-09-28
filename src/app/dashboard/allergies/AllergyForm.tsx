@@ -2,7 +2,7 @@
 
 /**
  * @file A reusable form component for creating and editing allergies.
- * It includes a smart search feature for finding standardized medical terms.
+ * It allows selecting an allergy from a predefined category list.
  */
 
 import * as React from 'react';
@@ -16,12 +16,13 @@ import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { AllergyCreateFromCode, AllergyUpdate } from '@/interfaces/client/allergy.interface';
-import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
-import { useDebounce } from '@/hooks/useDebounce';
+import { AllergyCategory, AllergyCreate, AllergyUpdate } from '@/interfaces/client/allergy.interface';
+import { useAllergyStore } from '@/store/allergy/allergy.store';
 
+// Zod schema for form validation.
 const getAllergySchema = (t: (key: string) => string) => z.object({
-  allergen: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
+  // The user must select a valid category object from the list.
+  category: z.custom<AllergyCategory>(v => v !== null && typeof v === 'object' && 'uuid' in v, {
     message: t('validation.allergenRequired'),
   }),
   reaction_type: z.string().optional(),
@@ -31,7 +32,7 @@ const getAllergySchema = (t: (key: string) => string) => z.object({
 type AllergyFormInputs = z.infer<ReturnType<typeof getAllergySchema>>;
 
 interface AllergyFormProps {
-  onSubmit: (data: AllergyCreateFromCode | AllergyUpdate) => Promise<void>;
+  onSubmit: (data: AllergyCreate | AllergyUpdate) => Promise<void>;
   onCancel: () => void;
   initialData?: any | null;
   isEditMode?: boolean;
@@ -41,10 +42,12 @@ export default function AllergyForm({ onSubmit, onCancel, initialData, isEditMod
   const { t } = useTranslation();
   const formSchema = getAllergySchema(t);
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState<MedicalCodeSearchResult[]>([]);
-  const [searchLoading, setSearchLoading] = React.useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  // Get categories and the fetch action from the Zustand store.
+  const {
+    categories,
+    isFetchingCategories,
+    fetchCategories
+  } = useAllergyStore((state) => state);
 
   const {
     control,
@@ -53,58 +56,52 @@ export default function AllergyForm({ onSubmit, onCancel, initialData, isEditMod
     formState: { errors, isSubmitting },
   } = useForm<AllergyFormInputs>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { allergen: null, reaction_type: '', severity: '' },
+    defaultValues: initialData || { category: null, reaction_type: '', severity: '' },
   });
 
+  // Fetch categories when the component mounts.
   React.useEffect(() => {
-    reset(initialData || { allergen: null, reaction_type: '', severity: '' });
+    fetchCategories();
+  }, [fetchCategories]);
+
+  React.useEffect(() => {
+    reset(initialData || { category: null, reaction_type: '', severity: '' });
   }, [initialData, reset]);
 
-  React.useEffect(() => {
-    if (debouncedSearchQuery.length < 3) {
-      setSearchResults([]);
-      return;
-    }
-    const search = async () => {
-      setSearchLoading(true);
-      try {
-        const results = await medicalCodeService.searchMedicalTerm('snomed', debouncedSearchQuery);
-        setSearchResults(results);
-      } catch (error) { console.error("Search failed:", error); setSearchResults([]); }
-      setSearchLoading(false);
-    };
-    void search();
-  }, [debouncedSearchQuery]);
-
+  // The submission handler now transforms the form data to match the API.
   const handleFormSubmit: SubmitHandler<AllergyFormInputs> = async (data) => {
-    await onSubmit(data);
+    const submissionData: AllergyCreate = {
+      category_uuid: data.category.uuid,
+      reaction_type: data.reaction_type,
+      severity: data.severity,
+    };
+    await onSubmit(submissionData);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Controller
-        name="allergen"
+        name="category"
         control={control}
         render={({ field }) => (
           <Autocomplete
             {...field}
-            options={searchResults}
+            options={categories}
             getOptionLabel={(option) => option.name || ''}
-            isOptionEqualToValue={(option, value) => option.code === value.code}
-            loading={searchLoading}
-            onInputChange={(_, newInputValue) => setSearchQuery(newInputValue)}
+            isOptionEqualToValue={(option, value) => option.uuid === value.uuid}
+            loading={isFetchingCategories}
             onChange={(_, data) => field.onChange(data)}
-            disabled={isEditMode} // Disable changing the allergen when editing
+            disabled={isEditMode} // Disable changing the category when editing
             renderInput={(params) => (
               <TextField
                 {...params}
-                label={t('dashboard_allergies.form.searchLabel')}
+                label={t('dashboard_allergies.form.categoryLabel')}
                 margin="normal"
                 required
                 autoFocus
-                error={!!errors.allergen}
-                helperText={errors.allergen?.message || (isEditMode ? 'Cannot change the allergen' : t('dashboard_allergies.form.searchHelperText'))}
-                InputProps={{ ...params.InputProps, endAdornment: <>{searchLoading ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
+                error={!!errors.category}
+                helperText={errors.category?.message || (isEditMode ? 'Cannot change the allergen' : t('dashboard_allergies.form.categoryHelperText'))}
+                InputProps={{ ...params.InputProps, endAdornment: <>{isFetchingCategories ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
               />
             )}
           />

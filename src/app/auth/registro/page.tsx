@@ -22,18 +22,14 @@ import { RegisterPayload } from '@/interfaces/auth/register-payload.interface';
 
 /**
  * Generates the Zod schema for the registration form validation.
- * @param t - The translation function from `react-i18next`.
- * @returns {z.ZodObject} The Zod schema for the registration form.
- * @description Includes a `.refine()` method to ensure password and passwordRepeat fields match.
  */
 const getRegisterSchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(2, { message: t('validation.registerNameMinLength') }),
   email: z.string().email({ message: t('validation.emailInvalid') }),
   password: z.string().min(6, { message: t('validation.registerPasswordMinLength') }),
   passwordRepeat: z.string().min(6, { message: t('validation.registerPasswordRepeatMinLength') }),
 }).refine((data) => data.password === data.passwordRepeat, {
   message: t('validation.registerPasswordsDoNotMatch'),
-  path: ["passwordRepeat"], // Specifies which field the error message should be attached to.
+  path: ["passwordRepeat"],
 });
 
 // Type definition for the form inputs, inferred from the Zod schema.
@@ -41,13 +37,6 @@ type RegisterFormInputs = z.infer<ReturnType<typeof getRegisterSchema>>;
 
 /**
  * RegisterPage Component
- *
- * @component
- * @returns {React.ReactElement} The user registration page.
- *
- * @description This component provides a form for new users to create an account.
- * It handles form validation, including password confirmation, and manages the registration
- * process through the authentication service and store.
  */
 export default function RegisterPage() {
   const { t } = useTranslation();
@@ -64,7 +53,6 @@ export default function RegisterPage() {
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
       passwordRepeat: '',
@@ -73,13 +61,11 @@ export default function RegisterPage() {
 
   /**
    * Handles the form submission for user registration.
-   * @param {RegisterFormInputs} data - The validated form data.
    */
   const onSubmit: SubmitHandler<RegisterFormInputs> = async (data: RegisterPayload) => {
     setServerError(null);
     try {
       const response = await authService.register(data);
-      // On successful registration, log the user in and redirect to the dashboard.
       login(response.access_token, response.client);
       router.push('/dashboard');
     } catch (error: any) {
@@ -88,7 +74,6 @@ export default function RegisterPage() {
     }
   };
 
-  // Effect to redirect the user if they are already authenticated.
   React.useEffect(() => {
     if (isAuthenticated) {
       router.replace('/dashboard');
@@ -115,24 +100,6 @@ export default function RegisterPage() {
             </Alert>
           )}
           <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                id="name"
-                label={t('auth_register.nameLabel')}
-                autoComplete="name"
-                autoFocus
-                error={!!errors.name}
-                helperText={errors.name?.message}
-              />
-            )}
-          />
-          <Controller
             name="email"
             control={control}
             render={({ field }) => (
@@ -144,6 +111,7 @@ export default function RegisterPage() {
                 id="email"
                 label={t('auth_register.emailLabel')}
                 autoComplete="email"
+                autoFocus
                 error={!!errors.email}
                 helperText={errors.email?.message}
               />

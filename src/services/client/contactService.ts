@@ -2,21 +2,21 @@
 
 /**
  * @file This file provides a service layer for interacting with the contact-related API endpoints.
- * It encapsulates all the logic for fetching, creating, updating, and deleting user contacts.
+ * It relies on environment variables for all endpoint paths.
  */
 
 import api from '@/services/api';
 import { Contact, ContactCreate, ContactUpdate } from '@/interfaces/client/contact.interface';
 
-// The base URL for all contact-related API requests, read from environment variables.
-const BASE_URL = process.env.NEXT_PUBLIC_API_CONTACTS_BASE_URL || '/contacts';
+// The full base path for the contacts API, read from environment variables.
+const CONTACTS_PATH = process.env.NEXT_PUBLIC_API_CONTACTS_PATH || '/api/v1/contacts';
 
 /**
  * Fetches the list of contacts for the authenticated client.
  * @returns {Promise<Contact[]>} A promise that resolves with an array of the client's contacts.
  */
 const getContacts = async (): Promise<Contact[]> => {
-    const response = await api.get<Contact[]>(`${BASE_URL}/`);
+    const response = await api.get<Contact[]>(CONTACTS_PATH);
     return response.data;
 };
 
@@ -26,8 +26,7 @@ const getContacts = async (): Promise<Contact[]> => {
  * @returns {Promise<Contact>} A promise that resolves with the newly created contact data.
  */
 const createContact = async (data: ContactCreate): Promise<Contact> => {
-    // Correctly typed: The generic only specifies the expected response data type.
-    const response = await api.post<Contact>(`${BASE_URL}/`, data);
+    const response = await api.post<Contact>(CONTACTS_PATH, data);
     return response.data;
 };
 
@@ -38,8 +37,7 @@ const createContact = async (data: ContactCreate): Promise<Contact> => {
  * @returns {Promise<Contact>} A promise that resolves with the updated contact data.
  */
 const updateContact = async (uuid: string, data: ContactUpdate): Promise<Contact> => {
-    // Correctly typed: The generic only specifies the expected response data type.
-    const response = await api.put<Contact>(`${BASE_URL}/${uuid}`, data);
+    const response = await api.put<Contact>(`${CONTACTS_PATH}/${uuid}`, data);
     return response.data;
 };
 
@@ -49,7 +47,7 @@ const updateContact = async (uuid: string, data: ContactUpdate): Promise<Contact
  * @returns {Promise<void>} A promise that resolves when the deletion is successful.
  */
 const deleteContact = async (uuid: string): Promise<void> => {
-    await api.delete<void>(`${BASE_URL}/${uuid}`);
+    await api.delete<void>(`${CONTACTS_PATH}/${uuid}`);
 };
 
 /**

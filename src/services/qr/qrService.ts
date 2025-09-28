@@ -17,7 +17,7 @@ const getMyQR = async (uuid: string): Promise<{ qrString: string }> => {
         throw new Error('User UUID is required to generate a QR code.');
     }
 
-    const appBaseUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
+    const appBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     const qrProfilePath = process.env.NEXT_PUBLIC_QR_PROFILE_PATH;
 
     if (!appBaseUrl || !qrProfilePath) {

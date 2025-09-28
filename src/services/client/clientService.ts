@@ -11,13 +11,13 @@ import { Client } from '@/interfaces/client/client.interface';
 import { ClientUpdate } from '@/interfaces/client/client-update.interface';
 
 // The base URL for all client-related API requests.
-const BASE_URL = process.env.NEXT_PUBLIC_API_CLIENTS_BASE_URL || '/clients';
-
+const BASE_URL = process.env.NEXT_PUBLIC_API_CLIENT_ME_BASE || '/clients/me';
+const BASE_URL_PROFILE = process.env.NEXT_PUBLIC_API_PROFILR || '/profile';
 /**
  * @deprecated Use `profileService.getProfile` instead.
  */
 const getMyProfile = async (): Promise<Client> => {
-    const response = await api.get<Client>(`${BASE_URL}/me`);
+    const response = await api.get<Client>(`${BASE_URL}/`);
     return response.data;
 };
 
@@ -25,7 +25,7 @@ const getMyProfile = async (): Promise<Client> => {
  * @deprecated Use `profileService.getFullProfile` instead.
  */
 const getMyFullProfile = async (): Promise<Client> => {
-    const response = await api.get<Client>(`${BASE_URL}/me/profile`);
+    const response = await api.get<Client>(BASE_URL+BASE_URL_PROFILE);
     return response.data;
 };
 
@@ -33,7 +33,7 @@ const getMyFullProfile = async (): Promise<Client> => {
  * @deprecated Use `profileService.updateProfile` instead.
  */
 const updateMyProfile = async (data: ClientUpdate): Promise<Client> => {
-    const response = await api.put<Client>(`${BASE_URL}/me`, data);
+    const response = await api.put<Client>(`${BASE_URL}`, data);
     return response.data;
 };
 
@@ -41,7 +41,7 @@ const updateMyProfile = async (data: ClientUpdate): Promise<Client> => {
  * @deprecated Use `authService.deleteAccount` instead.
  */
 const deleteMyAccount = async (): Promise<void> => {
-    await api.delete<void>(`${BASE_URL}/me`);
+    await api.delete<void>(`${BASE_URL}`);
 };
 
 export const clientService = {

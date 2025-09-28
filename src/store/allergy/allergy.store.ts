@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import {
+  AllergyCategory,
   AllergyCreate,
   AllergyRead,
   AllergyUpdate,
@@ -9,6 +10,7 @@ import {
   AllergyCreateFromCode,
 } from '@/interfaces/client/allergy.interface';
 import { allergyService } from '@/services/client/allergyService';
+import { getApiErrorMessage } from '@/services/apiErrors';
 
 /**
  * @file This file defines the Zustand store for managing the user's allergies.
@@ -21,9 +23,12 @@ import { allergyService } from '@/services/client/allergyService';
  */
 interface AllergyState {
   allergies: AllergyRead[]; // An array to hold the user's allergy records.
+  categories: AllergyCategory[]; // An array to hold the available allergy categories.
   loading: boolean; // Flag to indicate loading state during async operations.
+  isFetchingCategories: boolean; // Flag for category fetching.
   error: string | null; // Holds any error message from API calls.
   fetchMyAllergies: () => Promise<void>; // Action to fetch all allergies for the current user.
+  fetchCategories: () => Promise<void>; // Action to fetch all allergy categories.
   addAllergy: (data: AllergyCreate) => Promise<AllergyRead>; // Action to add a new allergy manually.
   addAllergyFromCode: (data: AllergyCreateFromCode) => Promise<void>; // Action to add an allergy using a standardized code (e.g., SNOMED).
   editAllergy: (uuid: string, data: AllergyUpdate) => Promise<AllergyRead>; // Action to update an existing allergy.
@@ -38,13 +43,30 @@ interface AllergyState {
 export const useAllergyStore = create<AllergyState>((set, get) => ({
   // Initial state
   allergies: [],
+  categories: [],
   loading: false,
+  isFetchingCategories: false,
   error: null,
 
   /**
    * Clears the current error message from the state.
    */
   clearError: () => set({ error: null }),
+
+  /**
+   * Fetches the list of all available allergy categories from the API.
+   */
+  fetchCategories: async () => {
+    if (get().isFetchingCategories) return;
+    set({ isFetchingCategories: true, error: null });
+    try {
+      const categories = await allergyService.getAllergyCategories();
+      set({ categories, isFetchingCategories: false });
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage, isFetchingCategories: false });
+    }
+  },
 
   /**
    * Fetches all allergies for the authenticated user from the API.
@@ -55,8 +77,9 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
     try {
       const allergies = await allergyService.getMyAllergies();
       set({ allergies, loading: false });
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to fetch allergies', loading: false });
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage, loading: false });
     }
   },
 
@@ -71,9 +94,10 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
       const newAllergy = await allergyService.createAllergy(data);
       set((state) => ({ allergies: [...state.allergies, newAllergy], loading: false }));
       return newAllergy;
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to add allergy', loading: false });
-      throw e;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage, loading: false });
+      throw new Error(errorMessage);
     }
   },
 
@@ -86,9 +110,10 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
     try {
       const newAllergy = await allergyService.createAllergyFromCode(data);
       set((state) => ({ allergies: [...state.allergies, newAllergy] }));
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to add allergy from code' });
-      throw e;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage });
+      throw new Error(errorMessage);
     }
   },
 
@@ -107,9 +132,10 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
         loading: false,
       }));
       return updatedAllergy;
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to update allergy', loading: false });
-      throw e;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage, loading: false });
+      throw new Error(errorMessage);
     }
   },
 
@@ -121,9 +147,10 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
     try {
       await allergyService.deleteAllergy(uuid);
       set((state) => ({ allergies: state.allergies.filter((a) => a.uuid !== uuid) }));
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to delete allergy' });
-      throw e;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage });
+      throw new Error(errorMessage);
     }
   },
 
@@ -138,9 +165,10 @@ export const useAllergyStore = create<AllergyState>((set, get) => ({
       set((state) => ({
         allergies: state.allergies.map((a) => (a.uuid === allergyUuid ? updatedAllergy : a)),
       }));
-    } catch (e: any) {
-      set({ error: e.message || 'Failed to add reaction' });
-      throw e;
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage });
+      throw new Error(errorMessage);
     }
   },
 }));

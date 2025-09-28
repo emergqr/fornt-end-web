@@ -14,7 +14,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
  * @description This layout component acts as a security boundary for all routes within the `/dashboard` path.
  * Its sole responsibility is to wrap its children with the `ProtectedRoute` component, which ensures
  * that only authenticated users can access the nested routes.
- * All visual layout aspects (like AppBar, Drawer, etc.) are handled by the root `ClientOnlyUI` component,
+ * All visual layout aspects (like AppBar, Drawer, etc.) are now handled by the root `RootLayout`,
  * keeping this layout focused on its role as a route guard.
  */
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
