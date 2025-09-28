@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuthStore } from '@/store/auth/auth.store';
 import { profileService } from '@/services/profileService';
+import { recursiveUrlCorrection } from '@/services/api';
 
 export default function ProfileAvatar() {
   const { t } = useTranslation();
@@ -33,7 +34,8 @@ export default function ProfileAvatar() {
 
     try {
       const updatedUser = await profileService.uploadAvatar(file);
-      setUser(updatedUser); // Update the global state with the new user data
+      const correctedUser = recursiveUrlCorrection(updatedUser);
+      setUser(correctedUser); // Update the global state with the new user data
     } catch (err: any) {
       setError(err.message || t('dashboard_profile.avatar.uploadError'));
     } finally {
@@ -41,8 +43,9 @@ export default function ProfileAvatar() {
     }
   };
 
-  // Use the full_avatar_url which is processed by the API interceptor
-  const avatarSrc = user?.full_avatar_url || '';
+  // CORRECTED: Use `avatar_url` (relative path) which is then processed to a full URL.
+  // The `user` object in the store should have the corrected URL if `recursiveUrlCorrection` was applied.
+  const avatarSrc = user?.avatar_url || '';
 
   return (
     <Box sx={{ position: 'relative', width: 120, height: 120, margin: 'auto' }}>
