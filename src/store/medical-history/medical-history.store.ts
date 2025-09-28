@@ -9,14 +9,12 @@ import {
 } from '@/interfaces/client/medical-history.interface';
 import { medicalHistoryService } from '@/services/client/medicalHistoryService';
 import { uploadDocumentsForEvent } from '@/services/client/fileUploadService';
+import { getApiErrorMessage } from '@/services/apiErrors';
 
 /**
  * @file This file defines the Zustand store for managing the user's medical history events.
  */
 
-/**
- * Interface defining the shape of the medical history state and its associated actions.
- */
 interface MedicalHistoryState {
     events: MedicalEventRead[];
     loading: boolean;
@@ -25,17 +23,16 @@ interface MedicalHistoryState {
     addMedicalEvent: (data: MedicalEventCreate, files: File[]) => Promise<MedicalEventRead>;
     editMedicalEvent: (uuid: string, data: MedicalEventUpdate) => Promise<void>;
     removeMedicalEvent: (uuid: string) => Promise<void>;
-    addDocumentsToEvent: (eventUuid: string, files: File[]) => Promise<void>; // New action
+    addDocumentsToEvent: (eventUuid: string, files: File[]) => Promise<void>;
+    clearError: () => void;
 }
 
-/**
- * Creates the Zustand store for medical history management.
- */
 export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => ({
-    // Initial state
     events: [],
     loading: false,
     error: null,
+
+    clearError: () => set({ error: null }),
 
     fetchMedicalHistory: async () => {
         try {
@@ -43,7 +40,7 @@ export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => 
             const events = await medicalHistoryService.getMedicalHistory();
             set({ events, loading: false });
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to fetch medical history';
+            const errorMessage = getApiErrorMessage(error);
             set({ loading: false, error: errorMessage });
         }
     },
@@ -62,23 +59,16 @@ export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => 
             }));
             return newEvent;
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to save medical event';
+            const errorMessage = getApiErrorMessage(error);
             set({ loading: false, error: errorMessage });
             throw new Error(errorMessage);
         }
     },
 
-    /**
-     * Uploads documents and attaches them to an already existing medical event.
-     * @param {string} eventUuid - The UUID of the event to attach files to.
-     * @param {File[]} files - An array of files to upload.
-     */
     addDocumentsToEvent: async (eventUuid: string, files: File[]) => {
         set({ loading: true, error: null });
         try {
             const uploadedDocuments = await uploadDocumentsForEvent(eventUuid, files);
-            
-            // Update the state by adding the new documents to the specific event
             set(state => ({
                 events: state.events.map(event => {
                     if (event.uuid === eventUuid) {
@@ -92,7 +82,7 @@ export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => 
                 loading: false,
             }));
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to upload documents';
+            const errorMessage = getApiErrorMessage(error);
             set({ loading: false, error: errorMessage });
             throw new Error(errorMessage);
         }
@@ -107,7 +97,7 @@ export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => 
                 loading: false,
             }));
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to update medical event';
+            const errorMessage = getApiErrorMessage(error);
             set({ loading: false, error: errorMessage });
             throw new Error(errorMessage);
         }
@@ -122,7 +112,7 @@ export const useMedicalHistoryStore = create<MedicalHistoryState>((set, get) => 
                 loading: false,
             }));
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to delete medical event';
+            const errorMessage = getApiErrorMessage(error);
             set({ loading: false, error: errorMessage });
             throw new Error(errorMessage);
         }
