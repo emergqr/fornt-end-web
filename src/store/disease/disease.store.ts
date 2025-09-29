@@ -22,12 +22,15 @@ interface DiseaseState {
   error: string | null;
   masterList: DiseaseRead[];
   masterListLoading: boolean;
+  categories: Record<string, string>;
+  categoriesLoading: boolean;
   fetchMyDiseases: () => Promise<void>;
   addDisease: (data: PatientDiseaseCreate) => Promise<void>;
   addDiseaseFromCode: (data: DiseaseCreateFromCode) => Promise<void>;
   editDisease: (uuid: string, data: PatientDiseaseUpdate) => Promise<void>;
   removeDisease: (uuid: string) => Promise<void>;
-  fetchMasterList: () => Promise<void>;
+  fetchMasterList: (category?: string) => Promise<void>;
+  fetchCategories: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -37,6 +40,8 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
   error: null,
   masterList: [],
   masterListLoading: false,
+  categories: {},
+  categoriesLoading: false,
 
   clearError: () => set({ error: null }),
 
@@ -105,15 +110,27 @@ export const useDiseaseStore = create<DiseaseState>((set, get) => ({
     }
   },
 
-  fetchMasterList: async () => {
-    if (get().masterListLoading || get().masterList.length > 0) return;
-    set({ masterListLoading: true, error: null });
+  fetchMasterList: async (category?: string) => {
+    if (get().masterListLoading) return;
+    set({ masterListLoading: true, error: null, masterList: [] });
     try {
-      const masterList = await diseaseService.getDiseasesMasterList();
+      const masterList = await diseaseService.getDiseasesMasterList(category);
       set({ masterList, masterListLoading: false });
     } catch (error) {
       const errorMessage = getApiErrorMessage(error);
       set({ error: errorMessage, masterListLoading: false });
+    }
+  },
+
+  fetchCategories: async () => {
+    if (get().categoriesLoading || Object.keys(get().categories).length > 0) return;
+    set({ categoriesLoading: true, error: null });
+    try {
+      const categories = await diseaseService.getDiseaseCategories();
+      set({ categories, categoriesLoading: false });
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+      set({ error: errorMessage, categoriesLoading: false });
     }
   },
 }));

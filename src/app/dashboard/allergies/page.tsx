@@ -7,7 +7,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAllergyStore } from '@/store/allergy/allergy.store';
-import { AllergyRead, AllergyUpdate, AllergyCreateFromCode, ReactionHistoryCreate } from '@/interfaces/client/allergy.interface';
+import { AllergyRead, AllergyUpdate, AllergyCreate, ReactionHistoryCreate } from '@/interfaces/client/allergy.interface';
 import AllergyForm from './AllergyForm';
 import AddReactionForm from './AddReactionForm';
 
@@ -33,7 +33,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function AllergiesPage() {
   const { t } = useTranslation();
-  const { allergies, loading, error, fetchMyAllergies, addAllergyFromCode, removeAllergy, editAllergy, addNewReaction } = useAllergyStore();
+  // Correctly import `addAllergy` instead of `addAllergyFromCode`
+  const { allergies, loading, error, fetchMyAllergies, addAllergy, removeAllergy, editAllergy, addNewReaction } = useAllergyStore();
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingAllergy, setEditingAllergy] = React.useState<AllergyRead | null>(null);
@@ -54,16 +55,17 @@ export default function AllergiesPage() {
     setEditingAllergy(null);
   };
 
-  const handleFormSubmit = async (data: any) => {
+  // The form submission handler is now corrected
+  const handleFormSubmit = async (data: AllergyCreate | AllergyUpdate) => {
     setFeedback(null);
     try {
       if (editingAllergy) {
-        const updatePayload: AllergyUpdate = { reaction_type: data.reaction_type, severity: data.severity };
-        await editAllergy(editingAllergy.uuid, updatePayload);
+        // For updates, we pass the data as AllergyUpdate
+        await editAllergy(editingAllergy.uuid, data as AllergyUpdate);
         setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.updateSuccess') });
       } else {
-        const createPayload: AllergyCreateFromCode = { code: data.allergen.code, name: data.allergen.name, source: 'snomed', reaction_type: data.reaction_type, severity: data.severity };
-        await addAllergyFromCode(createPayload);
+        // For creation, we call the correct `addAllergy` function
+        await addAllergy(data as AllergyCreate);
         setFeedback({ type: 'success', message: t('dashboard_allergies.feedback.addSuccess') });
       }
       handleCloseModal();
@@ -154,7 +156,8 @@ export default function AllergiesPage() {
           <AllergyForm
             onSubmit={handleFormSubmit}
             onCancel={handleCloseModal}
-            initialData={editingAllergy ? { allergen: { code: editingAllergy.source_code, name: editingAllergy.allergen }, reaction_type: editingAllergy.reaction_type, severity: editingAllergy.severity } : null}
+            // Pass the `editingAllergy` object directly, as it matches the expected structure.
+            initialData={editingAllergy}
             isEditMode={!!editingAllergy}
           />
         </DialogContent>

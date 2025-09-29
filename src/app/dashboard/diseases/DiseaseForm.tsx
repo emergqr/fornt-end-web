@@ -2,7 +2,7 @@
 
 /**
  * @file A reusable form component for creating and editing medical conditions (diseases).
- * It includes a smart search feature for finding standardized medical terms.
+ * It allows selecting a category and then searching for a disease from a master list.
  */
 
 import * as React from 'react';
@@ -15,13 +15,18 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
 
-import { DiseaseCreateFromCode, PatientDiseaseUpdate } from '@/interfaces/client/disease.interface';
-import { medicalCodeService, MedicalCodeSearchResult } from '@/services/client/medicalCodeService';
-import { useDebounce } from '@/hooks/useDebounce';
+import { PatientDiseaseCreate, PatientDiseaseUpdate, DiseaseRead } from '@/interfaces/client/disease.interface';
+import { useDiseaseStore } from '@/store/disease/disease.store';
 
 const getDiseaseFormSchema = (t: (key: string) => string) => z.object({
-  disease: z.custom<MedicalCodeSearchResult>(v => v !== null && typeof v === 'object' && 'code' in v, {
+  category: z.string({ required_error: t('validation.categoryRequired') }).min(1, t('validation.categoryRequired')),
+  disease: z.custom<DiseaseRead>(v => v !== null && typeof v === 'object' && 'uuid' in v, {
     message: t('validation.diseaseRequired'),
   }),
   diagnosis_date: z.string().min(1, { message: t('validation.diagnosisDateRequired') }),
@@ -32,7 +37,7 @@ const getDiseaseFormSchema = (t: (key: string) => string) => z.object({
 type DiseaseFormInputs = z.infer<ReturnType<typeof getDiseaseFormSchema>>;
 
 interface DiseaseFormProps {
-  onSubmit: (data: DiseaseCreateFromCode | PatientDiseaseUpdate) => Promise<void>;
+  onSubmit: (data: PatientDiseaseCreate | PatientDiseaseUpdate) => Promise<void>;
   onCancel: () => void;
   initialData?: any | null;
   isEditMode?: boolean;
@@ -42,70 +47,93 @@ export default function DiseaseForm({ onSubmit, onCancel, initialData, isEditMod
   const { t } = useTranslation();
   const formSchema = getDiseaseFormSchema(t);
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState<MedicalCodeSearchResult[]>([]);
-  const [searchLoading, setSearchLoading] = React.useState(false);
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const {
+    categories,
+    categoriesLoading,
+    fetchCategories,
+    masterList,
+    masterListLoading,
+    fetchMasterList,
+  } = useDiseaseStore();
 
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<DiseaseFormInputs>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { disease: null, diagnosis_date: '', severity: '', notes: '' },
+    defaultValues: initialData || { category: '', disease: null, diagnosis_date: '', severity: '', notes: '' },
   });
 
+  const selectedCategory = watch('category');
+
   React.useEffect(() => {
-    reset(initialData || { disease: null, diagnosis_date: '', severity: '', notes: '' });
+    fetchCategories();
+  }, [fetchCategories]);
+
+  React.useEffect(() => {
+    if (selectedCategory) {
+      fetchMasterList(selectedCategory);
+    }
+  }, [selectedCategory, fetchMasterList]);
+
+  React.useEffect(() => {
+    reset(initialData || { category: '', disease: null, diagnosis_date: '', severity: '', notes: '' });
   }, [initialData, reset]);
 
-  React.useEffect(() => {
-    if (debouncedSearchQuery.length < 3) {
-      setSearchResults([]);
-      return;
-    }
-    const search = async () => {
-      setSearchLoading(true);
-      try {
-        const results = await medicalCodeService.searchMedicalTerm('snomed', debouncedSearchQuery);
-        setSearchResults(results);
-      } catch (error) { console.error("Search failed:", error); setSearchResults([]); }
-      setSearchLoading(false);
-    };
-    void search();
-  }, [debouncedSearchQuery]);
-
   const handleFormSubmit: SubmitHandler<DiseaseFormInputs> = async (data) => {
-    await onSubmit(data);
+    const submissionData: PatientDiseaseCreate = {
+      disease_uuid: data.disease.uuid,
+      diagnosis_date: data.diagnosis_date,
+      severity: data.severity,
+      notes: data.notes,
+    };
+    await onSubmit(submissionData);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
+      <Controller
+        name="category"
+        control={control}
+        render={({ field }) => (
+          <FormControl fullWidth margin="normal" required error={!!errors.category}>
+            <InputLabel>{t('dashboard_diseases.form.categoryLabel')}</InputLabel>
+            <Select {...field} label={t('dashboard_diseases.form.categoryLabel')} disabled={isEditMode || categoriesLoading}>
+              {Object.keys(categories).map((catKey) => (
+                <MenuItem key={catKey} value={catKey}>
+                  {t(`dashboard_diseases.diseases_categories.${catKey}`, catKey)}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.category && <FormHelperText>{errors.category.message}</FormHelperText>}
+          </FormControl>
+        )}
+      />
+
       <Controller
         name="disease"
         control={control}
         render={({ field }) => (
           <Autocomplete
             {...field}
-            options={searchResults}
+            options={masterList}
             getOptionLabel={(option) => option.name || ''}
-            isOptionEqualToValue={(option, value) => option.code === value.code}
-            loading={searchLoading}
-            onInputChange={(_, newInputValue) => setSearchQuery(newInputValue)}
+            isOptionEqualToValue={(option, value) => option.uuid === value.uuid}
+            loading={masterListLoading}
             onChange={(_, data) => field.onChange(data)}
-            disabled={isEditMode}
+            disabled={isEditMode || !selectedCategory || masterListLoading}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label={t('dashboard_diseases.form.searchLabel')}
                 margin="normal"
                 required
-                autoFocus
                 error={!!errors.disease}
                 helperText={errors.disease?.message || (isEditMode ? 'Cannot change the disease' : t('dashboard_diseases.form.searchHelperText'))}
-                InputProps={{ ...params.InputProps, endAdornment: <>{searchLoading ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
+                InputProps={{ ...params.InputProps, endAdornment: <>{masterListLoading ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
               />
             )}
           />

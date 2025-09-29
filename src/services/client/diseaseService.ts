@@ -27,12 +27,28 @@ const getMyDiseases = async (): Promise<PatientDiseaseRead[]> => {
 };
 
 /**
- * Fetches the master list of all available diseases in the system.
+ * Fetches the master list of all available diseases in the system, optionally filtered by category.
+ * @param {string} [category] - An optional category to filter the diseases.
  * @returns {Promise<DiseaseRead[]>} A promise that resolves with the master list of diseases.
  */
-const getDiseasesMasterList = async (): Promise<DiseaseRead[]> => {
-  const response = await api.get<DiseaseRead[]>(`${BASE_URL}/master-list`);
+const getDiseasesMasterList = async (category?: string): Promise<DiseaseRead[]> => {
+  const params = category ? { category } : {};
+  const response = await api.get<DiseaseRead[]>(`${BASE_URL}/master-list`, { params });
   return response.data;
+};
+
+/**
+ * Fetches the list of all unique disease categories and transforms it into a key-value object.
+ * @returns {Promise<Record<string, string>>} A promise that resolves with an object of category names.
+ */
+const getDiseaseCategories = async (): Promise<Record<string, string>> => {
+  const response = await api.get<string[]>(`${BASE_URL}/categories`);
+  // Transform the array of strings into a key-value object for consistency
+  const categoriesObject = response.data.reduce((acc, category) => {
+    acc[category] = category;
+    return acc;
+  }, {} as Record<string, string>);
+  return categoriesObject;
 };
 
 /**
@@ -88,6 +104,7 @@ const deleteDisease = async (associationUuid: string): Promise<void> => {
 export const diseaseService = {
   getMyDiseases,
   getDiseasesMasterList,
+  getDiseaseCategories,
   createDisease,
   createDiseaseFromCode,
   updateDisease,
