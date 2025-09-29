@@ -16,15 +16,14 @@ import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { AllergyCategory, AllergyCreate, AllergyUpdate } from '@/interfaces/client/allergy.interface';
+// Import AllergyRead to replace `any`
+import { AllergyCreate, AllergyUpdate, AllergyRead } from '@/interfaces/client/allergy.interface';
 import { useAllergyStore } from '@/store/allergy/allergy.store';
 
 // Zod schema for form validation.
+// The form field is now `allergen` to match the data interfaces.
 const getAllergySchema = (t: (key: string) => string) => z.object({
-  // The user must select a valid category object from the list.
-  category: z.custom<AllergyCategory>(v => v !== null && typeof v === 'object' && 'uuid' in v, {
-    message: t('validation.allergenRequired'),
-  }),
+  allergen: z.string({ required_error: t('validation.allergenRequired') }).min(1, t('validation.allergenRequired')),
   reaction_type: z.string().optional(),
   severity: z.string().optional(),
 });
@@ -34,7 +33,8 @@ type AllergyFormInputs = z.infer<ReturnType<typeof getAllergySchema>>;
 interface AllergyFormProps {
   onSubmit: (data: AllergyCreate | AllergyUpdate) => Promise<void>;
   onCancel: () => void;
-  initialData?: any | null;
+  // Use the correct type `AllergyRead` for initialData.
+  initialData?: AllergyRead | null;
   isEditMode?: boolean;
 }
 
@@ -42,7 +42,6 @@ export default function AllergyForm({ onSubmit, onCancel, initialData, isEditMod
   const { t } = useTranslation();
   const formSchema = getAllergySchema(t);
 
-  // Get categories and the fetch action from the Zustand store.
   const {
     categories,
     isFetchingCategories,
@@ -56,51 +55,58 @@ export default function AllergyForm({ onSubmit, onCancel, initialData, isEditMod
     formState: { errors, isSubmitting },
   } = useForm<AllergyFormInputs>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { category: null, reaction_type: '', severity: '' },
+    // Default values now correctly reference `initialData.allergen`.
+    defaultValues: {
+      allergen: initialData?.allergen || '',
+      reaction_type: initialData?.reaction_type || '',
+      severity: initialData?.severity || '',
+    },
   });
 
-  // Fetch categories when the component mounts.
+  const categoryNames = React.useMemo(() => categories.map(cat => cat.name), [categories]);
+
   React.useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   React.useEffect(() => {
-    reset(initialData || { category: null, reaction_type: '', severity: '' });
+    // Reset form with initialData, using the allergen string for the category field.
+    reset({
+      allergen: initialData?.allergen || '',
+      reaction_type: initialData?.reaction_type || '',
+      severity: initialData?.severity || '',
+    });
   }, [initialData, reset]);
 
-  // The submission handler now transforms the form data to match the API.
   const handleFormSubmit: SubmitHandler<AllergyFormInputs> = async (data) => {
-    const submissionData: AllergyCreate = {
-      category_uuid: data.category.uuid,
-      reaction_type: data.reaction_type,
-      severity: data.severity,
-    };
-    await onSubmit(submissionData);
+    // The form data now perfectly matches the shape of AllergyCreate/Update.
+    await onSubmit(data);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Controller
-        name="category"
+        name="allergen" // The form field is now `allergen`
         control={control}
         render={({ field }) => (
           <Autocomplete
-            {...field}
-            options={categories}
-            getOptionLabel={(option) => option.name || ''}
-            isOptionEqualToValue={(option, value) => option.uuid === value.uuid}
+            value={field.value || null}
+            options={categoryNames}
+            getOptionLabel={(option) => t(`allergy_categories.${option}`, { defaultValue: option })}
             loading={isFetchingCategories}
             onChange={(_, data) => field.onChange(data)}
-            disabled={isEditMode} // Disable changing the category when editing
+            onBlur={field.onBlur}
+            disabled={isEditMode}
             renderInput={(params) => (
               <TextField
                 {...params}
+                inputRef={field.ref}
                 label={t('dashboard_allergies.form.categoryLabel')}
                 margin="normal"
                 required
                 autoFocus
-                error={!!errors.category}
-                helperText={errors.category?.message || (isEditMode ? 'Cannot change the allergen' : t('dashboard_allergies.form.categoryHelperText'))}
+                error={!!errors.allergen}
+                helperText={errors.allergen?.message || (isEditMode ? 'Cannot change the allergen' : t('dashboard_allergies.form.categoryHelperText'))}
                 InputProps={{ ...params.InputProps, endAdornment: <>{isFetchingCategories ? <CircularProgress color="inherit" size={20} /> : null}{params.InputProps.endAdornment}</> }}
               />
             )}
