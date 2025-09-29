@@ -272,7 +272,9 @@
       "searchHelperText": "Start typing to search the medical database.",
       "reactionLabel": "Reaction Type (Optional)",
       "severityLabel": "Severity (Optional)",
-      "submitButton": "Add Allergy"
+      "submitButton": "Add Allergy",
+      "categoryLabel": "Allergy Category",
+      "categoryHelperText": "Select a category from the list."
     },
     "list": {
       "title": "Registered Allergies",
@@ -291,6 +293,15 @@
       "editNotAvailable": "Editing an existing allergy will be available in a future version."
     }
   },
+  "allergy_categories": {
+    "Foods": "Foods",
+    "Environmental": "Environmental",
+    "Insects": "Insects",
+    "Latex": "Latex",
+    "Medications": "Medications",
+    "Contact_with_materials_or_substances": "Contact with materials or substances",
+    "Other": "Other"
+  },
   "dashboard_diseases": {
     "title": "My Medical Conditions",
     "addButton": "Add Condition",
@@ -301,7 +312,8 @@
       "diagnosisDateLabel": "Diagnosis Date",
       "severityLabel": "Severity (Optional)",
       "notesLabel": "Notes (Optional)",
-      "submitButton": "Add Condition"
+      "submitButton": "Add Condition",
+      "categoryLabel": "Disease Category"
     },
     "list": {
       "title": "Registered Conditions",
@@ -309,6 +321,15 @@
       "diagnosedLabel": "Diagnosed",
       "severityLabel": "Severity",
       "notAvailable": "N/A"
+    },
+    "diseases_categories": {
+      "Cardiovascular": "Cardiovascular",
+      "Respiratory": "Respiratory",
+      "Musculoskeletal": "Musculoskeletal",
+      "Gastrointestinal": "Gastrointestinal",
+      "Preventive": "Preventive",
+      "Mental Health": "Mental Health",
+      "Endocrine": "Endocrine"
     },
     "feedback": {
       "addSuccess": "Condition added successfully!",

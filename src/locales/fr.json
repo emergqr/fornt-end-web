@@ -272,7 +272,9 @@
       "searchHelperText": "Commencez à taper pour rechercher dans la base de données médicale.",
       "reactionLabel": "Type de Réaction (Optionnel)",
       "severityLabel": "Sévérité (Optionnel)",
-      "submitButton": "Ajouter l'Allergie"
+      "submitButton": "Ajouter l'Allergie",
+      "categoryLabel": "Catégorie d'allergie",
+      "categoryHelperText": "Sélectionnez une catégorie dans la liste."
     },
     "list": {
       "title": "Allergies Enregistrées",
@@ -291,17 +293,27 @@
       "editNotAvailable": "La modification d'une allergie existante sera disponible dans une future version."
     }
   },
+  "allergy_categories": {
+    "Foods": "Aliments",
+    "Environmental": "Environnementales",
+    "Insects": "Insectes",
+    "Latex": "Latex",
+    "Medications": "Médicaments",
+    "Contact_with_materials_or_substances": "Contact avec des matériaux ou des substances",
+    "Other": "Autres"
+  },
   "dashboard_diseases": {
-    "title": "Mes Conditions Médicales",
-    "addButton": "Ajouter une Condition",
+    "title": "Conditions Médicales",
+    "addButton": "Ajouter une condition",
     "form": {
-      "title": "Ajouter une Nouvelle Condition",
-      "searchLabel": "Rechercher une Maladie (ex. Hypertension)",
-      "searchHelperText": "Commencez à taper pour rechercher dans la base de données médicale.",
-      "diagnosisDateLabel": "Date du Diagnostic",
-      "severityLabel": "Sévérité (Optionnel)",
-      "notesLabel": "Notes (Optionnel)",
-      "submitButton": "Ajouter la Condition"
+      "title": "Ajouter une nouvelle condition",
+      "searchLabel": "Rechercher une maladie (par exemple, l'hypertension)",
+      "searchHelperText": "Commencez à taper pour rechercher la base de données médicale.",
+      "diagnosisDateLabel": "Date du diagnostic",
+      "severityLabel": "Sévérité (facultatif)",
+      "notesLabel": "Remarques (facultatif)",
+      "submitButton": "Ajouter une condition",
+      "categoryLabel": "Catégorie de la maladie"
     },
     "list": {
       "title": "Conditions Enregistrées",
@@ -309,6 +321,15 @@
       "diagnosedLabel": "Diagnostiqué",
       "severityLabel": "Sévérité",
       "notAvailable": "N/A"
+    },
+    "diseases_categories": {
+      "Cardiovascular": "Cardiovasculaire",
+      "Respiratory": "Respiratoire",
+      "Musculoskeletal": "Musculosquelettique",
+      "Gastrointestinal": "Gastro-intestinal",
+      "Preventive": "Préventif",
+      "Mental Health": "Santé mentale",
+      "Endocrine": "Endocrinien"
     },
     "feedback": {
       "addSuccess": "Condition ajoutée avec succès !",

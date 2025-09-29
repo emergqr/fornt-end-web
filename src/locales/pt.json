@@ -272,7 +272,9 @@
       "searchHelperText": "Comece a digitar para pesquisar no banco de dados médico.",
       "reactionLabel": "Tipo de Reação (Opcional)",
       "severityLabel": "Gravidade (Opcional)",
-      "submitButton": "Adicionar Alergia"
+      "submitButton": "Adicionar Alergia",
+      "categoryLabel": "Categoria de Alergia",
+      "categoryHelperText": "Selecione uma categoria da lista."
     },
     "list": {
       "title": "Alergias Registradas",
@@ -291,6 +293,15 @@
       "editNotAvailable": "A edição de uma alergia existente estará disponível em uma versão futura."
     }
   },
+  "allergy_categories": {
+    "Foods": "Alimentos",
+    "Environmental": "Ambientais",
+    "Insects": "Insetos",
+    "Latex": "Látex",
+    "Medications": "Medicamentos",
+    "Contact_with_materials_or_substances": "Contato com materiais ou substâncias",
+    "Other": "Outros"
+  },
   "dashboard_diseases": {
     "title": "Minhas Condições Médicas",
     "addButton": "Adicionar Condição",
@@ -301,7 +312,8 @@
       "diagnosisDateLabel": "Data do Diagnóstico",
       "severityLabel": "Gravidade (Opcional)",
       "notesLabel": "Notas (Opcional)",
-      "submitButton": "Adicionar Condição"
+      "submitButton": "Adicionar Condição",
+      "categoryLabel": "Categoria da Doença"
     },
     "list": {
       "title": "Condições Registradas",
@@ -309,6 +321,15 @@
       "diagnosedLabel": "Diagnosticado",
       "severityLabel": "Gravidade",
       "notAvailable": "N/A"
+    },
+    "diseases_categories": {
+      "Cardiovascular": "Cardiovascular",
+      "Respiratory": "Respiratório",
+      "Musculoskeletal": "Músculo-esquelético",
+      "Gastrointestinal": "Gastrointestinal",
+      "Preventive": "Preventivo",
+      "Mental Health": "Saúde Mental",
+      "Endocrine": "Endócrino"
     },
     "feedback": {
       "addSuccess": "Condição adicionada com sucesso!",

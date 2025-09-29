@@ -33,6 +33,7 @@
     "eventDateRequired": "La fecha es requerida",
     "loginEmailInvalid": "Por favor, introduce un email válido",
     "loginPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "registerNameMinLength": "El nombre debe tener al menos 2 caracteres",
     "registerPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
     "registerPasswordRepeatMinLength": "La contraseña debe tener al menos 6 caracteres",
     "registerPasswordsDoNotMatch": "Las contraseñas no coinciden",
@@ -129,6 +130,7 @@
   },
   "auth_register": {
     "title": "Crear una cuenta",
+    "nameLabel": "Nombre Completo",
     "emailLabel": "Correo Electrónico",
     "passwordLabel": "Contraseña",
     "passwordRepeatLabel": "Repetir Contraseña",
@@ -270,7 +272,9 @@
       "searchHelperText": "Empieza a escribir para buscar en la base de datos médica.",
       "reactionLabel": "Tipo de Reacción (Opcional)",
       "severityLabel": "Severidad (Opcional)",
-      "submitButton": "Añadir Alergia"
+      "submitButton": "Añadir Alergia",
+      "categoryLabel": "Categoría de Alergia",
+      "categoryHelperText": "Selecciona una categoría de la lista."
     },
     "list": {
       "title": "Alergias Registradas",
@@ -289,6 +293,15 @@
       "editNotAvailable": "La edición de una alergia existente se realizará en una futura versión."
     }
   },
+  "allergy_categories": {
+    "Foods": "Alimentos",
+    "Environmental": "Ambientales",
+    "Insects": "Insectos",
+    "Latex": "Látex",
+    "Medications": "Medicamentos",
+    "Contact_with_materials_or_substances": "Contacto con materiales o sustancias",
+    "Other": "Otros"
+  },
   "dashboard_diseases": {
     "title": "Mis Condiciones Médicas",
     "addButton": "Añadir Condición",
@@ -299,7 +312,8 @@
       "diagnosisDateLabel": "Fecha de Diagnóstico",
       "severityLabel": "Severidad (Opcional)",
       "notesLabel": "Notas (Opcional)",
-      "submitButton": "Añadir Condición"
+      "submitButton": "Añadir Condición",
+      "categoryLabel": "Categoría de la Enfermedad"
     },
     "list": {
       "title": "Condiciones Registradas",
@@ -307,6 +321,15 @@
       "diagnosedLabel": "Diagnosticado",
       "severityLabel": "Severidad",
       "notAvailable": "N/D"
+    },
+    "diseases_categories": {
+      "Cardiovascular": "Cardiovascular",
+      "Respiratory": "Respiratorio",
+      "Musculoskeletal": "Musculoesquelético",
+      "Gastrointestinal": "Gastrointestinal",
+      "Preventive": "Preventivo",
+      "Mental Health": "Salud Mental",
+      "Endocrine": "Endocrino"
     },
     "feedback": {
       "addSuccess": "¡Condición añadida con éxito!",
@@ -360,9 +383,9 @@
     },
     "list": {
       "title": "Planes Registrados",
-      "noSchedules": "No tienes planes de medicação registrados.",
-      "frequencyLabel": "Frequência",
-      "startsLabel": "Inicia em"
+      "noSchedules": "No tienes planes de medicación registrados.",
+      "frequencyLabel": "Frecuencia",
+      "startsLabel": "Inicia"
     },
     "feedback": {
       "addSuccess": "¡Plan de medicación añadido con éxito!",

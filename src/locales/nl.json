@@ -99,7 +99,7 @@
     "visionTitle": "Onze Visie",
     "visionText": "Wij streven naar een toekomst waarin elk individu eigenaar is van zijn medische geschiedenis, en doorbreken de barrières van traditionele gezondheidssystemen. We willen dat EmergQR het universele hulpmiddel is dat patiënten, artsen en nooddiensten naadloos en veilig met elkaar verbindt.",
     "valuesTitle": "Onze Waarden",
-    "valuesText": "- **Privacy en Veiligheid:** De bescherming van uw gegevens is onze hoogste prioriteit.\n- **Toegankelijkheid:** Uw informatie, beschikbaar voor u en wie u ook kiest, altijd en overal.\n- **Empowerment:** Wij geven u de tools om proactief uw gezondheid te beheren.\n- **Innovatie:** We zijn voortdurend op zoek naar new manieren om de gezondheidszorg te verbeteren door middel van technologie."
+    "valuesText": "- **Privacy en Veiligheid:** De bescherming van uw gegevens is onze hoogste prioriteit.\n- **Toegankelijkheid:** Uw informatie, beschikbaar voor u en wie u ook kiest, altijd en overal.\n- **Empowerment:** Wij geven u de tools om proactief uw gezondheid te beheren.\n- **Innovatie:** We zijn voortdurend op zoek naar new manieren om de gezondheidszorg te verbeteren door middel of technologie."
   },
   "servicesPage": {
     "title": "Onze Diensten",
@@ -272,7 +272,9 @@
       "searchHelperText": "Begin met typen om de medische database te doorzoeken.",
       "reactionLabel": "Reactietype (Optioneel)",
       "severityLabel": "Ernst (Optioneel)",
-      "submitButton": "Allergie Toevoegen"
+      "submitButton": "Allergie Toevoegen",
+      "categoryLabel": "Allergie Categorie",
+      "categoryHelperText": "Selecteer een categorie uit de lijst."
     },
     "list": {
       "title": "Geregistreerde Allergieën",
@@ -291,6 +293,15 @@
       "editNotAvailable": "Het bewerken van een bestaande allergie zal in een toekomstige versie beschikbaar zijn."
     }
   },
+  "allergy_categories": {
+    "Foods": "Voedsel",
+    "Environmental": "Omgeving",
+    "Insects": "Insecten",
+    "Latex": "Latex",
+    "Medications": "Medicijnen",
+    "Contact_with_materials_or_substances": "Contact met materialen of stoffen",
+    "Other": "Andere"
+  },
   "dashboard_diseases": {
     "title": "Mijn Medische Condities",
     "addButton": "Conditie Toevoegen",
@@ -301,7 +312,8 @@
       "diagnosisDateLabel": "Diagnosedatum",
       "severityLabel": "Ernst (Optioneel)",
       "notesLabel": "Notities (Optioneel)",
-      "submitButton": "Conditie Toevoegen"
+      "submitButton": "Conditie Toevoegen",
+      "categoryLabel": "Ziektecategorie"
     },
     "list": {
       "title": "Geregistreerde Condities",
@@ -309,6 +321,15 @@
       "diagnosedLabel": "Gediagnosticeerd",
       "severityLabel": "Ernst",
       "notAvailable": "N.v.t."
+    },
+    "diseases_categories": {
+      "Cardiovascular": "Cardiovasculair",
+      "Respiratory": "Ademhalingsstelsel",
+      "Musculoskeletal": "Musculoskeletaal",
+      "Gastrointestinal": "Gastro-intestinaal",
+      "Preventive": "Preventief",
+      "Mental Health": "Geestelijke gezondheid",
+      "Endocrine": "Endocrien"
     },
     "feedback": {
       "addSuccess": "Conditie succesvol toegevoegd!",
@@ -352,7 +373,7 @@
     "title": "Mijn Medicijnen",
     "form": {
       "title": "Nieuw Medicatieplan Toevoegen",
-      "nameLabel": "Naam van Medicijn",
+      "medicationNameLabel": "Naam van Medicijn",
       "dosageLabel": "Dosis (bijv. 1 pil, 10mg)",
       "frequencyLabel": "Frequentie (bijv. Dagelijks, Elke 8 uur)",
       "startDateLabel": "Startdatum",
